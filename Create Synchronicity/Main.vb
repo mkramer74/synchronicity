@@ -368,17 +368,7 @@ Friend NotInheritable Class MessageLoop
             ExploreTree(Path, 1, Writer)
 
             Try
-                Writer.WriteLine("** Requesting full permissions (local)")
-                Dim Permissions As New Security.Permissions.FileIOPermission(Security.Permissions.PermissionState.Unrestricted)
-                Permissions.AllLocalFiles = Security.Permissions.FileIOPermissionAccess.AllAccess
-                Permissions.Demand()
-                ExploreTree(Path, 1, Writer)
-            Catch Ex As Security.SecurityException
-                Writer.WriteLine(Ex.Message)
-            End Try
-
-            Try
-                Writer.WriteLine("** Requesting full permissions (all)")
+                Writer.WriteLine("** Requesting full permissions")
                 Dim Permissions As New Security.Permissions.FileIOPermission(Security.Permissions.PermissionState.Unrestricted)
                 Permissions.AllFiles = Security.Permissions.FileIOPermissionAccess.AllAccess
                 Permissions.Demand()

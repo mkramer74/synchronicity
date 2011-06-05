@@ -863,7 +863,7 @@ Public Class SynchronizeForm
 
         Dim SourceFATTime As Date = NTFSToFATTime(IO.File.GetLastWriteTimeUtc(Source)).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0))
         Dim DestFATTime As Date = NTFSToFATTime(IO.File.GetLastWriteTimeUtc(Destination))
-        Log.LogInfo(String.Format("SourceIsMoreRecent: S:({0}, {1}); D:({2}, {3})", FormatDate(IO.File.GetLastWriteTimeUtc(Source)), FormatDate(SourceFATTime), FormatDate(IO.File.GetLastWriteTimeUtc(Destination)), FormatDate(DestFATTime)))
+        Log.LogInfo(String.Format("SourceIsMoreRecent: S:({0}, {1}); D:({2}, {3})", Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(Source)), Interaction.FormatDate(SourceFATTime), Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(Destination)), Interaction.FormatDate(DestFATTime)))
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.FuzzyDstCompensation, False) Then
             Dim HoursDiff As Integer = CInt((SourceFATTime - DestFATTime).TotalHours)
@@ -956,12 +956,6 @@ Public Class SynchronizeForm
 #End Region
 
 #Region "Tests"
-    Private Shared Function FormatDate(ByVal Value As Date) As String
-#If DEBUG Then
-        Return Value.ToString("yyyy/MM/dd hh:mm:ss.fff")
-#End If
-    End Function
-
 #If DEBUG Then
     Structure DatePair
         Dim Ntfs, FAT As Date

@@ -241,6 +241,9 @@ Structure CommandLine
         Normal
         Scheduler
         Queue
+#If DEBUG Then
+        Scanner
+#End If
     End Enum
 
     Shared Help As Boolean '= False
@@ -252,6 +255,9 @@ Structure CommandLine
     Shared Log As Boolean '= False
     Shared NoUpdates As Boolean '= False
     Shared NoStop As Boolean '= False
+#If DEBUG Then
+    Shared ScanPath As String
+#End If
 
     Shared Sub ReadArgs(ByVal ArgsList As List(Of String))
         If ArgsList.Count > 1 Then
@@ -269,10 +275,21 @@ Structure CommandLine
             If RunArgIndex <> -1 AndAlso RunArgIndex + 1 < ArgsList.Count Then
                 CommandLine.TasksToRun = ArgsList(RunArgIndex + 1)
             End If
+
+#If DEBUG Then
+            Dim ScanArgIndex As Integer = ArgsList.IndexOf("/scan")
+            If ScanArgIndex <> -1 AndAlso ScanArgIndex + 1 < ArgsList.Count Then
+                CommandLine.ScanPath = ArgsList(ScanArgIndex + 1)
+            End If
+#End If
         End If
 
         If CommandLine.TasksToRun <> "" Then
             CommandLine.RunAs = CommandLine.RunMode.Queue
+#If DEBUG Then
+        ElseIf CommandLine.ScanPath <> "" Then
+            CommandLine.RunAs = CommandLine.RunMode.Scanner
+#End If
         ElseIf ArgsList.Contains("/scheduler") Then
             CommandLine.RunAs = CommandLine.RunMode.Scheduler
         End If

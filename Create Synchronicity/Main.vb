@@ -96,6 +96,11 @@ Friend NotInheritable Class MessageLoop
                     AddHandler MainFormInstance.ApplicationTimer.Tick, AddressOf Scheduling_Tick
                 End If
                 MainFormInstance.ApplicationTimer.Start() 'First tick fires after ApplicationTimer.Interval milliseconds.
+#If DEBUG Then
+            ElseIf CommandLine.RunAs = CommandLine.RunMode.Scanner Then 'FIXME: Does not exit
+                Explore(CommandLine.ScanPath)
+                ExitNeeded = True : Exit Sub
+#End If
             Else
                 AddHandler MainFormInstance.FormClosed, AddressOf ReloadMainForm
                 MainFormInstance.Show()
@@ -350,6 +355,73 @@ Friend NotInheritable Class MessageLoop
         ScheduledProfiles.Sort(Function(First As SchedulerEntry, Second As SchedulerEntry) First.NextRun.CompareTo(Second.NextRun))
     End Sub
 #End Region
+
+#If DEBUG Then
+
+
+    Shared Sub Explore(ByVal Path As String)
+        Path = IO.Path.GetFullPath(Path)
+        Using Writer As New IO.StreamWriter(IO.Path.Combine(ProgramConfig.LogRootDir, "scan-results.txt"), True)
+            Writer.WriteLine("== Exploring " & Path)
+
+            Writer.WriteLine("** Not requesting any specific permissions")
+            ExploreTree(Path, 1, Writer)
+
+            Try
+                Writer.WriteLine("** Requesting full permissions (local)")
+                Dim Permissions As New Security.Permissions.FileIOPermission(Security.Permissions.PermissionState.Unrestricted)
+                Permissions.AllLocalFiles = Security.Permissions.FileIOPermissionAccess.AllAccess
+                Permissions.Demand()
+                ExploreTree(Path, 1, Writer)
+            Catch Ex As Security.SecurityException
+                Writer.WriteLine(Ex.Message)
+            End Try
+
+            Try
+                Writer.WriteLine("** Requesting full permissions (all)")
+                Dim Permissions As New Security.Permissions.FileIOPermission(Security.Permissions.PermissionState.Unrestricted)
+                Permissions.AllFiles = Security.Permissions.FileIOPermissionAccess.AllAccess
+                Permissions.Demand()
+                ExploreTree(Path, 1, Writer)
+            Catch Ex As Security.SecurityException
+                Writer.WriteLine(Ex.Message)
+            End Try
+        End Using
+    End Sub
+
+    Shared Sub ExploreTree(ByVal Path As String, ByVal Depth As Integer, ByVal Stream As IO.StreamWriter)
+        Dim Indentation As String = "".PadLeft(Depth * 2)
+
+        For Each File As String In IO.Directory.GetFiles(Path)
+            Try
+                Stream.Write(Indentation)
+                Stream.Write(File)
+                Stream.Write("	" & IO.File.Exists(File))
+                Stream.Write("	" & IO.File.GetAttributes(File).ToString())
+                Stream.Write("	" & Interaction.FormatDate(IO.File.GetCreationTimeUtc(File)))
+                Stream.Write("	" & Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(File)))
+                Stream.WriteLine()
+            Catch ex As Exception
+                Stream.WriteLine(Indentation & ex.ToString)
+            End Try
+        Next
+
+        For Each Folder As String In IO.Directory.GetDirectories(Path)
+            Try
+                Stream.Write(Indentation)
+                Stream.Write(Folder)
+                Stream.Write("	" & IO.Directory.Exists(Folder))
+                Stream.Write("	" & IO.File.GetAttributes(Folder).ToString())
+                Stream.Write("	" & Interaction.FormatDate(IO.Directory.GetCreationTimeUtc(Folder)))
+                Stream.Write("	" & Interaction.FormatDate(IO.Directory.GetLastWriteTimeUtc(Folder)))
+                Stream.WriteLine()
+            Catch ex As Exception
+                Stream.WriteLine(Indentation & ex.ToString)
+            End Try
+            ExploreTree(Folder, Depth + 1, Stream)
+        Next
+    End Sub
+#End If
 
 #If Debug And 0 Then
     Sub VariousTests()

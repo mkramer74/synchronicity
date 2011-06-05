@@ -93,6 +93,12 @@ Friend Module Interaction
         Catch
         End Try
     End Sub
+
+    Function FormatDate(ByVal Value As Date) As String
+#If DEBUG Then
+        Return Value.ToString("yyyy/MM/dd hh:mm:ss.fff")
+#End If
+    End Function
 End Module
 
 Friend NotInheritable Class ListViewColumnSorter

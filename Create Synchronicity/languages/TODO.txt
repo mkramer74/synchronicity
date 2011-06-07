@@ -17,5 +17,6 @@ korean:5
 polish:1
 portuguese:1
 russian:9
+slovene:0
 spanish:0
 swedish:9

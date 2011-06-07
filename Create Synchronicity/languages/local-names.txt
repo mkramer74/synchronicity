@@ -18,4 +18,5 @@ polish;polski;pl
 portuguese;português;pt
 russian;русский язык;ru
 spanish;español;es
+slovene;slovenščina;sl
 swedish;svenska;sv

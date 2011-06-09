@@ -9,6 +9,7 @@ dutch;nederlands;nl
 english;english;en
 estonian;eesti;et
 francais;french;fr
+greek;Ελληνικά;el
 hebrew;עִבְרִית;he
 hungarian;magyar;hu
 indonesian;bahasa indonesia;id

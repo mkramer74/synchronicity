@@ -3,7 +3,7 @@
 Languages:          English, French, German, Portuguese, Italian, Spanish, 
                     Swedish, Dutch, Czech, Indonesian, Hebrew, Danish, Russian,
                     Estonian, Polish, Bulgarian, Korean, Chinese (Simplified),
-                    Hungarian, Chinese (Traditional), Amharic
+                    Hungarian, Chinese (Traditional), Amharic, Greek
 Created on:         June 3, 2009
 Created by:         Clément Pit--Claudel (Create Software)
 Special thanks:     Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
@@ -17,8 +17,8 @@ Translations:       Clément Pit--Claudel, Florian Haag, André Modesto, Teo Roj
                     Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,
                     John Van Amstel, Mauricio Leyzaola, Jiří Stuchlík, Sergio
                     Chiapperini, Gush Katif Laad, Bjørn Karlstrøm, Andres Aule,
-                    S. G. Park, Marco C., Marco Salvagno, Lajos Toldy,
-                    Elfalem Alemu, Juan Pablo Ahumada
+                    S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
+                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis
 
 * Technical information
 License:            GNU GPL v3 or later (see "COPYING")
@@ -33,6 +33,7 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Jun. 10, 2011 - NEW: !Greek translation, by Stathis Grigoriadis. Ευχαριστώ!
 May. 28, 2011 - NEW: !Amharic translation, by Elfalem Alemu. አመሰግናለሁ!
 May. 18, 2011 - NEW: !Chinese (traditional) translation. 謝謝!
 

@@ -8,7 +8,9 @@
 
 Friend Module Updates
     Public Sub CheckForUpdates(Optional ByVal RoutineCheck As Boolean = True)
+        Dim LatestVersion As String = ""
         Dim UpdateClient As New Net.WebClient
+
         Try
             UpdateClient.Headers.Add("version", Application.ProductVersion)
 #If CONFIG = "Linux" Then
@@ -18,7 +20,7 @@ Friend Module Updates
             UpdateClient.Proxy = System.Net.HttpWebRequest.DefaultWebProxy 'Tracker #2976549
             UpdateClient.Proxy.Credentials = Net.CredentialCache.DefaultCredentials
 #End If
-            Dim LatestVersion As String
+
             Dim Url As String = ProgramSetting.Website & If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, "code/scheduler-version.txt", "code/version.txt")
             Dim SecondaryUrl As String = ProgramSetting.UserWeb & "code/synchronicity-version.txt"
             Try
@@ -39,7 +41,7 @@ Friend Module Updates
             'Some form couldn't close properly because of thread accesses
             Interaction.ShowDebug(Ex.ToString)
         Catch Ex As Exception
-            Interaction.ShowMsg(Translation.Translate("\UPDATE_ERROR") & Environment.NewLine & Ex.Message, Translation.Translate("\UPDATE_ERROR_TITLE"), , MessageBoxIcon.Error)
+            Interaction.ShowMsg(Translation.Translate("\UPDATE_ERROR") & LatestVersion & Environment.NewLine & Environment.NewLine & Ex.Message, Translation.Translate("\UPDATE_ERROR_TITLE"), , MessageBoxIcon.Error)
             Interaction.ShowDebug(Ex.Message & Environment.NewLine & Ex.StackTrace)
         Finally
             UpdateClient.Dispose()

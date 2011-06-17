@@ -19,7 +19,7 @@ Translations:       Clément Pit--Claudel, Florian Haag, André Modesto, Teo Roj
                     John Van Amstel, Mauricio Leyzaola, Jiří Stuchlík, Sergio
                     Chiapperini, Gush Katif Laad, Bjørn Karlstrøm, Andres Aule,
                     S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
-                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis
+                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis, Tom Szabo
 
 * Technical information
 License:            GNU GPL v3 or later (see "COPYING")

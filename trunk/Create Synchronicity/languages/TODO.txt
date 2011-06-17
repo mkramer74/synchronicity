@@ -11,7 +11,7 @@ estonian:9
 francais:0
 greek:0
 hebrew:25
-hungarian:1
+hungarian:0
 indonesian:6
 italian:1
 korean:5

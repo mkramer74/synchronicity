@@ -1,4 +1,4 @@
-﻿# Create Synchronicity French Language file
+# Create Synchronicity French Language file
 # Translation by Clément Pit--Claudel
 # Tag outdated strings with "->". For example, write "->ID=Translation" if the string ID needs to be retranslated from English.
 #
@@ -21,7 +21,7 @@ CONFIRM_DELETION=Confirmation de suppression
 CONTACT_LINK=\Contacter l'auteur/ (createsoftware@users.sourceforge.net)
 CREATE=Créer
 DEBUG_MODE=Mode DEBUG
-DEBUG_WARNING=Cette version de Create Synchronicity est concue pour la recherche de bugs. Beaucoup d'informations supplémentaires seront ajoutées aux historiques, et la synchronisation sera probablement ralentie. Veuillez communiquer les bugs que vous pourriez rencontrer.
+DEBUG_WARNING=Cette version de Create Synchronicity est conçue pour la recherche de bugs. Beaucoup d'informations supplémentaires seront ajoutées aux historiques, et la synchronisation sera probablement ralentie. Veuillez communiquer les bugs que vous pourriez rencontrer.
 DELETE=Supprimer
 DELETE_PROFILE=Voulez-vous vraiment supprimer le profil "{0}" ?
 DESTINATION=Destination :
@@ -45,7 +45,7 @@ FOLDERS_DELETED=Dossiers supprimés :
 FROM=Depuis :
 HOURS=heures.
 INCLUDE_EXCLUDE=Inclure ou exclure des types de fichiers
-INVALID_CMD=Arguments passés en ligne de commande invalides !
+INVALID_CMD=Paramètres passés en ligne de commande invalides !
 INVALID_CONFIG=Configuration invalide !
 INVALID_DEST=Le répertoire de destination est invalide.
 INVALID_PROFILE=Le nom du profil est invalide !
@@ -64,16 +64,16 @@ LR=Gauche->Droite
 LR_INCREMENTAL=Gauche à droite (Incrémental)
 LR_INCREMENTAL_TAG="{0}" copie les fichiers de la source vers la destination.\nLes fichiers créés et modifiés sont copiés de gauche à droite, mais aucun fichier n'est supprimé.
 LR_MIRROR=Gauche à droite (Miroir)
-LR_MIRROR_TAG="{0}" crée une copie conforme du coté gauche sur le coté droit, et copie tous les fichiers de la source vers la destination.\nLes fichiers créés et modifiés sont copiés de gauche à droite.
+LR_MIRROR_TAG="{0}" crée une copie conforme du côté gauche sur le côté droit, et copie tous les fichiers de la source vers la destination.\nLes fichiers créés et modifiés sont copiés de gauche à droite ; les suppressions effectuées à gauche sont réalisées à droite.
 METHOD=Méthode :
 NAME=Nom :
 NEW_PROFILE=Crée un nouveau profil
 NEW_PROFILE_LABEL=Nouveau profil
 NO=Non
-NO_UPDATES=Aucune mise à jour disponible
+NO_UPDATES=Aucune mise à jour n'est disponible
 NONE=Aucun
 PATH=Chemin
-PREVIEW=Apercu
+PREVIEW=Aperçu
 PROFILE_SETTINGS=Paramètres du profil {0}
 PROFILES=Profils
 PROPAGATE=Propager les mises à jour

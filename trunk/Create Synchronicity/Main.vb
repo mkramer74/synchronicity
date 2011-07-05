@@ -230,7 +230,10 @@ Friend NotInheritable Class MessageLoop
             ProfilesQueue = New Queue(Of String)
 
             ConfigHandler.LogAppEvent("Profiles queue: Queue created.")
-            For Each Profile As String In CommandLine.TasksToRun.Split(ProgramSetting.EnqueuingSeparator)
+            Dim RequestedProfiles As New List(Of String)(CommandLine.TasksToRun.Split(ProgramSetting.EnqueuingSeparator))
+
+            If (CommandLine.RunAll) Then RequestedProfiles = New List(Of String)(Profiles.Keys) 'Overwrites previous initialization
+            For Each Profile As String In RequestedProfiles
                 If Profiles.ContainsKey(Profile) Then
                     If Profiles(Profile).ValidateConfigFile() Then
                         ConfigHandler.LogAppEvent("Profiles queue: Registered profile " & Profile)

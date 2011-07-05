@@ -249,6 +249,7 @@ Structure CommandLine
     Shared Help As Boolean '= False
     Shared Quiet As Boolean '= False
     Shared TasksToRun As String = ""
+    Shared RunAll As Boolean '= False
     Shared ShowPreview As Boolean '= False
     Shared RunAs As RunMode '= RunMode.Normal
     Shared Silent As Boolean '= False
@@ -268,11 +269,12 @@ Structure CommandLine
             CommandLine.Log = ArgsList.Contains("/log")
             CommandLine.NoUpdates = ArgsList.Contains("/noupdates")
             CommandLine.NoStop = ArgsList.Contains("/nostop")
+            CommandLine.RunAll = ArgsList.Contains("/all")
 
             CommandLine.Quiet = CommandLine.Quiet Or CommandLine.Silent
 
             Dim RunArgIndex As Integer = ArgsList.IndexOf("/run")
-            If RunArgIndex <> -1 AndAlso RunArgIndex + 1 < ArgsList.Count Then
+            If (Not CommandLine.RunAll) AndAlso RunArgIndex <> -1 AndAlso RunArgIndex + 1 < ArgsList.Count Then
                 CommandLine.TasksToRun = ArgsList(RunArgIndex + 1)
             End If
 
@@ -284,7 +286,7 @@ Structure CommandLine
 #End If
         End If
 
-        If CommandLine.TasksToRun <> "" Then
+        If CommandLine.RunAll Or CommandLine.TasksToRun <> "" Then
             CommandLine.RunAs = CommandLine.RunMode.Queue
 #If DEBUG Then
         ElseIf CommandLine.ScanPath <> "" Then

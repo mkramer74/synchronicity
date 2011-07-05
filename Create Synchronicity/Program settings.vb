@@ -120,21 +120,22 @@ NotInheritable Class ConfigHandler
         Dim Writable As Boolean = True
         Dim ProgramPathExists As Boolean = IO.Directory.Exists(Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName)
 
-        For Each Folder As String In WriteNeededFolders
-            Dim FolderInfo As New IO.DirectoryInfo(Folder)
-            Writable = Writable And (Not (FolderInfo.Attributes And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly)
+        Try
+            For Each Folder As String In WriteNeededFolders
+                Dim FolderInfo As New IO.DirectoryInfo(Folder)
+                Writable = Writable And (Not (FolderInfo.Attributes And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly)
 
-            Try
                 Dim TestPath As String = Folder & ProgramSetting.DirSep & "write-permissions"
                 IO.File.Create(TestPath).Close()
                 IO.File.Delete(TestPath)
-            Catch
-                Writable = False
-            End Try
-        Next
-        For Each File As String In WriteNeededFiles
-            Writable = Writable And (Not (IO.File.GetAttributes(File) And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly)
-        Next
+            Next
+            For Each File As String In WriteNeededFiles
+                'Some bugs were reported regarding write-permissions not being found at this point of the code, which means that the deletion might have been delayed somewhat.
+                Writable = Writable And (Not (IO.File.GetAttributes(File) And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly)
+            Next
+        Catch
+            Writable = False
+        End Try
 
         ' When a user folder exists, and no config folder exists in the install dir, use the user's folder.
         If Writable And (ProgramPathExists Or Not IO.Directory.Exists(UserPath)) Then

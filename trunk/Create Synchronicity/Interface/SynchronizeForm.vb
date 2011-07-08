@@ -740,7 +740,7 @@ Public Class SynchronizeForm
             For Each File As String In IO.Directory.GetFiles(Src_FilePath)
                 Dim RelativeFName As String = File.Substring(Context.SourcePath.Length)
                 If Not IsValidFile(RelativeFName) Then
-                    If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.Delay, False)) OrElse (IO.File.GetLastWriteTimeUtc(File) > Date.Now.AddMonths(1)) Then
+                    If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.Delay, False)) OrElse (IO.File.GetLastAccessTimeUtc(File) > Date.UtcNow.AddMonths(1)) Then 'FIXME
                         AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, Context.Action, False))
                         Log.LogInfo(String.Format("Cleanup: [Delete] ""{0}"" ({1})", File, RelativeFName))
                     Else

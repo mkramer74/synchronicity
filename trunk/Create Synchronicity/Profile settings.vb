@@ -160,7 +160,8 @@ NotInheritable Class ProfileHandler
     End Function
 
     Function Rename(ByVal NewName As String) As Boolean
-        If IO.File.Exists(ProgramConfig.GetLogPath(NewName)) Or IO.File.Exists(ProgramConfig.GetConfigPath(NewName)) Then Return False
+        'Don't exit if there's a case change.
+        If (Not String.Equals(ProfileName, NewName, StringComparison.OrdinalIgnoreCase)) And (IO.File.Exists(ProgramConfig.GetLogPath(NewName)) Or IO.File.Exists(ProgramConfig.GetConfigPath(NewName))) Then Return False
 
         Try
             If IO.File.Exists(ProgramConfig.GetLogPath(ProfileName)) Then IO.File.Move(ProgramConfig.GetLogPath(ProfileName), ProgramConfig.GetLogPath(NewName))

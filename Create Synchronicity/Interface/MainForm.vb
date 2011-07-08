@@ -139,9 +139,11 @@ Public Class MainForm
             Dim SettingsForm As New SettingsForm(e.Label)
             SettingsForm.ShowDialog()
         Else
-            If Not Profiles(Actions.Items(e.Item).Text).RenameProfile(e.Label) Then e.CancelEdit = True
+            If Not Profiles(Actions.Items(e.Item).Text).Rename(e.Label) Then e.CancelEdit = True
         End If
-        ReloadProfilesList()
+
+        ' Tracker #3357854: Reloading deletes the item being edited, and the edit is committed on the first item of the list.
+        Me.BeginInvoke(New Action(AddressOf ReloadProfilesList))
     End Sub
 
     Private Sub Actions_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Actions.SelectedIndexChanged

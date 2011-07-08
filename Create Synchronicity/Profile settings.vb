@@ -32,6 +32,7 @@ Friend Module ProfileSetting
     'Next settings are hidden, not automatically appended to config files.
     Public Const ExcludedFolders As String = "Excluded folder patterns"
     Public Const Forecast As String = "Forecast"
+    Public Const Delay As String = "Delay deletions"
     '</>
 
     Public Const Scheduling As String = "Scheduling"

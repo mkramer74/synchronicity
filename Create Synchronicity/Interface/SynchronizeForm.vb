@@ -740,13 +740,17 @@ Public Class SynchronizeForm
             For Each File As String In IO.Directory.GetFiles(Src_FilePath)
                 Dim RelativeFName As String = File.Substring(Context.SourcePath.Length)
                 If Not IsValidFile(RelativeFName) Then
-                    AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, Context.Action, False))
-                    Log.LogInfo(String.Format("Cleanup: [Delete] ""{0}"" ({1})", File, RelativeFName))
+                    If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.Delay, False)) OrElse (IO.File.GetLastWriteTimeUtc(File) > Date.Now.AddMonths(1)) Then
+                        AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, Context.Action, False))
+                        Log.LogInfo(String.Format("Cleanup: [Delete] ""{0}"" ({1})", File, RelativeFName))
+                    Else
+                        Log.LogInfo(String.Format("Cleanup: [Keep until outdated] ""{0}"" ({1})", File, RelativeFName))
+                    End If
                 Else
                     Log.LogInfo(String.Format("Cleanup: [Keep] ""{0}"" ({1})", File, RelativeFName))
                 End If
 
-                Status.FilesScanned += 1
+                    Status.FilesScanned += 1
             Next
         Catch Ex As Exception
 #If DEBUG Then

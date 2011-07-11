@@ -21,3 +21,4 @@ russian;русский язык;ru
 spanish;español;es
 slovene;slovenščina;sl
 swedish;svenska;sv
+turkish;Türkçe;tr

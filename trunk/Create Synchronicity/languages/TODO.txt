@@ -21,3 +21,4 @@ russian:9
 slovene:0
 spanish:0
 swedish:9
+turkish:0

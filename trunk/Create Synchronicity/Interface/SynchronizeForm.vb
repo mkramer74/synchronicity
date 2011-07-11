@@ -397,7 +397,7 @@ Public Class SynchronizeForm
                     If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction <> Nothing Then
                         Try
                             ConfigHandler.LogAppEvent(Translation.Translate("\POST_SYNC"))
-                            Diagnostics.Process.Start(PostSyncAction)
+                            Diagnostics.Process.Start(PostSyncAction, ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination)))
                         Catch Ex As Exception
                             Log.HandleError(Ex)
                         End Try

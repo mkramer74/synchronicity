@@ -35,10 +35,11 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Jul. 11, 2011 - NEW: (Hidden setting) Post-sync actions.
 Jul. 11, 2011 - NEW: !Turkish translation, by muska. Sağ olun!
 Jul. 08, 2011 - UPD: #3357854: Allow case-only changes in profile names and fix sorting after rename.
 Jul. 05, 2011 - FIX: Some users reported an error with the write-permissions file.
-Jun. 10, 2011 - NEW: Sync all profiles in a row using /all.
+Jun. 10, 2011 - NEW: Command-line switch to sync all profiles (/all).
 Jun. 10, 2011 - NEW: !Greek translation, by Stathis Grigoriadis. Ευχαριστώ!
 May. 28, 2011 - NEW: !Amharic translation, by Elfalem Alemu. አመሰግናለሁ!
 May. 18, 2011 - NEW: !Chinese (traditional) translation. 謝謝!

@@ -163,3 +163,4 @@ CATCHUP_MISSED_BACKUPS_TAG=Показывает, что делать, если �
 ->COMPARE_SIZE=
 ->MORE=
 ->NO_PROFILES=
+->POST_SYNC=

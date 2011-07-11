@@ -159,7 +159,7 @@ Public Class SynchronizeForm
         RemoveHandler Interaction.StatusIcon.Click, AddressOf StatusIcon_Click
 
         Interaction.StatusIcon.Text = Translation.Translate("\WAITING")
-        RaiseEvent SyncFinished(Handler.ProfileName, Not (Status.Failed Or Status.Cancel))
+        RaiseEvent SyncFinished(Handler.ProfileName, Not (Status.Failed Or Status.Cancel)) 'These parameters are not used atm.
     End Sub
 
     Private Sub CancelBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StopBtn.Click
@@ -389,8 +389,20 @@ Public Class SynchronizeForm
 
                 ' Set last run only if the profile hasn't failed, and has synced completely.
                 ' Checking for Status.Cancel allows to resync if eg. computer was stopped during sync.
-                ' EndAll() sets Status.Cancel to true, but if the sync completes successfully, this part executes before the call to EndAll 
-                If Not (Status.Failed Or Status.Cancel) Then Handler.SetLastRun()
+                If Not (Status.Failed Or Status.Cancel) Then
+                    Handler.SetLastRun()
+
+                    ' Search for a post-sync action, requiring that Expert mode be enabled.
+                    Dim PostSyncAction As String = Handler.GetSetting(Of String)(ProfileSetting.PostSyncAction)
+                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction <> Nothing Then
+                        Try
+                            ConfigHandler.LogAppEvent(Translation.Translate("\POST_SYNC"))
+                            Diagnostics.Process.Start(PostSyncAction)
+                        Catch Ex As Exception
+                            Log.HandleError(Ex)
+                        End Try
+                    End If
+                End If
 
                 Log.SaveAndDispose(Handler.GetSetting(Of String)(ProfileSetting.Source), Handler.GetSetting(Of String)(ProfileSetting.Destination), Status)
 
@@ -750,7 +762,7 @@ Public Class SynchronizeForm
                     Log.LogInfo(String.Format("Cleanup: [Keep] ""{0}"" ({1})", File, RelativeFName))
                 End If
 
-                    Status.FilesScanned += 1
+                Status.FilesScanned += 1
             Next
         Catch Ex As Exception
 #If DEBUG Then

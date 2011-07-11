@@ -33,6 +33,7 @@ Friend Module ProfileSetting
     Public Const ExcludedFolders As String = "Excluded folder patterns"
     Public Const Forecast As String = "Forecast"
     Public Const Delay As String = "Delay deletions"
+    Public Const PostSyncAction As String = "Post-sync action"
     '</>
 
     Public Const Scheduling As String = "Scheduling"

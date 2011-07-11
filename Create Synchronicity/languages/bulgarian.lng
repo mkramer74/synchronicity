@@ -160,3 +160,4 @@ CREATE_DEST=Динамично създаване на папка (в момен
 ->COMPARE_SIZE=
 ->MORE=
 ->NO_PROFILES=
+->POST_SYNC=

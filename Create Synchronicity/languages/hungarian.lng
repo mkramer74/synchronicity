@@ -161,3 +161,4 @@ GROUP=Csoport
 COMPARE_SIZE=Fájlméret összehasonlítás
 MORE=Tovább (csak hozzáértőknek)
 NO_PROFILES=Nincs profilod. Klikkelj ide "{0}" hogy készíts egyet.
+->POST_SYNC=

@@ -124,7 +124,7 @@ Public Class SynchronizeForm
         If IsValid Then
             ProgramConfig.IncrementSyncsCount()
             If Preview Then
-                PreviewList.Items.Clear()
+                PreviewList.Items.Clear() 'TODO: Needed?
                 ScanThread.Start()
             Else
                 FullSyncThread.Start()
@@ -510,6 +510,7 @@ Public Class SynchronizeForm
             Case 2
                 Context.Action = TypeOfAction.Copy
                 Init_Synchronization(Handler.RightCheckedNodes, Context)
+                'Else: Don't init synchronization from the right side
         End Select
         Me.Invoke(TaskDoneCallback, StatusData.SyncStep.Scan)
 

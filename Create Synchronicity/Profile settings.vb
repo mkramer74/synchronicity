@@ -33,6 +33,7 @@ Friend Module ProfileSetting
     Public Const ExcludedFolders As String = "Excluded folder patterns"
     Public Const Forecast As String = "Forecast"
     Public Const Delay As String = "Delay deletions"
+    Public Const WakeupAction As String = "Wakeup action"
     Public Const PostSyncAction As String = "Post-sync action"
     '</>
 
@@ -99,6 +100,19 @@ NotInheritable Class ProfileHandler
     Function ValidateConfigFile(Optional ByVal WarnUnrootedPaths As Boolean = False, Optional ByVal TryCreateDest As Boolean = False, Optional ByVal Silent As Boolean = False, Optional ByRef FailureMsg As String = Nothing) As Boolean
         Dim IsValid As Boolean = True
         Dim InvalidListing As New List(Of String)
+
+        Static NeedsWakeup As Boolean = True
+        Dim Action As String = Me.GetSetting(Of String)(ProfileSetting.WakeupAction)
+        If NeedsWakeup And ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) And Action IsNot Nothing Then
+            Try
+                'Call Wake-up script in a blocking way
+                System.Diagnostics.Process.Start(Action).WaitForExit()
+                NeedsWakeup = False
+            Catch Ex As Exception
+                ConfigHandler.LogAppEvent("Unable to run setup action") 'FIXME: Translate
+                IsValid = False
+            End Try
+        End If
 
         If Not IO.Directory.Exists(TranslatePath(GetSetting(Of String)(ProfileSetting.Source))) Then
             InvalidListing.Add(Translation.Translate("\INVALID_SOURCE"))

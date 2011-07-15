@@ -10,7 +10,6 @@ Friend Module ProgramSetting
     'Main program settings
     Public Const Language As String = "Language"
     Public Const DefaultLanguage As String = "english"
-    'Public Const SyncsCount As String = "Syncs count" 'LATER: Problem with concurrent savings of the config file.
     Public Const AutoUpdates As String = "Auto updates"
     Public Const MaxLogEntries As String = "Archived log entries"
     Public Const MainView As String = "Main view"
@@ -20,6 +19,7 @@ Friend Module ProgramSetting
     Public Const DiffProgram As String = "Diff program"
     Public Const DiffArguments As String = "Diff arguments"
     Public Const TextLogs As String = "Text logs"
+    Public Const Autocomplete As String = "Autocomplete"
 
     'Program files
     Public Const ConfigFolderName As String = "config"

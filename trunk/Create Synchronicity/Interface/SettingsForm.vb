@@ -38,6 +38,10 @@ Public Class SettingsForm
 #If CONFIG = "Linux" Then
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.Sizable
 #End If
+        If Not ProgramConfig.GetProgramSetting(ProgramSetting.Autocomplete, True) Then
+            FromTextBox.AutoCompleteMode = AutoCompleteMode.None
+            ToTextBox.AutoCompleteMode = AutoCompleteMode.None
+        End If
 
         ' Add any initialization after the InitializeComponent() call.
         Handler = New ProfileHandler(Name)

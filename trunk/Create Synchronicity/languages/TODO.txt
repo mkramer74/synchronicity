@@ -6,9 +6,9 @@ czech:10
 danish:7
 deutsch:1
 dutch:1
-english:1
+english:0
 estonian:10
-francais:1
+francais:0
 greek:1
 hebrew:26
 hungarian:1
@@ -21,4 +21,4 @@ russian:10
 slovene:1
 spanish:1
 swedish:10
-turkish:1
+turkish:0

@@ -1,3 +1,3 @@
 ﻿Module Revision
-    Public Const Build As Integer = 1368
+    Public Const Build As Integer = 1369
 End Module

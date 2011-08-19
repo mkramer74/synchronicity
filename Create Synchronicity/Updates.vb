@@ -21,8 +21,8 @@ Friend Module Updates
             UpdateClient.Proxy.Credentials = Net.CredentialCache.DefaultCredentials
 #End If
 
-            Dim Url As String = ProgramSetting.Website & If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, "code/scheduler-version.txt", "code/version.txt")
-            Dim SecondaryUrl As String = ProgramSetting.UserWeb & "code/synchronicity-version.txt"
+            Dim Url As String = ProgramSetting.ProjectWeb & If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, "code/scheduler-version.txt", "code/version.txt")
+            Dim SecondaryUrl As String = ProgramSetting.UserWeb & "code/synchronicity-version.txt" 'FIXME
             Try
                 LatestVersion = UpdateClient.DownloadString(Url)
             Catch ex As Net.WebException
@@ -31,7 +31,7 @@ Friend Module Updates
 
             If ((New Version(LatestVersion)) > (New Version(Application.ProductVersion))) Then
                 If Interaction.ShowMsg(String.Format(Translation.Translate("\UPDATE_MSG"), Application.ProductVersion, LatestVersion), Translation.Translate("\UPDATE_TITLE"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-                    Interaction.StartProcess(ProgramSetting.Website & "update.html")
+                    Interaction.StartProcess(ProgramSetting.ProjectWeb & "update.html")
                     If ProgramConfig.CanGoOn Then MainFormInstance.Invoke(New Action(AddressOf Application.Exit))
                 End If
             Else

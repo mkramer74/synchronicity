@@ -13,7 +13,8 @@ Special thanks:     Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                     MJ Raatz, Hal Berman, The GD Workshop, David Klun,
                     Rob Freeborn, Simone Cramer, Frank Klassen, Marceli Kubik,
                     Daniel Díaz Quintero, Kyle D. Eberle (kyledavidphoto.com),
-                    Thomas (Grraver), Orestes Panagoulas, Troy Schnack
+                    Thomas (Grraver), Orestes Panagoulas, Troy Schnack,
+                    Samuel Fernmo
 Patches:            U.N. Owen
 Translations:       Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                     Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,

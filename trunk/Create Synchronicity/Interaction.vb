@@ -98,6 +98,7 @@ Friend Module Interaction
 #If DEBUG Then
         Return Value.ToString("yyyy/MM/dd hh:mm:ss.fff")
 #End If
+        Return ""
     End Function
 End Module
 

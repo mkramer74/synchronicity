@@ -46,7 +46,7 @@ Friend Module ProgramSetting
     Public Const RegistryBootKey As String = "Software\Microsoft\Windows\CurrentVersion\Run"
     Public Const RegistryRootedBootKey As String = "HKEY_CURRENT_USER\" & RegistryBootKey
 
-    Public Const Website As String = "http://synchronicity.sourceforge.net/"
+    Public Const ProjectWeb As String = "http://synchronicity.sourceforge.net/"
     Public Const UserWeb As String = "http://createsoftware.users.sourceforge.net/"
 End Module
 

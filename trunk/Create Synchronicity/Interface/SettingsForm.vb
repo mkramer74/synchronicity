@@ -220,7 +220,7 @@ Public Class SettingsForm
     End Sub
 
     Private Sub HelpLink_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HelpLink.Click
-        Interaction.StartProcess(ProgramSetting.Website & "settings-help.html")
+        Interaction.StartProcess(ProgramSetting.ProjectWeb & "settings-help.html")
     End Sub
 
     Private Sub MoreLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MoreLabel.MouseClick

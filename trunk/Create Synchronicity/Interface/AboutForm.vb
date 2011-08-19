@@ -20,7 +20,7 @@ Public Class AboutForm
 
     Private Sub About_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Translation.TranslateControl(Me)
-        VersionInfo.Text = VersionInfo.Text.Replace("%version%", String.Format("{0} (r{1})", Application.ProductVersion.TrimEnd(".0".ToCharArray), Revision.Build))
+        VersionInfo.Text = VersionInfo.Text.Replace("%version%", String.Format("{0} (r{1})", Application.ProductVersion.TrimEnd(".0".ToCharArray), External.Build))
 
         SetLinkArea(BugReport)
         SetLinkArea(ContactLink)
@@ -39,11 +39,11 @@ Public Class AboutForm
     End Sub
 
     Private Sub LinkToProductPage_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkToProductPage.LinkClicked
-        Interaction.StartProcess(ProgramSetting.Website)
+        Interaction.StartProcess(External.Website)
     End Sub
 
     Private Sub LinkToWebsite_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkToWebsite.LinkClicked
-        Interaction.StartProcess(ProgramSetting.UserWeb)
+        Interaction.StartProcess(External.MainWeb)
     End Sub
 
     Private Sub VersionInfo_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles VersionInfo.LinkClicked
@@ -51,15 +51,15 @@ Public Class AboutForm
     End Sub
 
     Private Sub ContactLink_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles ContactLink.LinkClicked
-        Interaction.StartProcess("mailto:createsoftware@users.sourceforge.net")
+        Interaction.StartProcess(External.Support)
     End Sub
 
     Private Sub LinkToLicense_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkToLicense.LinkClicked
-        Interaction.StartProcess("http://www.gnu.org/licenses/gpl.html")
+        Interaction.StartProcess(External.License)
     End Sub
 
     Private Sub BugReport_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles BugReport.LinkClicked
-        Interaction.StartProcess("http://sourceforge.net/tracker/?group_id=264348&atid=1130882")
+        Interaction.StartProcess(External.BugReport)
     End Sub
 
     Private Sub AboutForm_FormClosed(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles MyBase.FormClosed

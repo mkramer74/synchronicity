@@ -134,6 +134,7 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Branding.vb" />
     <Compile Include="Interface\AboutForm.designer.vb">
       <DependentUpon>AboutForm.vb</DependentUpon>
     </Compile>
@@ -335,6 +336,9 @@
     <Content Include="Release notes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

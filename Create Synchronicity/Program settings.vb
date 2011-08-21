@@ -45,9 +45,6 @@ Friend Module ProgramSetting
     Public Const RegistryBootVal As String = "Create Synchronicity - Scheduler"
     Public Const RegistryBootKey As String = "Software\Microsoft\Windows\CurrentVersion\Run"
     Public Const RegistryRootedBootKey As String = "HKEY_CURRENT_USER\" & RegistryBootKey
-
-    Public Const ProjectWeb As String = "http://synchronicity.sourceforge.net/"
-    Public Const UserWeb As String = "http://createsoftware.users.sourceforge.net/"
 End Module
 
 NotInheritable Class ConfigHandler
@@ -102,7 +99,7 @@ NotInheritable Class ConfigHandler
         Static UserFilesRootDir As String = ""
         If Not UserFilesRootDir = "" Then Return UserFilesRootDir
 
-        Dim UserPath As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & ProgramSetting.DirSep & "Create Software" & ProgramSetting.DirSep & "Create Synchronicity" & ProgramSetting.DirSep
+        Dim UserPath As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & ProgramSetting.DirSep & Branding.Brand & ProgramSetting.DirSep & "Create Synchronicity" & ProgramSetting.DirSep
 
         'http://support.microsoft.com/default.aspx?scid=kb;EN-US;326549
         Dim WriteNeededFiles As New List(Of String)

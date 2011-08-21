@@ -20,7 +20,7 @@ Public Class AboutForm
 
     Private Sub About_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Translation.TranslateControl(Me)
-        VersionInfo.Text = VersionInfo.Text.Replace("%version%", String.Format("{0} (r{1})", Application.ProductVersion.TrimEnd(".0".ToCharArray), External.Build))
+        VersionInfo.Text = VersionInfo.Text.Replace("%version%", String.Format("{0} (r{1})", Application.ProductVersion.TrimEnd(".0".ToCharArray), Revision.Build))
 
         SetLinkArea(BugReport)
         SetLinkArea(ContactLink)
@@ -39,11 +39,11 @@ Public Class AboutForm
     End Sub
 
     Private Sub LinkToProductPage_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkToProductPage.LinkClicked
-        Interaction.StartProcess(External.Website)
+        Interaction.StartProcess(Branding.Web)
     End Sub
 
     Private Sub LinkToWebsite_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkToWebsite.LinkClicked
-        Interaction.StartProcess(External.MainWeb)
+        Interaction.StartProcess(Branding.CompanyWeb)
     End Sub
 
     Private Sub VersionInfo_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles VersionInfo.LinkClicked
@@ -51,15 +51,15 @@ Public Class AboutForm
     End Sub
 
     Private Sub ContactLink_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles ContactLink.LinkClicked
-        Interaction.StartProcess(External.Support)
+        Interaction.StartProcess(Branding.Support)
     End Sub
 
     Private Sub LinkToLicense_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkToLicense.LinkClicked
-        Interaction.StartProcess(External.License)
+        Interaction.StartProcess(Branding.License)
     End Sub
 
     Private Sub BugReport_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles BugReport.LinkClicked
-        Interaction.StartProcess(External.BugReport)
+        Interaction.StartProcess(Branding.BugReport)
     End Sub
 
     Private Sub AboutForm_FormClosed(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles MyBase.FormClosed

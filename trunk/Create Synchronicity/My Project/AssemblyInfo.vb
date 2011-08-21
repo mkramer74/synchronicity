@@ -20,9 +20,9 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("Create Synchronicity")> 
 <Assembly: AssemblyDescription("Create Synchronicity synchronizes and backups files and folders quickly and easily.")> 
-<Assembly: AssemblyCompany("Create Software")> 
+<Assembly: AssemblyCompany(Branding.Brand)> 
 <Assembly: AssemblyProduct("Create Synchronicity")> 
-<Assembly: AssemblyCopyright("Create Software 2009-2011")> 
+<Assembly: AssemblyCopyright(Branding.Brand & " 2009-2012")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)> 

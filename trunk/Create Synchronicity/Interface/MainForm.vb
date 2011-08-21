@@ -65,7 +65,7 @@ Public Class MainForm
     Private Sub MainForm_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyDown
         'Requires PreviewKeys to be set to true to work, otherwise the form won't catch the keypress.
         If e.KeyCode = Keys.F1 Then
-            Interaction.StartProcess(ProgramSetting.ProjectWeb & "help.html")
+            Interaction.StartProcess(Branding.Help)
         ElseIf e.KeyCode = Keys.F5 Then
             ReloadProfilesList()
         ElseIf e.Control Then
@@ -225,7 +225,7 @@ Public Class MainForm
     End Sub
 
     Private Sub Donate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Donate.Click
-        Interaction.StartProcess(ProgramSetting.ProjectWeb & "contribute.html")
+        Interaction.StartProcess(Branding.Contribute)
     End Sub
 
     Private Sub Donate_MouseEnter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Donate.MouseEnter

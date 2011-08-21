@@ -12,7 +12,9 @@ Friend Module Updates
         Dim UpdateClient As New Net.WebClient
 
         Try
+            'Headers
             UpdateClient.Headers.Add("version", Application.ProductVersion)
+
 #If CONFIG = "Linux" Then
             UpdateClient.Headers.Add("os", "Linux")
 #Else
@@ -21,17 +23,16 @@ Friend Module Updates
             UpdateClient.Proxy.Credentials = Net.CredentialCache.DefaultCredentials
 #End If
 
-            Dim Url As String = ProgramSetting.ProjectWeb & If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, "code/scheduler-version.txt", "code/version.txt")
-            Dim SecondaryUrl As String = ProgramSetting.UserWeb & "code/synchronicity-version.txt" 'FIXME
+            Dim Url As String = If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, Branding.UpdatesUrl, Branding.UpdatesSchedulerUrl)
             Try
                 LatestVersion = UpdateClient.DownloadString(Url)
             Catch ex As Net.WebException
-                LatestVersion = UpdateClient.DownloadString(SecondaryUrl)
+                LatestVersion = UpdateClient.DownloadString(Branding.UpdatesFallbackUrl)
             End Try
 
             If ((New Version(LatestVersion)) > (New Version(Application.ProductVersion))) Then
                 If Interaction.ShowMsg(String.Format(Translation.Translate("\UPDATE_MSG"), Application.ProductVersion, LatestVersion), Translation.Translate("\UPDATE_TITLE"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-                    Interaction.StartProcess(ProgramSetting.ProjectWeb & "update.html")
+                    Interaction.StartProcess(Branding.UpdatesTarget)
                     If ProgramConfig.CanGoOn Then MainFormInstance.Invoke(New Action(AddressOf Application.Exit))
                 End If
             Else

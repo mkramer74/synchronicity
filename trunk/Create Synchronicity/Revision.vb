@@ -1,3 +1,3 @@
-﻿Friend Module Revision
-    Public Const Build As Integer = 1372
+﻿Module Revision
+    Public Const Build As Integer = 1373
 End Module

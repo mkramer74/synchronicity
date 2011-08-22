@@ -17,7 +17,7 @@
 
 @set LOG="%BUILD%\buildlog-r%REV%.txt"
 
-mkdir %BUILD%
+mkdir "%BUILD%"
 
 (echo Packaging log for r%REV% & date /t & time /t & echo.) > %LOG%
 
@@ -26,7 +26,7 @@ echo (*) Updating revision number
 echo.
 echo -----
 cd "%ROOT%\Create Synchronicity"
-subwcrev.exe "%ROOT%" Revision.template.vb Revision.vb
+subwcrev.exe %ROOT% Revision.template.vb Revision.vb
 cd "%ROOT%"
 ) >> %LOG%
 
@@ -60,8 +60,8 @@ cd "%BIN%\Debug"
 cd "%ROOT%"
 
 cd "%BIN%\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
-cd %ROOT%
+"C:\Program Files\7-Zip\7z.exe" a "..\..\..\build\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
+cd ..\..\..
 ) >> %LOG%
 
 echo (*) Creating current-build.txt

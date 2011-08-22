@@ -18,7 +18,7 @@ echo (**) Updating revision number
 echo.
 echo -----
 cd "%ROOT%\Create Synchronicity"
-subwcrev.exe %ROOT% Revision.template.vb Revision.vb
+subwcrev.exe "%ROOT%" Revision.template.vb Revision.vb
 cd "%ROOT%"
 ) >> %LOG%
 

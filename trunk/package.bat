@@ -17,52 +17,8 @@
 
 @set LOG="%BUILD%\buildlog-r%REV%.txt"
 
-mkdir "%BUILD%"
-
-(echo Packaging log for r%REV% & date /t & time /t & echo.) > %LOG%
-
-echo (*) Updating revision number
-(
-echo.
-echo -----
-cd "%ROOT%\Create Synchronicity"
-subwcrev.exe %ROOT% Revision.template.vb Revision.vb
-cd "%ROOT%"
-) >> %LOG%
-
-echo (*) Building program (release)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out %LOG%
-
-echo (*) Building program (debug)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
-
-echo (*) Building installer
-(
-echo.
-echo -----
-"C:\Program Files (x86)\NSIS\makensis.exe" "%ROOT%\Create Synchronicity\setup_script.nsi"
-echo.
-echo -----
-move Create_Synchronicity_Setup.exe "build\Create_Synchronicity_Setup-r%REV%.exe"
-) >> %LOG%
-
-echo (*) Building zip files
-(
-echo.
-echo -----
-cd "%BIN%\Release"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
-cd "%ROOT%"
-
-cd "%BIN%\Debug"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-DEBUG.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
-cd "%ROOT%"
-
-cd "%BIN%\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
-cd "%ROOT%"
-) >> %LOG%
+echo (*) Building
+call build.bat "r%REV%"
 
 echo (*) Creating current-build.txt
 (

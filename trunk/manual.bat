@@ -8,7 +8,7 @@
 @echo Created by:   Clément Pit--Claudel.
 @echo Web site:     http://synchronicity.sourceforge.net.
 
-@set LOCALROOT=..\..\..\..\..\Sites Web\Sourceforge\Synchronicity
+@set LOCALROOT=D:\Documents\Sites Web\Sourceforge\Synchronicity
 @set WEBPAGES=%LOCALROOT%\pages
 
 Xhtml2Latex.exe "%WEBPAGES%\help.php" "%WEBPAGES%\help.tex" /webroot "http://synchronicity.sourceforge.net/" /localroot "%LOCALROOT%\\" /wrap

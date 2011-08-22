@@ -11,8 +11,13 @@
 @echo.
 
 @set REV=%1
-@set LOG="build\buildlog-r%REV%.txt"
-mkdir build
+@set ROOT=%CD%
+@set BUILD=%ROOT%\build
+@set BIN=%ROOT%\Create Synchronicity\bin
+
+@set LOG="%BUILD%\buildlog-r%REV%.txt"
+
+mkdir %BUILD%
 
 (echo Packaging log for r%REV% & date /t & time /t & echo.) > %LOG%
 
@@ -20,22 +25,22 @@ echo (*) Updating revision number
 (
 echo.
 echo -----
-cd "Create Synchronicity"
-subwcrev.exe .. Revision.template.vb Revision.vb
-cd ..
+cd "%ROOT%\Create Synchronicity"
+subwcrev.exe "%ROOT%" Revision.template.vb Revision.vb
+cd "%ROOT%"
 ) >> %LOG%
 
 echo (*) Building program (release)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "Create Synchronicity.sln" /Rebuild Release /Out %LOG%
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out %LOG%
 
 echo (*) Building program (debug)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
 
 echo (*) Building installer
 (
 echo.
 echo -----
-"C:\Program Files (x86)\NSIS\makensis.exe" "Create Synchronicity\setup_script.nsi"
+"C:\Program Files (x86)\NSIS\makensis.exe" "%ROOT%\Create Synchronicity\setup_script.nsi"
 echo.
 echo -----
 move Create_Synchronicity_Setup.exe "build\Create_Synchronicity_Setup-r%REV%.exe"
@@ -45,18 +50,18 @@ echo (*) Building zip files
 (
 echo.
 echo -----
-cd "Create Synchronicity\bin\Release"
-"C:\Program Files\7-Zip\7z.exe" a "..\..\..\build\Create_Synchronicity-r%REV%.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
-cd ..\..\..
+cd "%BIN%\Release"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
+cd "%ROOT%"
 
-cd "Create Synchronicity\bin\Debug"
-"C:\Program Files\7-Zip\7z.exe" a "..\..\..\build\Create_Synchronicity-r%REV%-DEBUG.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
-"C:\Program Files\7-Zip\7z.exe" a "..\..\..\build\Create_Synchronicity-r%REV%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
-cd ..\..\..
+cd "%BIN%\Debug"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-DEBUG.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
+cd "%ROOT%"
 
-cd "Create Synchronicity\bin\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "..\..\..\build\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
-cd ..\..\..
+cd "%BIN%\Linux"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
+cd %ROOT%
 ) >> %LOG%
 
 echo (*) Creating current-build.txt
@@ -80,8 +85,8 @@ echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge
 echo.
 echo -----
 echo Uploading files via SCP.
-"C:\Program Files (x86)\PuTTY\pscp.exe" "build\current-build.txt" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/code"
-"C:\Program Files (x86)\PuTTY\pscp.exe" "build\Create_Synchronicity-r%REV%.zip" "build\Create_Synchronicity-r%REV%-DEBUG.zip" "build\Create_Synchronicity_Setup-r%REV%.exe" "build\Create_Synchronicity-r%REV%-Linux.zip" "build\Create_Synchronicity-r%REV%-Extensions.zip" "createsoftware,synchronicity@frs.sourceforge.net:/home/pfs/project/s/sy/synchronicity/Create Synchronicity/Unreleased (SVN Builds)"
+"C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\current-build.txt" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/code"
+"C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\Create_Synchronicity-r%REV%.zip" "%BUILD%\Create_Synchronicity-r%REV%-DEBUG.zip" "%BUILD%\Create_Synchronicity_Setup-r%REV%.exe" "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "%BUILD%\Create_Synchronicity-r%REV%-Extensions.zip" "createsoftware,synchronicity@frs.sourceforge.net:/home/pfs/project/s/sy/synchronicity/Create Synchronicity/Unreleased (SVN Builds)"
 ) >> %LOG%
 
 echo (*) Building manual and uploading it to web.sourceforge.net.
@@ -97,5 +102,5 @@ call manual.bat
 @echo This script is designed to be called by a SVN hook script.
 @echo If used from the command line, it should be passed the revision number as its first parameter.
 @echo Requires 7-zip installed in "C:\Program Files\7-Zip\7z.exe" and Putty installed in "C:\Program Files (x86)\PuTTY\pscp.exe".
-@echo Pageant (putty key handler) should be told about the private key to connect to the scp server.
+@echo Pageant (putty key handler) should know the private key to connect to the scp server.
 :end

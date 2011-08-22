@@ -17,7 +17,7 @@
 
 @set LOG="%BUILD%\buildlog-r%REV%.txt"
 
-echo (*) Building
+echo (*) Building r%REV%
 call build.bat "r%REV%"
 
 echo (*) Creating current-build.txt

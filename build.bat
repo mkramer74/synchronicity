@@ -10,7 +10,7 @@
 @echo Web site:     http://synchronicity.sourceforge.net.
 @echo.
 
-@set REV=%1
+@set TAG=%1
 @set ROOT=%CD%
 @set BUILD=%ROOT%\build
 @set BIN=%ROOT%\Create Synchronicity\bin
@@ -43,7 +43,7 @@ echo -----
 "C:\Program Files (x86)\NSIS\makensis.exe" "%ROOT%\Create Synchronicity\setup_script.nsi"
 echo.
 echo -----
-move Create_Synchronicity_Setup.exe "build\Create_Synchronicity_Setup-%TAG%.exe"
+move Create_Synchronicity_Setup.exe "%BUILD%\Create_Synchronicity_Setup-%TAG%.exe"
 ) >> %LOG%
 
 echo (**) Building zip files

@@ -60,8 +60,8 @@ cd "%BIN%\Debug"
 cd "%ROOT%"
 
 cd "%BIN%\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "..\..\..\build\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
-cd ..\..\..
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
+cd "%ROOT%"
 ) >> %LOG%
 
 echo (*) Creating current-build.txt

@@ -8,6 +8,7 @@
 
 Friend Module Branding 'FIXME: Strip compression
     Public Const Brand As String = "Create Software"
+    Public Const Name As String = "Create Synchronicity"
     Public Const Web As String = "http://synchronicity.sourceforge.net/"
     Public Const CompanyWeb As String = "http://createsoftware.users.sourceforge.net/"
     Public Const Support As String = "mailto:createsoftware@users.sourceforge.net"

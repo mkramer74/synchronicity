@@ -11,11 +11,7 @@
 @echo.
 
 @set REV=%1
-@set ROOT=%CD%
-@set BUILD=%ROOT%\build
-@set BIN=%ROOT%\Create Synchronicity\bin
-
-@set LOG="%BUILD%\buildlog-r%REV%.txt"
+@REM Inherits other variables from build.bat
 
 echo (*) Building r%REV%
 call build.bat "r%REV%"

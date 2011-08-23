@@ -10,12 +10,13 @@
 
 @set LOCALROOT=D:\Documents\Sites Web\Sourceforge\Synchronicity
 @set WEBPAGES=%LOCALROOT%\pages
+@set NAME=Create Synchronicity
 
 Xhtml2Latex.exe "%WEBPAGES%\help.php" "%WEBPAGES%\help.tex" /webroot "http://synchronicity.sourceforge.net/" /localroot "%LOCALROOT%\\" /wrap
 
-copy "%WEBPAGES%\help.tex" "build\Create Synchronicity User Manual.tex"
-copy "%WEBPAGES%\help.pdf" "build\Create Synchronicity User Manual.pdf"
-"C:\Program Files (x86)\PuTTY\pscp.exe" "build\Create Synchronicity User Manual.pdf" "build\Create Synchronicity User Manual.tex" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/pages"
+copy "%WEBPAGES%\help.tex" "build\%NAME% User Manual.tex"
+copy "%WEBPAGES%\help.pdf" "build\%NAME% User Manual.pdf"
+"C:\Program Files (x86)\PuTTY\pscp.exe" "build\%NAME% User Manual.pdf" "build\%NAME% User Manual.tex" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/pages"
 
 @goto end
 

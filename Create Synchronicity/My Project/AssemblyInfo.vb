@@ -18,10 +18,10 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Create Synchronicity")> 
-<Assembly: AssemblyDescription("Create Synchronicity synchronizes and backups files and folders quickly and easily.")> 
+<Assembly: AssemblyTitle(Branding.Name)> 
+<Assembly: AssemblyDescription(Branding.Name & "synchronizes and backups files and folders quickly and easily.")> 
 <Assembly: AssemblyCompany(Branding.Brand)> 
-<Assembly: AssemblyProduct("Create Synchronicity")> 
+<Assembly: AssemblyProduct(Branding.Name)> 
 <Assembly: AssemblyCopyright(Branding.Brand & " 2009-2012")> 
 <Assembly: AssemblyTrademark("")> 
 

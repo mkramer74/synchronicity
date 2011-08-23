@@ -7,6 +7,8 @@
 @set BUILD=%ROOT%\build
 @set BIN=%ROOT%\Create Synchronicity\bin
 
+@set NAME=Create Synchronicity
+@set FILENAME=Create_Synchronicity
 @set LOG="%BUILD%\buildlog-%TAG%.txt"
 
 mkdir "%BUILD%"
@@ -35,7 +37,7 @@ echo -----
 "C:\Program Files (x86)\NSIS\makensis.exe" "%ROOT%\Create Synchronicity\setup_script.nsi"
 echo.
 echo -----
-move Create_Synchronicity_Setup.exe "%BUILD%\Create_Synchronicity_Setup-%TAG%.exe"
+move %FILENAME%_Setup.exe "%BUILD%\%FILENAME%_Setup-%TAG%.exe"
 ) >> %LOG%
 
 echo (**) Building zip files
@@ -43,16 +45,16 @@ echo (**) Building zip files
 echo.
 echo -----
 cd "%BIN%\Release"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-%TAG%.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
 cd "%ROOT%"
 
 cd "%BIN%\Debug"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-%TAG%-DEBUG.zip" "Create Synchronicity.exe" "Release notes.txt" "COPYING" "languages\*"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-DEBUG.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
 cd "%ROOT%"
 
 cd "%BIN%\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\Create_Synchronicity-%TAG%-Linux.zip" "Create Synchronicity.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
 cd "%ROOT%"
 ) >> %LOG%
 

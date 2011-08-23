@@ -99,7 +99,7 @@ NotInheritable Class ConfigHandler
         Static UserFilesRootDir As String = ""
         If Not UserFilesRootDir = "" Then Return UserFilesRootDir
 
-        Dim UserPath As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & ProgramSetting.DirSep & Branding.Brand & ProgramSetting.DirSep & "Create Synchronicity" & ProgramSetting.DirSep
+        Dim UserPath As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & ProgramSetting.DirSep & Branding.Brand & ProgramSetting.DirSep & Branding.Name & ProgramSetting.DirSep
 
         'http://support.microsoft.com/default.aspx?scid=kb;EN-US;326549
         Dim WriteNeededFiles As New List(Of String)

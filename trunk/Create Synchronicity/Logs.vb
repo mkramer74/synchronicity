@@ -66,11 +66,13 @@ Friend NotInheritable Class LogHandler
     End Sub
 
     Private Sub OpenHTMLHeaders(ByRef LogW As IO.StreamWriter)
+        Dim LogTitle As String = String.Format(Translation.Translate("\LOG_TITLE"), LogName)
+
         If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then
             LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"">")
             LogW.WriteLine("<html xmlns=""http://www.w3.org/1999/xhtml"" xml:lang=""en"" encoding=""utf-8"">")
             LogW.WriteLine("	<head>")
-            LogW.WriteLine("		<title>Create Synchronicity - Log for " & LogName & "</title>")
+            LogW.WriteLine("		<title>" & LogTitle & "</title>")
             LogW.WriteLine("		<meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" />")
             LogW.WriteLine("		<style type=""text/css"">")
             LogW.WriteLine("			body {")
@@ -95,7 +97,7 @@ Friend NotInheritable Class LogHandler
             LogW.WriteLine("	<body>")
         End If
 
-        LogW.WriteLine(String.Format(Translation.Translate("\LOG_TITLE"), LogName))
+        LogW.WriteLine("<h1>" & LogTitle & "</h1>")
     End Sub
 
     Private Shared Sub CloseHTMLHeaders(ByRef LogW As IO.StreamWriter)

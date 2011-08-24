@@ -32,10 +32,12 @@ Friend Module ProfileSetting
     'Next settings are hidden, not automatically appended to config files.
     Public Const ExcludedFolders As String = "Excluded folder patterns"
     Public Const Forecast As String = "Forecast"
-    Public Const Delay As String = "Delay deletions"
     Public Const WakeupAction As String = "Wakeup action"
     Public Const PostSyncAction As String = "Post-sync action"
     '</>
+
+    'Disabled: would require keeping a list of modified files to work, since once a source file is deleted in the source, there's no way to tell when it had been last modified, and hence no way to calculate the appropriate deletion date.
+    'Public Const Delay As String = "Delay deletions"
 
     Public Const Scheduling As String = "Scheduling"
     Public Const SchedulingSettingsCount As Integer = 5 'Frequency;WeekDay;MonthDay;Hour;Minute

@@ -54,7 +54,7 @@ cd "%BIN%\Debug"
 cd "%ROOT%"
 
 cd "%BIN%\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run-create-synchronicity.sh" "COPYING" "languages\*"
+"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run.sh" "COPYING" "languages\*"
 cd "%ROOT%"
 ) >> %LOG%
 

@@ -23,7 +23,7 @@ Friend Module Updates
             UpdateClient.Proxy.Credentials = Net.CredentialCache.DefaultCredentials
 #End If
 
-            Dim Url As String = If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, Branding.UpdatesUrl, Branding.UpdatesSchedulerUrl)
+            Dim Url As String = If(CommandLine.RunAs = CommandLine.RunMode.Scheduler, Branding.UpdatesSchedulerUrl, Branding.UpdatesUrl)
             Try
                 LatestVersion = UpdateClient.DownloadString(Url)
             Catch ex As Net.WebException

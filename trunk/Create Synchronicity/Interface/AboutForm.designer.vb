@@ -71,6 +71,7 @@ Partial Class AboutForm
         Me.FlowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown
         Me.FlowLayoutPanel.Location = New System.Drawing.Point(146, 12)
         Me.FlowLayoutPanel.Name = "FlowLayoutPanel"
+        Me.FlowLayoutPanel.Padding = New System.Windows.Forms.Padding(0, 4, 0, 0)
         Me.FlowLayoutPanel.Size = New System.Drawing.Size(368, 129)
         Me.FlowLayoutPanel.TabIndex = 0
         Me.FlowLayoutPanel.WrapContents = False
@@ -78,7 +79,7 @@ Partial Class AboutForm
         'LinkToProductPage
         '
         Me.LinkToProductPage.AutoSize = True
-        Me.LinkToProductPage.Location = New System.Drawing.Point(3, 0)
+        Me.LinkToProductPage.Location = New System.Drawing.Point(3, 4)
         Me.LinkToProductPage.MinimumSize = New System.Drawing.Size(0, 20)
         Me.LinkToProductPage.Name = "LinkToProductPage"
         Me.LinkToProductPage.Size = New System.Drawing.Size(127, 20)
@@ -89,7 +90,7 @@ Partial Class AboutForm
         'LinkToWebsite
         '
         Me.LinkToWebsite.AutoSize = True
-        Me.LinkToWebsite.Location = New System.Drawing.Point(3, 20)
+        Me.LinkToWebsite.Location = New System.Drawing.Point(3, 24)
         Me.LinkToWebsite.MinimumSize = New System.Drawing.Size(0, 20)
         Me.LinkToWebsite.Name = "LinkToWebsite"
         Me.LinkToWebsite.Size = New System.Drawing.Size(144, 20)
@@ -100,7 +101,7 @@ Partial Class AboutForm
         'VersionInfo
         '
         Me.VersionInfo.AutoSize = True
-        Me.VersionInfo.Location = New System.Drawing.Point(3, 40)
+        Me.VersionInfo.Location = New System.Drawing.Point(3, 44)
         Me.VersionInfo.MinimumSize = New System.Drawing.Size(0, 20)
         Me.VersionInfo.Name = "VersionInfo"
         Me.VersionInfo.Size = New System.Drawing.Size(98, 20)
@@ -112,7 +113,7 @@ Partial Class AboutForm
         'ContactLink
         '
         Me.ContactLink.AutoSize = True
-        Me.ContactLink.Location = New System.Drawing.Point(3, 60)
+        Me.ContactLink.Location = New System.Drawing.Point(3, 64)
         Me.ContactLink.MinimumSize = New System.Drawing.Size(0, 20)
         Me.ContactLink.Name = "ContactLink"
         Me.ContactLink.Size = New System.Drawing.Size(99, 20)
@@ -124,7 +125,7 @@ Partial Class AboutForm
         'LinkToLicense
         '
         Me.LinkToLicense.AutoSize = True
-        Me.LinkToLicense.Location = New System.Drawing.Point(3, 80)
+        Me.LinkToLicense.Location = New System.Drawing.Point(3, 84)
         Me.LinkToLicense.MinimumSize = New System.Drawing.Size(0, 20)
         Me.LinkToLicense.Name = "LinkToLicense"
         Me.LinkToLicense.Size = New System.Drawing.Size(95, 20)
@@ -136,7 +137,7 @@ Partial Class AboutForm
         'BugReport
         '
         Me.BugReport.AutoSize = True
-        Me.BugReport.Location = New System.Drawing.Point(3, 100)
+        Me.BugReport.Location = New System.Drawing.Point(3, 104)
         Me.BugReport.MinimumSize = New System.Drawing.Size(0, 20)
         Me.BugReport.Name = "BugReport"
         Me.BugReport.RightToLeft = System.Windows.Forms.RightToLeft.No

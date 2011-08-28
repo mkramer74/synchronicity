@@ -160,4 +160,4 @@ GROUP=Gruppe
 COMPARE_SIZE=Dateigröße vergleichen
 MORE=Mehr (für erfahrene Benutzer)
 NO_PROFILES=Es sind keine Profile vorhanden. Bitte "{0}" klicken, um eins zu erzeugen.
-->POST_SYNC=
+POST_SYNC=Aktion nach der Synchronisation starten: "{0}"

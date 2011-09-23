@@ -169,7 +169,7 @@ NotInheritable Class ProfileHandler
                 End If
 
                 If Not IO.Path.IsPathRooted(TranslatePath(GetSetting(Of String)(ProfileSetting.Destination))) Then
-                    If Interaction.ShowMsg(String.Format(Translation.Translate("\RIGHT_UNROOTED"), IO.Path.GetFullPath(GetSetting(Of String)(ProfileSetting.Source))), , MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Return False
+                    If Interaction.ShowMsg(String.Format(Translation.Translate("\RIGHT_UNROOTED"), IO.Path.GetFullPath(GetSetting(Of String)(ProfileSetting.Destination))), , MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Return False
                 End If
             End If
 

@@ -14,7 +14,7 @@ Special thanks:     Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                     Rob Freeborn, Simone Cramer, Frank Klassen, Marceli Kubik,
                     Daniel Díaz Quintero, Kyle D. Eberle (kyledavidphoto.com),
                     Thomas (Grraver), Orestes Panagoulas, Troy Schnack,
-                    Samuel Fernmo
+                    Samuel Fernmo, Carl-Gustav Werner, Masahiko Kuroiwa
 Patches:            U.N. Owen
 Translations:       Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                     Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,
@@ -36,6 +36,7 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Sep. 23, 2011 - NEW: !Japanese translation, by Masahiko Kuroiwa. ありがと!
 Jul. 11, 2011 - NEW: (Hidden setting) Post-sync actions.
 Jul. 11, 2011 - NEW: !Turkish translation, by muska. Sağ olun!
 Jul. 08, 2011 - UPD: #3357854: Allow case-only changes in profile names and fix sorting after rename.

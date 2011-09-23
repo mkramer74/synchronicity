@@ -14,11 +14,12 @@ hebrew:26
 hungarian:1
 indonesian:7
 italian:2
+japanese:0
 korean:6
 polish:2
 portuguese:2
 russian:10
 slovene:1
 spanish:1
-swedish:10
+swedish:0
 turkish:0

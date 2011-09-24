@@ -103,12 +103,14 @@ NotInheritable Class ProfileHandler
         Dim IsValid As Boolean = True
         Dim InvalidListing As New List(Of String)
 
+        Dim Dest As String = TranslatePath(GetSetting(Of String)(ProfileSetting.Destination))
+
         Static NeedsWakeup As Boolean = True
         Dim Action As String = Me.GetSetting(Of String)(ProfileSetting.WakeupAction)
         If NeedsWakeup And ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) And Action IsNot Nothing Then
             Try
                 'Call Wake-up script in a blocking way
-                System.Diagnostics.Process.Start(Action).WaitForExit()
+                System.Diagnostics.Process.Start(Action, Dest).WaitForExit()
                 NeedsWakeup = False
             Catch Ex As Exception
                 ConfigHandler.LogAppEvent("Unable to run setup action") 'FIXME: Translate
@@ -121,7 +123,8 @@ NotInheritable Class ProfileHandler
             IsValid = False
         End If
 
-        Dim Dest As String = TranslatePath(GetSetting(Of String)(ProfileSetting.Destination))
+        'TryCreateDest <=> When this function returns, the folder should exist.
+        '_MayCreateDest <=> Creating the destination folder is allowed for this folder.
         Dim _MayCreateDest As Boolean = GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False)
         If _MayCreateDest And TryCreateDest Then
             Try

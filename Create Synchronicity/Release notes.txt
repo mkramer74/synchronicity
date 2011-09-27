@@ -14,7 +14,8 @@ Special thanks:     Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                     Rob Freeborn, Simone Cramer, Frank Klassen, Marceli Kubik,
                     Daniel Díaz Quintero, Kyle D. Eberle (kyledavidphoto.com),
                     Thomas (Grraver), Orestes Panagoulas, Troy Schnack,
-                    Samuel Fernmo, Carl-Gustav Werner, Masahiko Kuroiwa
+                    Samuel Fernmo, Carl-Gustav Werner, Masahiko Kuroiwa,
+                    Brenden Veljacich
 Patches:            U.N. Owen
 Translations:       Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                     Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,

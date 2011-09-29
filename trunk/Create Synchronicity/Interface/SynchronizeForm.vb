@@ -646,13 +646,18 @@ Public Class SynchronizeForm
 
     ' This procedure searches for changes in the source directory, in regards
     ' to the status of the destination directory.
+    ' TODO: Context is always copy here
     Private Sub SearchForChanges(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingAction)
         If Not HasAcceptedDirname(Folder) Then Exit Sub
-        Log.LogInfo(String.Format("=> Scanning folder ""{0}"" for new or updated files.", Folder))
 
         Dim Src_FilePath As String = CombinePathes(Context.SourcePath, Folder)
         Dim Dest_FilePath As String = CombinePathes(Context.DestinationPath, Folder)
+
+        'Optionally exclude hidden folders.
+        If IsExcludedSinceHidden(Src_FilePath) Then Exit Sub
+
         UpdateLabel(StatusData.SyncStep.Scan, Src_FilePath)
+        Log.LogInfo(String.Format("=> Scanning folder ""{0}"" for new or updated files.", Folder))
 
         Dim PropagateUpdates As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)
         Dim EmptyDirectories As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.ReplicateEmptyDirectories, True)
@@ -737,17 +742,16 @@ Public Class SynchronizeForm
         End If
     End Sub
 
+    'TODO: Context is always delete here.
     Private Sub SearchForCrap(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingAction)
+        ' Folder exclusion doesn't work exactly the same as file exclusion: if Source\a is excluded, Dest\a doesn't get deleted. That way one can safely exclude Source\System Volume Information and the like.
         If Not HasAcceptedDirname(Folder) Then Exit Sub
 
         'Here, Source is set to be the right folder, and dest to be the left folder
         Dim Src_FilePath As String = CombinePathes(Context.SourcePath, Folder)
         Dim Dest_FilePath As String = CombinePathes(Context.DestinationPath, Folder)
+
         UpdateLabel(StatusData.SyncStep.Scan, Src_FilePath)
-
-        'Dim PropagateUpdates As Boolean = Handler.GetSetting(Of Boolean)(ConfigOptions.PropagateUpdates, True)
-        'Dim EmptyDirectories As Boolean = Handler.GetSetting(Of Boolean)(ConfigOptions.ReplicateEmptyDirectories, False)
-
         Log.LogInfo(String.Format("=> Scanning folder ""{0}"" for files to delete.", Folder))
         Try
             For Each File As String In IO.Directory.GetFiles(Src_FilePath)
@@ -843,19 +847,21 @@ Public Class SynchronizeForm
 #End Region
 
 #Region " Functions "
-    Private Function IsIncludedInSync(ByVal Path As String) As Boolean
-        If Handler.GetSetting(Of Boolean)(ProfileSetting.ExcludeHidden, False) AndAlso (IO.File.GetAttributes(Path) And IO.FileAttributes.Hidden) <> 0 Then
-            Return False
-        End If
+    Private Function IsExcludedSinceHidden(ByVal Path As String) As Boolean
+        Return Handler.GetSetting(Of Boolean)(ProfileSetting.ExcludeHidden, False) AndAlso (IO.File.GetAttributes(Path) And IO.FileAttributes.Hidden) <> 0
+    End Function
+
+    Private Function IsIncludedInSync(ByVal FullPath As String) As Boolean
+        If IsExcludedSinceHidden(FullPath) Then Return False
 
         ' Check the filename
         Try
             Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Restrictions)
                 'LATER: Add an option to allow for simultaneous inclusion and exclusion (useful because of regex patterns)
                 Case 1
-                    Return MatchesPattern(GetFileOrFolderName(Path), IncludedPatterns)
+                    Return MatchesPattern(GetFileOrFolderName(FullPath), IncludedPatterns)
                 Case 2
-                    Return Not MatchesPattern(GetFileOrFolderName(Path), ExcludedPatterns)
+                    Return Not MatchesPattern(GetFileOrFolderName(FullPath), ExcludedPatterns)
             End Select
         Catch Ex As Exception
 #If DEBUG Then

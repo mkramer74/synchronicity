@@ -679,7 +679,7 @@ Public Class SynchronizeForm
                 Log.LogInfo("Scanning " & SourceFile)
                 'First check if the file is part of the synchronization profile.
                 'Then, check whether it requires updating.
-                If HasAcceptedFilename(SourceFile) Then
+                If IsIncludedInSync(SourceFile) Then
                     Dim DestinationExists As Boolean = IO.File.Exists(DestinationFile)
                     Dim RelativeFilePath As String = SourceFile.Substring(Context.SourcePath.Length)
                     If Not DestinationExists OrElse (PropagateUpdates AndAlso SourceIsMoreRecent(SourceFile, DestinationFile)) Then
@@ -843,7 +843,12 @@ Public Class SynchronizeForm
 #End Region
 
 #Region " Functions "
-    Private Function HasAcceptedFilename(ByVal Path As String) As Boolean
+    Private Function IsIncludedInSync(ByVal Path As String) As Boolean
+        If Handler.GetSetting(Of Boolean)(ProfileSetting.ExcludeHidden, False) AndAlso (IO.File.GetAttributes(Path) And IO.FileAttributes.Hidden) <> 0 Then
+            Return False
+        End If
+
+        ' Check the filename
         Try
             Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Restrictions)
                 'LATER: Add an option to allow for simultaneous inclusion and exclusion (useful because of regex patterns)

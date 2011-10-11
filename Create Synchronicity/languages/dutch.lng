@@ -1,4 +1,4 @@
-﻿# Create Synchronicity Dutch Language file
+# Create Synchronicity Dutch Language file
 # Translation by John Van Amstel
 # Tag outdated strings with "->". For example, write "->ID=Translation" if the string ID needs to be retranslated from English.
 #
@@ -160,4 +160,4 @@ GROUP=Groep
 COMPARE_SIZE=Vergelijk bestandsgrootte
 MORE=Meer (enkel experts)
 NO_PROFILES=Je hebt geen profiel. Klik "{0}" om een te creëren.
-->POST_SYNC=
+POST_SYNC=Start de na synchronisatie actie: "{0}"

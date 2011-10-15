@@ -5,14 +5,14 @@ chinese (traditional):1
 czech:10
 danish:7
 deutsch:0
-dutch:1
+dutch:0
 english:0
 estonian:10
 francais:0
-greek:1
+greek:0
 hebrew:26
 hungarian:1
-indonesian:7
+indonesian:0
 italian:2
 japanese:0
 korean:6

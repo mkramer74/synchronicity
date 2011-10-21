@@ -776,7 +776,7 @@ Partial Class SettingsForm
         Me.Controls.Add(Me.SynchronizationMethodBox)
         Me.Controls.Add(Me.IncludeExcludeBox)
         Me.Controls.Add(Me.BottomDescLabel)
-        Me.Font = New System.Drawing.Font("Verdana", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Font = Main.LargeFont
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.Name = "SettingsForm"
         Me.ShowInTaskbar = False

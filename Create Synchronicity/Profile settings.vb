@@ -188,7 +188,7 @@ NotInheritable Class ProfileHandler
         Try
             If IO.File.Exists(ProgramConfig.GetLogPath(ProfileName)) Then IO.File.Move(ProgramConfig.GetLogPath(ProfileName), ProgramConfig.GetLogPath(NewName))
             IO.File.Move(ProgramConfig.GetConfigPath(ProfileName), ProgramConfig.GetConfigPath(NewName))
-            ProfileName = NewName 'TODO: Useful?
+            ProfileName = NewName 'Not really useful in the current situation : profiles are reloaded just after renaming anyway.
         Catch
             Return False
         End Try

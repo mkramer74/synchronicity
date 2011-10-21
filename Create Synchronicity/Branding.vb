@@ -6,7 +6,7 @@
 'Created by:	Clément Pit--Claudel.
 'Web site:		http://synchronicity.sourceforge.net.
 
-Friend Module Branding 'FIXME: Strip compression
+Friend Module Branding
     Public Const Brand As String = "Create Software"
     Public Const Name As String = "Create Synchronicity"
     Public Const Web As String = "http://synchronicity.sourceforge.net/"

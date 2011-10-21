@@ -573,7 +573,7 @@ Partial Class SynchronizeForm
         Me.Controls.Add(Me.StatisticsPanel)
         Me.Controls.Add(Me.ButtonsLayoutPanel)
         Me.Controls.Add(Me.MainLayoutPanel)
-        Me.Font = New System.Drawing.Font("Verdana", 8.25!)
+        Me.Font = Main.LargeFont
         Me.KeyPreview = True
         Me.Name = "SynchronizeForm"
         Me.Text = "\SYNCHRONIZING"

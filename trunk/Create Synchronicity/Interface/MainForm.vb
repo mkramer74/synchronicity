@@ -85,7 +85,7 @@ Public Class MainForm
                     SetView(1)
                 Case Keys.Add
                     SetFont(Actions.Font.Size + 1)
-                Case (Keys.Subtract)
+                Case Keys.Subtract
                     SetFont(Actions.Font.Size - 1)
             End Select
         End If

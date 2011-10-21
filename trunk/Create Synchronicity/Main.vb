@@ -7,6 +7,9 @@ Module Main
     Friend ReloadNeeded As Boolean
     Friend MainFormInstance As MainForm
 
+    Friend SmallFont As Drawing.Font
+    Friend LargeFont As Drawing.Font
+
     Friend MsgLoop As MessageLoop
     Friend Delegate Sub Action() 'LATER: replace with .Net 4.0 standards.
 
@@ -138,6 +141,14 @@ Friend NotInheritable Class MessageLoop
         ' Load program configuration
         ProgramConfig = ConfigHandler.GetSingleton
         Translation = LanguageHandler.GetSingleton
+
+        Try
+            SmallFont = New Drawing.Font("Verdana", 7.0!)
+            LargeFont = New Drawing.Font("Verdana", 8.25!)
+        Catch ex As ArgumentException
+            SmallFont = New Drawing.Font(Drawing.SystemFonts.MessageBoxFont.FontFamily.Name, 7.0!)
+            LargeFont = Drawing.SystemFonts.MessageBoxFont
+        End Try
 
         ' Create required folders
         IO.Directory.CreateDirectory(ProgramConfig.LogRootDir)

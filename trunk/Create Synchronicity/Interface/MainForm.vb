@@ -95,7 +95,7 @@ Public Class MainForm
         Application.Exit()
     End Sub
 
-#If 0 Then
+#If 0 Then 'FIXME : Start CS from that label
     Private Sub ToolStripHeader_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripHeader.Click
         Interaction.StartProcess(ConfigOptions.Website & "scheduler.html")
     End Sub

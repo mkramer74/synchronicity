@@ -97,7 +97,7 @@ Public Class MainForm
     End Sub
     
     Private Sub ToolStripHeader_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripHeader.Click
-        Diagnostics.Process.Start(Application.StartupPath)
+        Diagnostics.Process.Start(Application.ExecutablePath)
     End Sub
 
     Private Sub Actions_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Actions.KeyDown

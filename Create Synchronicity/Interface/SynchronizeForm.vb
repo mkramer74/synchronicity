@@ -744,7 +744,7 @@ Public Class SynchronizeForm
 
     'TODO: Context is always delete here.
     Private Sub SearchForCrap(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingAction)
-        ' Folder exclusion doesn't work exactly the same as file exclusion: if Source\a is excluded, Dest\a doesn't get deleted. That way one can safely exclude Source\System Volume Information and the like.
+        ' Folder exclusion doesn't work exactly the same as file exclusion: if "Source\a" is excluded, "Dest\a" doesn't get deleted. That way one can safely exclude "Source\System Volume Information" and the like.
         If Not HasAcceptedDirname(Folder) Then Exit Sub
 
         'Here, Source is set to be the right folder, and dest to be the left folder

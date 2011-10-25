@@ -110,7 +110,7 @@ NotInheritable Class ProfileHandler
 
         Dim Dest As String = TranslatePath(GetSetting(Of String)(ProfileSetting.Destination))
 
-        Static NeedsWakeup As Boolean = True
+        Static NeedsWakeup As Boolean = True 'Static, but not shared.
         Dim Action As String = Me.GetSetting(Of String)(ProfileSetting.WakeupAction)
         If NeedsWakeup And ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) And Action IsNot Nothing Then
             Try
@@ -118,7 +118,7 @@ NotInheritable Class ProfileHandler
                 System.Diagnostics.Process.Start(Action, Dest).WaitForExit()
                 NeedsWakeup = False
             Catch Ex As Exception
-                ConfigHandler.LogAppEvent("Unable to run setup action") 'FIXME: Translate
+                ConfigHandler.LogAppEvent("Unable to run wake-up script") 'FIXME: Translate
                 IsValid = False
             End Try
         End If

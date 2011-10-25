@@ -760,6 +760,7 @@ Partial Class SettingsForm
         '
         'PropagateUpdatesOption
         '
+        Me.PropagateUpdatesOption.Checked = True
         Me.PropagateUpdatesOption.CheckOnClick = True
         Me.PropagateUpdatesOption.Name = "PropagateUpdatesOption"
         Me.PropagateUpdatesOption.Size = New System.Drawing.Size(162, 22)

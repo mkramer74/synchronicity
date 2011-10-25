@@ -21,7 +21,11 @@ echo (**) Changing "Verdana" to Main.LargeFont in interface files.
 (
 echo.
 echo -----
-for /R "Create Synchronicity\Interface" %%f IN (*.vb) do sed -i "s/Me.Font = .*/Me.Font = Main.LargeFont/" "%%f"
+for /R "Create Synchronicity\Interface" %%f IN (*.vb) do
+(
+copy "%%f" "%%f.bak"
+sed -i "s/Me.Font = .*/Me.Font = Main.LargeFont/" "%%f"
+)
 ) >> %LOG%
 
 echo (**) Updating revision number
@@ -74,7 +78,7 @@ echo (**) Changing font name back from Main.LargeFont to "Verdana" in interface 
 (
 echo.
 echo -----
-for /R "Create Synchronicity\Interface" %%f IN (*.vb) do sed -i "s/Me.Font = .*/Me.Font = New System.Drawing.Font(\"Verdana\", 8.25!)/" "%%f"
+for /R "Create Synchronicity\Interface" %%f IN (*.vb) do move /Y "%%f.bak" "%%f"
 ) >> %LOG%
 
 @goto end

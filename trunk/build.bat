@@ -34,13 +34,13 @@ cd "%ROOT%"
 ) >> %LOG%
 
 echo (**) Building program (release)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out %LOG%
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out "%LOG%"
 
 echo (**) Building program (debug)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out "%LOG%"
 
 echo (**) Building program (Linux)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Linux /Out %LOG%
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Linux /Out "%LOG%"
 
 echo (**) Building installer
 (

@@ -55,7 +55,7 @@ Partial Class LanguageForm
         Me.ClientSize = New System.Drawing.Size(331, 47)
         Me.Controls.Add(Me.LanguagesList)
         Me.Controls.Add(Me.OkBtn)
-        Me.Font = Main.LargeFont
+        Me.Font = New System.Drawing.Font("Verdana", 8.25!)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
         Me.Name = "LanguageForm"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

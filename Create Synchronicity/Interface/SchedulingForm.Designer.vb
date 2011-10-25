@@ -279,7 +279,7 @@ Partial Class SchedulingForm
         Me.Controls.Add(Me.Panel)
         Me.Controls.Add(Me.WarningLabel)
         Me.Controls.Add(Me.ActionsPanel)
-        Me.Font = Main.LargeFont
+        Me.Font = New System.Drawing.Font("Verdana", 8.25!)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
         Me.MaximizeBox = False
         Me.MinimizeBox = False

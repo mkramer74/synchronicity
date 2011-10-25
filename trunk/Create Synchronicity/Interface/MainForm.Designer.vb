@@ -490,7 +490,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.Donate)
         Me.Controls.Add(Me.Actions)
         Me.Controls.Add(Me.InfoPanel)
-        Me.Font = Main.LargeFont
+        Me.Font = New System.Drawing.Font("Verdana", 8.25!)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.KeyPreview = True
         Me.Name = "MainForm"

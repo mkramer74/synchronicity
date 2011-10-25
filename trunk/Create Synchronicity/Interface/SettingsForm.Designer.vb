@@ -81,6 +81,8 @@ Partial Class SettingsForm
         Me.SaveButton = New System.Windows.Forms.Button()
         Me.FolderBrowser = New System.Windows.Forms.FolderBrowserDialog()
         Me.AdvancedBox = New System.Windows.Forms.GroupBox()
+        Me.GroupLabel = New System.Windows.Forms.Label()
+        Me.GroupNameBox = New System.Windows.Forms.ComboBox()
         Me.StrictDateComparisonOption = New System.Windows.Forms.CheckBox()
         Me.TimeOffsetLabel = New System.Windows.Forms.Label()
         Me.MoreLabel = New System.Windows.Forms.LinkLabel()
@@ -91,8 +93,6 @@ Partial Class SettingsForm
         Me.CreateDestOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.CheckFileSizeOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.ChecksumOption = New System.Windows.Forms.ToolStripMenuItem()
-        Me.GroupOption = New System.Windows.Forms.ToolStripMenuItem()
-        Me.GroupTextBox = New System.Windows.Forms.ToolStripTextBox()
         Me.PropagateUpdatesOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.DirectoriesBox.SuspendLayout()
         Me.ViewsLayoutPanel.SuspendLayout()
@@ -420,7 +420,7 @@ Partial Class SettingsForm
         Me.StrictMirrorOption.AutoSize = True
         Me.StrictMirrorOption.Location = New System.Drawing.Point(6, 46)
         Me.StrictMirrorOption.Name = "StrictMirrorOption"
-        Me.StrictMirrorOption.Size = New System.Drawing.Size(155, 17)
+        Me.StrictMirrorOption.Size = New System.Drawing.Size(169, 17)
         Me.StrictMirrorOption.TabIndex = 2
         Me.StrictMirrorOption.Text = "\STRICT_MIRROR_DESC"
         Me.StrictMirrorOption.UseVisualStyleBackColor = True
@@ -435,7 +435,7 @@ Partial Class SettingsForm
         Me.MethodLayoutPanel.Controls.Add(Me.LRIncrementalMethodOption, 1, 0)
         Me.MethodLayoutPanel.Controls.Add(Me.LRMirrorMethodOption, 0, 0)
         Me.MethodLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top
-        Me.MethodLayoutPanel.Location = New System.Drawing.Point(3, 16)
+        Me.MethodLayoutPanel.Location = New System.Drawing.Point(3, 17)
         Me.MethodLayoutPanel.Name = "MethodLayoutPanel"
         Me.MethodLayoutPanel.RowCount = 1
         Me.MethodLayoutPanel.RowStyles.Add(New System.Windows.Forms.RowStyle())
@@ -501,7 +501,7 @@ Partial Class SettingsForm
         Me.CopyAllFilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.CopyAllFilesCheckBox.Location = New System.Drawing.Point(6, 20)
         Me.CopyAllFilesCheckBox.Name = "CopyAllFilesCheckBox"
-        Me.CopyAllFilesCheckBox.Size = New System.Drawing.Size(85, 17)
+        Me.CopyAllFilesCheckBox.Size = New System.Drawing.Size(90, 17)
         Me.CopyAllFilesCheckBox.TabIndex = 0
         Me.CopyAllFilesCheckBox.Text = "\ALL_FILES"
         Me.CopyAllFilesCheckBox.UseVisualStyleBackColor = True
@@ -574,9 +574,9 @@ Partial Class SettingsForm
         Me.ReplicateEmptyDirectoriesOption.AutoSize = True
         Me.ReplicateEmptyDirectoriesOption.Checked = True
         Me.ReplicateEmptyDirectoriesOption.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.ReplicateEmptyDirectoriesOption.Location = New System.Drawing.Point(564, 20)
+        Me.ReplicateEmptyDirectoriesOption.Location = New System.Drawing.Point(558, 20)
         Me.ReplicateEmptyDirectoriesOption.Name = "ReplicateEmptyDirectoriesOption"
-        Me.ReplicateEmptyDirectoriesOption.Size = New System.Drawing.Size(133, 17)
+        Me.ReplicateEmptyDirectoriesOption.Size = New System.Drawing.Size(139, 17)
         Me.ReplicateEmptyDirectoriesOption.TabIndex = 1
         Me.ReplicateEmptyDirectoriesOption.Text = "\REPLICATE_EMPTY"
         Me.ReplicateEmptyDirectoriesOption.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -630,6 +630,8 @@ Partial Class SettingsForm
         '
         Me.AdvancedBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.AdvancedBox.Controls.Add(Me.GroupLabel)
+        Me.AdvancedBox.Controls.Add(Me.GroupNameBox)
         Me.AdvancedBox.Controls.Add(Me.StrictDateComparisonOption)
         Me.AdvancedBox.Controls.Add(Me.TimeOffsetLabel)
         Me.AdvancedBox.Controls.Add(Me.MoreLabel)
@@ -641,6 +643,26 @@ Partial Class SettingsForm
         Me.AdvancedBox.TabIndex = 4
         Me.AdvancedBox.TabStop = False
         Me.AdvancedBox.Text = "\ADVANCED_OPTS"
+        '
+        'GroupLabel
+        '
+        Me.GroupLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom), System.Windows.Forms.AnchorStyles)
+        Me.GroupLabel.Location = New System.Drawing.Point(6, 20)
+        Me.GroupLabel.Name = "GroupLabel"
+        Me.GroupLabel.Size = New System.Drawing.Size(76, 17)
+        Me.GroupLabel.TabIndex = 8
+        Me.GroupLabel.Text = "\GROUP"
+        Me.GroupLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'GroupNameBox
+        '
+        Me.GroupNameBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.GroupNameBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.GroupNameBox.FormattingEnabled = True
+        Me.GroupNameBox.Location = New System.Drawing.Point(88, 18)
+        Me.GroupNameBox.Name = "GroupNameBox"
+        Me.GroupNameBox.Size = New System.Drawing.Size(259, 21)
+        Me.GroupNameBox.TabIndex = 9
         '
         'StrictDateComparisonOption
         '
@@ -670,7 +692,7 @@ Partial Class SettingsForm
         'MoreLabel
         '
         Me.MoreLabel.AutoSize = True
-        Me.MoreLabel.Location = New System.Drawing.Point(3, 45)
+        Me.MoreLabel.Location = New System.Drawing.Point(6, 45)
         Me.MoreLabel.Name = "MoreLabel"
         Me.MoreLabel.Size = New System.Drawing.Size(45, 13)
         Me.MoreLabel.TabIndex = 7
@@ -708,7 +730,7 @@ Partial Class SettingsForm
         '
         'ExpertMenu
         '
-        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.GroupOption, Me.PropagateUpdatesOption})
+        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.PropagateUpdatesOption})
         Me.ExpertMenu.Name = "ExpertMenu"
         Me.ExpertMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.ExpertMenu.ShowCheckMargin = True
@@ -736,19 +758,6 @@ Partial Class SettingsForm
         Me.ChecksumOption.Size = New System.Drawing.Size(162, 22)
         Me.ChecksumOption.Text = "\MD5"
         '
-        'GroupOption
-        '
-        Me.GroupOption.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GroupTextBox})
-        Me.GroupOption.Name = "GroupOption"
-        Me.GroupOption.Size = New System.Drawing.Size(162, 22)
-        Me.GroupOption.Text = "\GROUP"
-        '
-        'GroupTextBox
-        '
-        Me.GroupTextBox.Name = "GroupTextBox"
-        Me.GroupTextBox.Text = "\NAME"
-        Me.GroupTextBox.Size = New System.Drawing.Size(100, 23)
-        '
         'PropagateUpdatesOption
         '
         Me.PropagateUpdatesOption.CheckOnClick = True
@@ -770,7 +779,7 @@ Partial Class SettingsForm
         Me.Controls.Add(Me.SynchronizationMethodBox)
         Me.Controls.Add(Me.IncludeExcludeBox)
         Me.Controls.Add(Me.BottomDescLabel)
-        Me.Font = Main.LargeFont
+        Me.Font = New System.Drawing.Font("Verdana", 8.25!)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.Name = "SettingsForm"
         Me.ShowInTaskbar = False
@@ -857,9 +866,9 @@ Partial Class SettingsForm
     Friend WithEvents ExpertMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents CheckFileSizeOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ChecksumOption As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents GroupOption As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents GroupTextBox As System.Windows.Forms.ToolStripTextBox
     Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CreateDestOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents PropagateUpdatesOption As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents GroupLabel As System.Windows.Forms.Label
+    Friend WithEvents GroupNameBox As System.Windows.Forms.ComboBox
 End Class

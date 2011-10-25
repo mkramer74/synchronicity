@@ -15,6 +15,15 @@ mkdir "%BUILD%"
 
 (echo Packaging log for %TAG% & date /t & time /t & echo.) > %LOG%
 
+
+@rem Visual Studio doesn't let you define a common font, but some users do not have Verdana. Always build using a common font for all forms, and make sure that it's supported.
+echo (**) Changing "Verdana" to Main.LargeFont in interface files.
+(
+echo.
+echo -----
+for /R "Create Synchronicity\Interface" %%f IN (*.vb) do sed -i "s/Me.Font = .*/Me.Font = Main.LargeFont/" "%%f"
+) >> %LOG%
+
 echo (**) Updating revision number
 (
 echo.
@@ -59,6 +68,13 @@ cd "%ROOT%"
 cd "%BIN%\Linux"
 "C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run.sh" "COPYING" "languages\*"
 cd "%ROOT%"
+) >> %LOG%
+
+echo (**) Changing font name back from Main.LargeFont to "Verdana" in interface files.
+(
+echo.
+echo -----
+for /R "Create Synchronicity\Interface" %%f IN (*.vb) do sed -i "s/Me.Font = .*/Me.Font = New System.Drawing.Font("Verdana", 8.25!)/" "%%f"
 ) >> %LOG%
 
 @goto end

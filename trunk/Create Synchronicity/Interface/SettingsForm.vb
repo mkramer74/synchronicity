@@ -133,6 +133,10 @@ Public Class SettingsForm
         StrictMirrorOption.Visible = LRMirrorMethodOption.Checked
     End Sub
 
+    Private Sub PropagateUpdatesOption_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PropagateUpdatesOption.CheckedChanged
+        PropagateUpdatesOption.ForeColor = If(PropagateUpdatesOption.Checked, Drawing.Color.Green, Drawing.Color.Red)
+    End Sub
+
     Private Sub View_AfterCheck(ByVal sender As System.Object, ByVal e As System.Windows.Forms.TreeViewEventArgs) Handles RightView.AfterCheck, LeftView.AfterCheck
         If ProcessingNodes Then Exit Sub
         If Not InhibitAutocheck Then CheckNodeTree(e.Node.Checked, e.Node) 'NB: Expanding a node can lead here, but in this case e.Node has no children.
@@ -519,8 +523,4 @@ Public Class SettingsForm
         Return ListString.ToString
     End Function
 #End Region
-
-    Private Sub PropagateUpdatesOption_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PropagateUpdatesOption.CheckedChanged
-        PropagateUpdatesOption.ForeColor = If(PropagateUpdatesOption.Checked, Drawing.Color.Green, Drawing.Color.Red)
-    End Sub
 End Class

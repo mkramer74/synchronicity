@@ -74,7 +74,7 @@ echo (**) Changing font name back from Main.LargeFont to "Verdana" in interface 
 (
 echo.
 echo -----
-for /R "Create Synchronicity\Interface" %%f IN (*.vb) do sed -i "s/Me.Font = .*/Me.Font = New System.Drawing.Font("Verdana", 8.25!)/" "%%f"
+for /R "Create Synchronicity\Interface" %%f IN (*.vb) do sed -i "s/Me.Font = .*/Me.Font = New System.Drawing.Font(\"Verdana\", 8.25!)/" "%%f"
 ) >> %LOG%
 
 @goto end

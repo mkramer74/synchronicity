@@ -76,7 +76,6 @@ Partial Class SettingsForm
         Me.IncludeFilesOption = New System.Windows.Forms.RadioButton()
         Me.ExcludeFilesOption = New System.Windows.Forms.RadioButton()
         Me.ReplicateEmptyDirectoriesOption = New System.Windows.Forms.CheckBox()
-        Me.PropagateUpdatesOption = New System.Windows.Forms.CheckBox()
         Me.ActionsPanel = New System.Windows.Forms.TableLayoutPanel()
         Me.CancelBtn = New System.Windows.Forms.Button()
         Me.SaveButton = New System.Windows.Forms.Button()
@@ -94,6 +93,7 @@ Partial Class SettingsForm
         Me.ChecksumOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.GroupOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.GroupTextBox = New System.Windows.Forms.ToolStripTextBox()
+        Me.PropagateUpdatesOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.DirectoriesBox.SuspendLayout()
         Me.ViewsLayoutPanel.SuspendLayout()
         Me.LeftViewPanel.SuspendLayout()
@@ -582,19 +582,6 @@ Partial Class SettingsForm
         Me.ReplicateEmptyDirectoriesOption.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.ReplicateEmptyDirectoriesOption.UseVisualStyleBackColor = True
         '
-        'PropagateUpdatesOption
-        '
-        Me.PropagateUpdatesOption.AutoSize = True
-        Me.PropagateUpdatesOption.Checked = True
-        Me.PropagateUpdatesOption.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.PropagateUpdatesOption.Location = New System.Drawing.Point(6, 20)
-        Me.PropagateUpdatesOption.Name = "PropagateUpdatesOption"
-        Me.PropagateUpdatesOption.Size = New System.Drawing.Size(101, 17)
-        Me.PropagateUpdatesOption.TabIndex = 0
-        Me.PropagateUpdatesOption.Tag = "\PROPAGATE_TAG"
-        Me.PropagateUpdatesOption.Text = "\PROPAGATE"
-        Me.PropagateUpdatesOption.UseVisualStyleBackColor = True
-        '
         'ActionsPanel
         '
         Me.ActionsPanel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -647,7 +634,6 @@ Partial Class SettingsForm
         Me.AdvancedBox.Controls.Add(Me.TimeOffsetLabel)
         Me.AdvancedBox.Controls.Add(Me.MoreLabel)
         Me.AdvancedBox.Controls.Add(Me.TimeOffset)
-        Me.AdvancedBox.Controls.Add(Me.PropagateUpdatesOption)
         Me.AdvancedBox.Controls.Add(Me.TimeOffsetHoursLabel)
         Me.AdvancedBox.Location = New System.Drawing.Point(12, 433)
         Me.AdvancedBox.Name = "AdvancedBox"
@@ -722,7 +708,7 @@ Partial Class SettingsForm
         '
         'ExpertMenu
         '
-        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.GroupOption})
+        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.GroupOption, Me.PropagateUpdatesOption})
         Me.ExpertMenu.Name = "ExpertMenu"
         Me.ExpertMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.ExpertMenu.ShowCheckMargin = True
@@ -760,7 +746,15 @@ Partial Class SettingsForm
         'GroupTextBox
         '
         Me.GroupTextBox.Name = "GroupTextBox"
+        Me.GroupTextBox.Text = "\NAME"
         Me.GroupTextBox.Size = New System.Drawing.Size(100, 23)
+        '
+        'PropagateUpdatesOption
+        '
+        Me.PropagateUpdatesOption.CheckOnClick = True
+        Me.PropagateUpdatesOption.Name = "PropagateUpdatesOption"
+        Me.PropagateUpdatesOption.Size = New System.Drawing.Size(162, 22)
+        Me.PropagateUpdatesOption.Text = "\PROPAGATE"
         '
         'SettingsForm
         '
@@ -838,7 +832,6 @@ Partial Class SettingsForm
     Friend WithEvents TreeViewMenuStrip As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents DontSynchronizeMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ReplicateEmptyDirectoriesOption As System.Windows.Forms.CheckBox
-    Friend WithEvents PropagateUpdatesOption As System.Windows.Forms.CheckBox
     Friend WithEvents AdvancedBox As System.Windows.Forms.GroupBox
     Friend WithEvents BottomDescLabel As System.Windows.Forms.Label
     Friend WithEvents StrictMirrorOption As System.Windows.Forms.CheckBox
@@ -868,4 +861,5 @@ Partial Class SettingsForm
     Friend WithEvents GroupTextBox As System.Windows.Forms.ToolStripTextBox
     Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CreateDestOption As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents PropagateUpdatesOption As System.Windows.Forms.ToolStripMenuItem
 End Class

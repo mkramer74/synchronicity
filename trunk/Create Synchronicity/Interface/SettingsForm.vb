@@ -156,11 +156,12 @@ Public Class SettingsForm
         Interaction.HideToolTip(CType(sender, Control))
     End Sub
 
-    Private Sub Bottom_Showtag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PropagateUpdatesOption.MouseEnter, StrictDateComparisonOption.MouseEnter
-        BottomDescLabel.Text = CStr(CType(sender, Control).Tag)
+    Private Sub Bottom_Showtag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseEnter
+        'BottomDescLabel.Text = CStr(CType(sender, Control).Tag)
+        BottomDescLabel.Text = CStr(StrictDateComparisonOption.Tag)
     End Sub
 
-    Private Sub Bottom_HideTag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PropagateUpdatesOption.MouseLeave, StrictDateComparisonOption.MouseLeave
+    Private Sub Bottom_HideTag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseLeave
         BottomDescLabel.Text = ""
     End Sub
 
@@ -520,4 +521,8 @@ Public Class SettingsForm
         Return ListString.ToString
     End Function
 #End Region
+
+    Private Sub PropagateUpdatesOption_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PropagateUpdatesOption.CheckedChanged
+        PropagateUpdatesOption.ForeColor = If(PropagateUpdatesOption.Checked, Drawing.Color.Green, Drawing.Color.Red)
+    End Sub
 End Class

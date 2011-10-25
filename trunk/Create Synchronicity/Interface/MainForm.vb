@@ -8,6 +8,7 @@
 
 Public Class MainForm
     Dim CurView As Integer
+    Dim ProfilesGroups As New List(Of String)
     Dim Views() As View = New View() {View.Tile, View.Details, View.LargeIcon}
 
 #Region " Events "
@@ -136,7 +137,7 @@ Public Class MainForm
 
         If e.Item = 0 Then
             e.CancelEdit = True
-            Dim SettingsForm As New SettingsForm(e.Label)
+            Dim SettingsForm As New SettingsForm(e.Label, ProfilesGroups)
             SettingsForm.ShowDialog()
         Else
             If Not Profiles(Actions.Items(e.Item).Text).Rename(e.Label) Then e.CancelEdit = True
@@ -189,7 +190,7 @@ Public Class MainForm
     End Sub
 
     Private Sub ChangeSettingsMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ChangeSettingsMenuItem.Click
-        Dim SettingsForm As New SettingsForm(CurrentProfile)
+        Dim SettingsForm As New SettingsForm(CurrentProfile, ProfilesGroups)
         SettingsForm.ShowDialog()
         ReloadProfilesList()
     End Sub
@@ -266,7 +267,7 @@ Public Class MainForm
         Actions.Items.Clear()
         Actions.Items.Add(CreateProfileItem).Group = Actions.Groups(0)
 
-        Dim Groups As New List(Of String)
+        ProfilesGroups.Clear()
         For Each ProfilePair As KeyValuePair(Of String, ProfileHandler) In Profiles
             Dim ProfileName As String = ProfilePair.Key
             Dim NewItem As ListViewItem = Actions.Items.Add(ProfileName)
@@ -277,8 +278,8 @@ Public Class MainForm
 
             Dim GroupName As String = Profiles(ProfileName).GetSetting(Of String)(ProfileSetting.Group, "")
             If GroupName <> "" Then
-                If Not Groups.Contains(GroupName) Then
-                    Groups.Add(GroupName)
+                If Not ProfilesGroups.Contains(GroupName) Then
+                    ProfilesGroups.Add(GroupName)
                     Actions.Groups.Add(New ListViewGroup(GroupName, GroupName))
                 End If
 
@@ -359,11 +360,11 @@ Public Class MainForm
         Return True
     End Function
 
-    Function CurrentProfile() As String
+    Private Function CurrentProfile() As String
         Return Actions.SelectedItems(0).Text
     End Function
 
-    Sub BuildIcons()
+    Private Sub BuildIcons()
         For Id As Integer = 0 To SyncIcons.Images.Count - 2
             Dim NewImg As New Drawing.Bitmap(32, 32)
             Dim Painter As Drawing.Graphics = Drawing.Graphics.FromImage(NewImg)

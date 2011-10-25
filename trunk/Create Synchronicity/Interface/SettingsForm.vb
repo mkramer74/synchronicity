@@ -32,7 +32,7 @@ Public Class SettingsForm
     'Path handling: Always trim traliing path separator chars: it makes everything much simpler. Only exception: '/' in Linux
 
 #Region " Events "
-    Public Sub New(ByVal Name As String)
+    Public Sub New(ByVal Name As String, ByVal Groups As List(Of String))
         ' This call is required by the Windows Form Designer.
         InitializeComponent()
 #If CONFIG = "Linux" Then
@@ -42,6 +42,8 @@ Public Class SettingsForm
             FromTextBox.AutoCompleteMode = AutoCompleteMode.None
             ToTextBox.AutoCompleteMode = AutoCompleteMode.None
         End If
+
+        GroupNameBox.Items.AddRange(Groups.ToArray)
 
         ' Add any initialization after the InitializeComponent() call.
         Handler = New ProfileHandler(Name)
@@ -226,10 +228,6 @@ Public Class SettingsForm
 
     Private Sub MoreLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MoreLabel.MouseClick
         ExpertMenu.Show(MoreLabel, e.Location)
-    End Sub
-
-    Private Sub GroupTextBox_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GroupTextBox.TextChanged
-        GroupOption.Checked = GroupTextBox.Text <> ""
     End Sub
 #End Region
 
@@ -450,7 +448,7 @@ Public Class SettingsForm
         Handler.CopySetting(ProfileSetting.TimeOffset, TimeOffset.Value, LoadToForm)
         Handler.CopySetting(ProfileSetting.Checksum, ChecksumOption.Checked, LoadToForm)
         Handler.CopySetting(ProfileSetting.CheckFileSize, CheckFileSizeOption.Checked, LoadToForm)
-        Handler.CopySetting(ProfileSetting.Group, GroupTextBox.Text, LoadToForm)
+        Handler.CopySetting(ProfileSetting.Group, GroupNameBox.Text, LoadToForm)
         'Hidden settings are not added here
 
         'Note: Behaves correctly when no radio button is checked, although CopyAllFiles is unchecked.

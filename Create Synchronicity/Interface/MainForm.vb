@@ -95,12 +95,10 @@ Public Class MainForm
     Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
         Application.Exit()
     End Sub
-
-#If 0 Then 'FIXME : Start CS from that label
+    
     Private Sub ToolStripHeader_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripHeader.Click
-        Interaction.StartProcess(ConfigOptions.Website & "scheduler.html")
+        Diagnostics.Process.Start(Application.StartupPath)
     End Sub
-#End If
 
     Private Sub Actions_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Actions.KeyDown
         If Actions.SelectedItems.Count = 0 Then Exit Sub
@@ -384,4 +382,5 @@ Public Class MainForm
         Next
     End Sub
 #End Region
+
 End Class

@@ -33,7 +33,7 @@ Partial Class MainForm
         Me.components = New System.ComponentModel.Container()
         Dim ListViewGroup1 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("\ACTIONS", System.Windows.Forms.HorizontalAlignment.Left)
         Dim ListViewGroup2 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("\PROFILES", System.Windows.Forms.HorizontalAlignment.Left)
-        Dim ListViewItem1 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem(New System.Windows.Forms.ListViewItem.ListViewSubItem() {New System.Windows.Forms.ListViewItem.ListViewSubItem(Nothing, "\NEW_PROFILE_LABEL"), New System.Windows.Forms.ListViewItem.ListViewSubItem(Nothing, "\NEW_PROFILE")}, 3)
+        Dim ListViewItem1 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem(New String() {"\NEW_PROFILE_LABEL", "\NEW_PROFILE"}, 3)
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.Actions = New System.Windows.Forms.ListView()
         Me.Actions_NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
@@ -440,7 +440,6 @@ Partial Class MainForm
         '
         'ToolStripHeader
         '
-        Me.ToolStripHeader.Enabled = False
         Me.ToolStripHeader.Name = "ToolStripHeader"
         Me.ToolStripHeader.Size = New System.Drawing.Size(183, 22)
         Me.ToolStripHeader.Text = "Create Synchronicity"

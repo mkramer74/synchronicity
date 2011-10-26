@@ -35,7 +35,7 @@ Friend Module ProfileSetting
     Public Const WakeupAction As String = "Wakeup action"
     Public Const PostSyncAction As String = "Post-sync action"
     Public Const ExcludeHidden As String = "Exclude hidden entries"
-    Public Const DiscardAfter As String = "Discard after:"
+    Public Const DiscardAfter As String = "Discard after"
     '</>
 
     'Disabled: would require keeping a list of modified files to work, since once a source file is deleted in the source, there's no way to tell when it had been last modified, and hence no way to calculate the appropriate deletion date.

@@ -851,8 +851,13 @@ Public Class SynchronizeForm
         Return Handler.GetSetting(Of Boolean)(ProfileSetting.ExcludeHidden, False) AndAlso (IO.File.GetAttributes(Path) And IO.FileAttributes.Hidden) <> 0
     End Function
 
+    Private Function IsTooOld(ByVal Path As String) As Boolean
+        Dim Days As Integer = Handler.GetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0)
+        Return ((Days > 0) AndAlso (Date.UtcNow - IO.File.GetLastWriteTimeUtc(Path)).TotalDays > Days)
+    End Function
+
     Private Function IsIncludedInSync(ByVal FullPath As String) As Boolean
-        If IsExcludedSinceHidden(FullPath) Then Return False
+        If IsExcludedSinceHidden(FullPath) OrElse IsTooOld(FullPath) Then Return False
 
         ' Check the filename
         Try

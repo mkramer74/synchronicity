@@ -37,6 +37,10 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Oct. 27, 2011 - NEW: Hidden setting: discard files from your backup after a user-specified number of days.
+Oct. 25, 2011 - NEW: Create profile groups to keep your profiles organized.
+Oct. 25, 2011 - UPD: Restrict the "propagate updates" to expert mode.
+Sep. 29, 2011 - NEW: Hidden setting: Exclude hidden files.
 Sep. 23, 2011 - NEW: !Japanese translation, by Masahiko Kuroiwa. ありがと!
 Jul. 11, 2011 - NEW: (Hidden setting) Post-sync actions.
 Jul. 11, 2011 - NEW: !Turkish translation, by muska. Sağ olun!

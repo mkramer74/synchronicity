@@ -49,6 +49,8 @@ Friend Module ProfileSetting
         LRIncremental = 1
         BiIncremental = 2
     End Enum
+
+    Public Const DefaultMethod As Integer = CInt(SyncMethod.LRIncremental)
 End Module
 
 NotInheritable Class ProfileHandler
@@ -59,19 +61,6 @@ NotInheritable Class ProfileHandler
     Public LeftCheckedNodes As New Dictionary(Of String, Boolean)
     Public RightCheckedNodes As New Dictionary(Of String, Boolean)
 
-    Private _Method As SyncMethod
-    Public Property Method As SyncMethod
-        Get
-            Return _Method
-        End Get
-
-        Set(ByVal value As SyncMethod)
-            _Method = value
-            SetSetting(Of ProfileSetting.SyncMethod)(ProfileSetting.Method, value)
-        End Set
-    End Property
-
-
     'NOTE: Only vital settings should be checked for correctness, since the config will be rejected if a mismatch occurs.
     Private Shared ReadOnly RequiredSettings() As String = {ProfileSetting.Source, ProfileSetting.Destination, ProfileSetting.ExcludedTypes, ProfileSetting.IncludedTypes, ProfileSetting.LeftSubFolders, ProfileSetting.RightSubFolders, ProfileSetting.Method, ProfileSetting.Restrictions, ProfileSetting.ReplicateEmptyDirectories}
 
@@ -79,12 +68,13 @@ NotInheritable Class ProfileHandler
         ProfileName = Name
         IsNewProfile = Not LoadConfigFile()
 
-        'Using GetSetting(Of SyncMethod) fails: it expects to find an integer (eg "0") in the config file, but when failing SetSettings saves a string (eg. "LRIncremental")
-        Try
-            Method = CType([Enum].Parse(GetType(ProfileSetting.SyncMethod), GetSetting(Of String)(ProfileSetting.Method)), ProfileSetting.SyncMethod)
-        Catch Ex As ArgumentException
-            Method = ProfileSetting.SyncMethod.LRIncremental
-        End Try
+        'Never use GetSetting(Of SyncMethod). It searches the config file for a string containing an int (eg "0"), but when failing it calls SetSettings which saves a string containing an enum label (eg. "LRIncremental")
+
+        If GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) <> ProfileSetting.SyncMethod.LRMirror Then
+            'Disable Mirror-Specific settings.
+            SetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)
+            SetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0) 'TODO: Does this really need to be disabled? In incremental mode, it currently means "do not update this file anymore".
+        End If
 
         'Sanity checks: if no folders were included on the right due to automatic destination creation, select all folders
         If GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False) And GetSetting(Of String)(ProfileSetting.RightSubFolders) Is Nothing Then SetSetting(Of String)(ProfileSetting.RightSubFolders, "*")

@@ -503,18 +503,17 @@ Public Class SynchronizeForm
         Context.Source = SideOfSource.Right
         Context.SourcePath = Destination
         Context.DestinationPath = Source
-        Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method)
-            Case 0
+        Select Handler.Method
+            Case SyncMethod.LRMirror
                 Context.Action = TypeOfAction.Delete
                 Init_Synchronization(Handler.RightCheckedNodes, Context)
-            Case 2
+            Case SyncMethod.LRIncremental
+                'Pass
+            Case SyncMethod.BiIncremental
                 Context.Action = TypeOfAction.Copy
                 Init_Synchronization(Handler.RightCheckedNodes, Context)
-                'Else: Don't init synchronization from the right side
         End Select
         Me.Invoke(TaskDoneCallback, StatusData.SyncStep.Scan)
-
-        'NOTE: [to sysadmins] (March 13, 2010) --> Moved to FAQ (http://synchronicity.sourceforge.net/faq.html)
     End Sub
 
     Private Sub Sync()
@@ -797,7 +796,7 @@ Public Class SynchronizeForm
         If Count > 0 Then
             AddPreviewItem(SyncingList(Side)(SyncingList(Side).Count - 1), Side)
         ElseIf Count < 0 Then
-            PreviewList.Items.RemoveAt(PreviewList.Items.Count - 1) 'The callers already take care of updating the folders counts correctly.
+            PreviewList.Items.RemoveAt(PreviewList.Items.Count - 1) 'The callers already takes care of updating the folders count correctly.
         End If
     End Sub
 
@@ -852,6 +851,7 @@ Public Class SynchronizeForm
     End Function
 
     Private Function IsTooOld(ByVal Path As String) As Boolean
+
         Dim Days As Integer = Handler.GetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0)
         Return ((Days > 0) AndAlso (Date.UtcNow - IO.File.GetLastWriteTimeUtc(Path)).TotalDays > Days)
     End Function
@@ -886,7 +886,7 @@ Public Class SynchronizeForm
     End Function
 
     Private Function SourceIsMoreRecent(ByVal Source As String, ByVal Destination As String) As Boolean 'Assumes Source and Destination exist.
-        If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)) Then Return False
+        If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)) Then Return False 'LATER: Require expert mode?
 
         Log.LogInfo(String.Format("SourceIsMoreRecent: {0}, {1}", Source, Destination))
 
@@ -910,7 +910,7 @@ Public Class SynchronizeForm
         End If
         Log.LogInfo("SourceIsMoreRecent: Filetimes differ")
 
-        If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False
+        If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False 'FIXME: Strict mirror in two-ways incremental mode.
 
         Return True
     End Function

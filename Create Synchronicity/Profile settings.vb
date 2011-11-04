@@ -43,6 +43,12 @@ Friend Module ProfileSetting
 
     Public Const Scheduling As String = "Scheduling"
     Public Const SchedulingSettingsCount As Integer = 5 'Frequency;WeekDay;MonthDay;Hour;Minute
+
+    Enum SyncMethod
+        LRMirror = 0
+        LRIncremental = 1
+        BiIncremental = 2
+    End Enum
 End Module
 
 NotInheritable Class ProfileHandler
@@ -53,12 +59,34 @@ NotInheritable Class ProfileHandler
     Public LeftCheckedNodes As New Dictionary(Of String, Boolean)
     Public RightCheckedNodes As New Dictionary(Of String, Boolean)
 
+    Private _Method As SyncMethod
+    Public Property Method As SyncMethod
+        Get
+            Return _Method
+        End Get
+
+        Set(ByVal value As SyncMethod)
+            _Method = value
+            SetSetting(Of ProfileSetting.SyncMethod)(ProfileSetting.Method, value)
+        End Set
+    End Property
+
+
     'NOTE: Only vital settings should be checked for correctness, since the config will be rejected if a mismatch occurs.
     Private Shared ReadOnly RequiredSettings() As String = {ProfileSetting.Source, ProfileSetting.Destination, ProfileSetting.ExcludedTypes, ProfileSetting.IncludedTypes, ProfileSetting.LeftSubFolders, ProfileSetting.RightSubFolders, ProfileSetting.Method, ProfileSetting.Restrictions, ProfileSetting.ReplicateEmptyDirectories}
 
     Public Sub New(ByVal Name As String)
         ProfileName = Name
         IsNewProfile = Not LoadConfigFile()
+
+        'Using GetSetting(Of SyncMethod) fails: it expects to find an integer (eg "0") in the config file, but when failing SetSettings saves a string (eg. "LRIncremental")
+        Try
+            Method = CType([Enum].Parse(GetType(ProfileSetting.SyncMethod), GetSetting(Of String)(ProfileSetting.Method)), ProfileSetting.SyncMethod)
+        Catch Ex As ArgumentException
+            Method = ProfileSetting.SyncMethod.LRIncremental
+        End Try
+
+        'Sanity checks: if no folders were included on the right due to automatic destination creation, select all folders
         If GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False) And GetSetting(Of String)(ProfileSetting.RightSubFolders) Is Nothing Then SetSetting(Of String)(ProfileSetting.RightSubFolders, "*")
     End Sub
 

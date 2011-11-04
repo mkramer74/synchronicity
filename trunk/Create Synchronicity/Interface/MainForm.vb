@@ -271,7 +271,7 @@ Public Class MainForm
             Dim NewItem As ListViewItem = Actions.Items.Add(ProfileName)
 
             NewItem.Group = Actions.Groups(1)
-            NewItem.ImageIndex = Profiles(ProfileName).GetSetting(Of Integer)(ProfileSetting.Method, 0) + If(ProfilePair.Value.Scheduler.Frequency = ScheduleInfo.Freq.Never, 0, 4)
+            NewItem.ImageIndex = CInt(Profiles(ProfileName).Method) + If(ProfilePair.Value.Scheduler.Frequency = ScheduleInfo.Freq.Never, 0, 4)
             NewItem.SubItems.Add(GetMethodName(ProfileName)).ForeColor = Drawing.Color.DarkGray
 
             Dim GroupName As String = Profiles(ProfileName).GetSetting(Of String)(ProfileSetting.Group, "")
@@ -340,13 +340,13 @@ Public Class MainForm
     End Sub
 
     Private Shared Function GetMethodName(ByVal Name As String) As String
-        Select Case Profiles(Name).GetSetting(Of String)(ProfileSetting.Method, "")
-            Case "1"
-                Return Translation.Translate("\LR_INCREMENTAL")
-            Case "2"
+        Select Case Profiles(Name).Method
+            Case ProfileSetting.SyncMethod.LRMirror
+                Return Translation.Translate("\LR_MIRROR")
+            Case ProfileSetting.SyncMethod.BiIncremental
                 Return Translation.Translate("\TWOWAYS_INCREMENTAL")
             Case Else
-                Return Translation.Translate("\LR_MIRROR")
+                Return Translation.Translate("\LR_INCREMENTAL")
         End Select
     End Function
 

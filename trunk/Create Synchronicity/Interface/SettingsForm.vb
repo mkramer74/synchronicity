@@ -457,16 +457,23 @@ Public Class SettingsForm
 
         'Note: Behaves correctly when no radio button is checked, although CopyAllFiles is unchecked.
         Dim Restrictions As Integer = (If(CopyAllFilesCheckBox.Checked, 0, 1) * (If(IncludeFilesOption.Checked, 1, 0) + 2 * If(ExcludeFilesOption.Checked, 1, 0)))
-        Dim Method As Integer = (If(LRIncrementalMethodOption.Checked, 1, 0) * 1 + If(TwoWaysIncrementalMethodOption.Checked, 1, 0) * 2)
+
+        If LRMirrorMethodOption.Checked Then
+            Handler.Method = ProfileSetting.SyncMethod.LRMirror
+        ElseIf TwoWaysIncrementalMethodOption.Checked Then
+            Handler.Method = ProfileSetting.SyncMethod.BiIncremental
+        Else
+            Handler.Method = ProfileSetting.SyncMethod.LRIncremental
+        End If
 
         If LoadToForm Then
-            Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method)
-                Case 1
-                    LRIncrementalMethodOption.Checked = True
-                Case 2
+            Select Case Handler.Method
+                Case ProfileSetting.SyncMethod.LRMirror
+                    LRMirrorMethodOption.Checked = True
+                Case ProfileSetting.SyncMethod.BiIncremental
                     TwoWaysIncrementalMethodOption.Checked = True
                 Case Else
-                    LRMirrorMethodOption.Checked = True
+                    LRIncrementalMethodOption.Checked = True
             End Select
 
             CopyAllFilesCheckBox.Checked = False
@@ -481,7 +488,6 @@ Public Class SettingsForm
 
             SwitchControls()
         Else
-            Handler.SetSetting(Of Integer)(ProfileSetting.Method, Method)
             Handler.SetSetting(Of Integer)(ProfileSetting.Restrictions, Restrictions)
 
             SetRootPathDisplay(False)

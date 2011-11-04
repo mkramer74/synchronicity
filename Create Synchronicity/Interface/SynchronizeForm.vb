@@ -503,7 +503,7 @@ Public Class SynchronizeForm
         Context.Source = SideOfSource.Right
         Context.SourcePath = Destination
         Context.DestinationPath = Source
-        Select Handler.Method
+        Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) 'Important: (Of Integer)
             Case SyncMethod.LRMirror
                 Context.Action = TypeOfAction.Delete
                 Init_Synchronization(Handler.RightCheckedNodes, Context)
@@ -851,7 +851,6 @@ Public Class SynchronizeForm
     End Function
 
     Private Function IsTooOld(ByVal Path As String) As Boolean
-
         Dim Days As Integer = Handler.GetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0)
         Return ((Days > 0) AndAlso (Date.UtcNow - IO.File.GetLastWriteTimeUtc(Path)).TotalDays > Days)
     End Function
@@ -910,6 +909,7 @@ Public Class SynchronizeForm
         End If
         Log.LogInfo("SourceIsMoreRecent: Filetimes differ")
 
+        'StrictMirror is disabled in constructor if Method is not LRMirror
         If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False 'FIXME: Strict mirror in two-ways incremental mode.
 
         Return True

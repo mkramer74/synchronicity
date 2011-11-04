@@ -458,16 +458,17 @@ Public Class SettingsForm
         'Note: Behaves correctly when no radio button is checked, although CopyAllFiles is unchecked.
         Dim Restrictions As Integer = (If(CopyAllFilesCheckBox.Checked, 0, 1) * (If(IncludeFilesOption.Checked, 1, 0) + 2 * If(ExcludeFilesOption.Checked, 1, 0)))
 
+        Dim Method As ProfileSetting.SyncMethod
         If LRMirrorMethodOption.Checked Then
-            Handler.Method = ProfileSetting.SyncMethod.LRMirror
+            Method = ProfileSetting.SyncMethod.LRMirror
         ElseIf TwoWaysIncrementalMethodOption.Checked Then
-            Handler.Method = ProfileSetting.SyncMethod.BiIncremental
+            Method = ProfileSetting.SyncMethod.BiIncremental
         Else
-            Handler.Method = ProfileSetting.SyncMethod.LRIncremental
+            Method = ProfileSetting.SyncMethod.LRIncremental
         End If
 
         If LoadToForm Then
-            Select Case Handler.Method
+            Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) 'Important: (Of Integer)
                 Case ProfileSetting.SyncMethod.LRMirror
                     LRMirrorMethodOption.Checked = True
                 Case ProfileSetting.SyncMethod.BiIncremental
@@ -488,6 +489,7 @@ Public Class SettingsForm
 
             SwitchControls()
         Else
+            Handler.SetSetting(Of Integer)(ProfileSetting.Method, CInt(Method)) 'SetSetting(Of ProfileSetting.SyncMethod) would save a string, unparsable by GetSetting(Of ProfileSetting.SyncMethod)
             Handler.SetSetting(Of Integer)(ProfileSetting.Restrictions, Restrictions)
 
             SetRootPathDisplay(False)

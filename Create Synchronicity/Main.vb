@@ -241,9 +241,25 @@ Friend NotInheritable Class MessageLoop
             ProfilesQueue = New Queue(Of String)
 
             ConfigHandler.LogAppEvent("Profiles queue: Queue created.")
-            Dim RequestedProfiles As New List(Of String)(CommandLine.TasksToRun.Split(ProgramSetting.EnqueuingSeparator))
+            Dim RequestedProfiles As New List(Of String)
 
-            If (CommandLine.RunAll) Then RequestedProfiles = New List(Of String)(Profiles.Keys) 'Overwrites previous initialization
+            If (CommandLine.RunAll) Then
+                RequestedProfiles.AddRange(Profiles.Keys) 'Overwrites previous initialization
+            Else
+                Dim RequestedGroups As New List(Of String)
+                For Each Entry As String In CommandLine.TasksToRun.Split(ProgramSetting.EnqueuingSeparator)
+                    If Entry.StartsWith(ProgramSetting.GroupPrefix) Then
+                        RequestedGroups.Add(Entry.Substring(1))
+                    Else
+                        RequestedProfiles.Add(Entry)
+                    End If
+                Next
+
+                For Each Profile As ProfileHandler In Profiles.Values
+                    If RequestedGroups.Contains(Profile.GetSetting(Of String)(ProfileSetting.Group, "")) Then RequestedProfiles.Add(Profile.ProfileName)
+                Next
+            End If
+
             For Each Profile As String In RequestedProfiles
                 If Profiles.ContainsKey(Profile) Then
                     If Profiles(Profile).ValidateConfigFile() Then

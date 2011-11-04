@@ -29,6 +29,7 @@ Friend Module ProgramSetting
     Public Const DllName As String = "compress.dll"
     'Public CompressionThreshold As Integer = 0 'Better not filter at all
 
+    Public Const GroupPrefix As Char = ":"c
     Public Const EnqueuingSeparator As Char = "|"c
 #If CONFIG = "Linux" Then
     Public Const DirSep As Char = "/"c

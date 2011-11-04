@@ -249,7 +249,11 @@ Public Class SynchronizeForm
 
     Private Shared Function FormatTimespan(ByVal T As TimeSpan) As String
         Dim Hours As Integer = CInt(Math.Truncate(T.TotalHours))
-        Return If(Hours = 0, "", Hours & "h, ") & If(T.Minutes = 0, "", T.Minutes.ToString & "m, ") & T.Seconds.ToString & "s"
+        Dim Blocks As New List(Of String)
+        If Hours <> 0 Then Blocks.Add(Hours & "h")
+        If T.Minutes <> 0 Then Blocks.Add(T.Minutes.ToString & "m")
+        If T.Seconds <> 0 Then Blocks.Add(T.Seconds.ToString & "s")
+        Return String.Join(", ", Blocks.ToArray())
     End Function
 
     Private Sub UpdateStatuses()
@@ -263,10 +267,11 @@ Public Class SynchronizeForm
         End If
 
         Dim EstimateString As String = ""
-        If Status.CurrentStep = StatusData.SyncStep.SyncLR And Status.TimeElapsed.TotalSeconds > 60 And ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, True) Then
-            Dim RemainingSeconds As Double = Math.Min(Integer.MaxValue / 2, (Status.BytesScanned / (1 + Status.Speed)) - Status.TimeElapsed.TotalSeconds)
-            EstimateString = String.Format(" [/ ~{0}]", FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds)))) ' LATER: RemainingSeconds = 120 * Math.Ceiling(RemainingSeconds / 120)
+        If Status.CurrentStep = StatusData.SyncStep.SyncLR AndAlso Status.TimeElapsed.TotalSeconds > 2 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
+            Dim RemainingSeconds As Double = 60 * Math.Round(Math.Min(Integer.MaxValue / 2, (Status.BytesScanned / Status.Speed) - Status.TimeElapsed.TotalSeconds) / 60, 0)
+            EstimateString = String.Format(" / ~{0}", FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds))))
         End If
+
         ElapsedTime.Text = FormatTimespan(Status.TimeElapsed) & EstimateString
 
         Done.Text = Status.ActionsDone & "/" & Status.TotalActionsCount

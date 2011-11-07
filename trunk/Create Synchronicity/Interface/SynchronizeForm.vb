@@ -335,14 +335,14 @@ Public Class SynchronizeForm
         CurBar.Value = If(Finished, MaxValue, 0)
     End Sub
 
-    Private Sub TaskDone(ByVal Id As StatusData.SyncStep)
-        If Not Status.CurrentStep = Id Then Exit Sub 'Prevents infinite exit loop.
+    Private Sub StepCompleted(ByVal StepId As StatusData.SyncStep)
+        If Not Status.CurrentStep = StepId Then Exit Sub 'Prevents a potentially infinite exit loop.
 
-        SetMax(Id, 100, True)
-        UpdateLabel(Id, Translation.Translate("\FINISHED"))
+        SetMax(StepId, 100, True)
+        UpdateLabel(StepId, Translation.Translate("\FINISHED"))
         UpdateStatuses()
 
-        Select Case Id
+        Select Case StepId
             Case StatusData.SyncStep.Scan
                 SyncingTimer.Stop()
                 Status.CurrentStep = StatusData.SyncStep.SyncLR
@@ -472,7 +472,7 @@ Public Class SynchronizeForm
         Status.Cancel = Status.Cancel Or (Status.CurrentStep <> StatusData.SyncStep.Done)
         FullSyncThread.Abort()
         ScanThread.Abort() : SyncThread.Abort()
-        TaskDone(StatusData.SyncStep.Scan) : TaskDone(StatusData.SyncStep.SyncLR) : TaskDone(StatusData.SyncStep.SyncRL) 'This call will sleep for 5s after displaying its failure message if the backup failed.
+        StepCompleted(StatusData.SyncStep.Scan) : StepCompleted(StatusData.SyncStep.SyncLR) : StepCompleted(StatusData.SyncStep.SyncRL) 'This call will sleep for 5s after displaying its failure message if the backup failed.
     End Sub
 #End Region
 
@@ -484,7 +484,7 @@ Public Class SynchronizeForm
 
     Private Sub Scan()
         Dim Context As New SyncingAction
-        Dim TaskDoneCallback As New TaskDoneCall(AddressOf TaskDone)
+        Dim TaskDoneCallback As New TaskDoneCall(AddressOf StepCompleted)
 
         'Pass 1: Create actions L->R for files/folder copy, and mark dest files that should be kept
         'Pass 2: Create actions R->L for files/folder copy/deletion, based on what was marked as ValidFile, aka based on what should be kept.
@@ -522,8 +522,14 @@ Public Class SynchronizeForm
     End Sub
 
     Private Sub Sync()
-        Dim TaskDoneCallback As New TaskDoneCall(AddressOf TaskDone)
+        Dim TaskDoneCallback As New TaskDoneCall(AddressOf StepCompleted)
         Dim SetMaxCallback As New SetIntCall(AddressOf SetMax)
+
+        If Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False) Then
+            Log.HandleError(New Exception(), "This is a preview-only profile") 'FIXME: Translate
+            Me.Close()
+            Exit Sub
+        End If
 
         Dim Left As String = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         Dim Right As String = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
@@ -538,7 +544,7 @@ Public Class SynchronizeForm
         Me.Invoke(TaskDoneCallback, StatusData.SyncStep.SyncRL)
     End Sub
 
-    '"Source" is "current side", with the corresponding side set to "Side"
+    '"Source" is "current side", with the corresponding side stored in "Side"
     Private Sub Do_Task(ByVal Side As SideOfSource, ByRef ListOfActions As List(Of SyncingItem), ByVal Source As String, ByVal Destination As String, ByVal CurrentStep As StatusData.SyncStep)
         Dim IncrementCallback As New SetIntCall(AddressOf Increment)
 

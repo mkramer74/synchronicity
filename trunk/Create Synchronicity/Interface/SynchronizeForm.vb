@@ -677,11 +677,11 @@ Public Class SynchronizeForm
         Dim PropagateUpdates As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)
         Dim EmptyDirectories As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.ReplicateEmptyDirectories, True)
 
-        Dim InitialCount As Integer
-        Dim IsSingularity As Boolean
-        IsSingularity = Not IO.Directory.Exists(Dest_FilePath)
+        Dim InitialValidFilesCount As Integer
+        Dim IsNewFolder As Boolean
+        IsNewFolder = Not IO.Directory.Exists(Dest_FilePath)
 
-        If IsSingularity Then
+        If IsNewFolder Then
             AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, Context.Action, False))
             Log.LogInfo(String.Format("SearchForUpdates: [New folder] ""{0}"" ({1})", Dest_FilePath, Folder))
         Else
@@ -690,7 +690,7 @@ Public Class SynchronizeForm
             Log.LogInfo(String.Format("SearchForUpdates: [Valid folder] ""{0}"" ({1})", Dest_FilePath, Folder))
         End If
 
-        InitialCount = ValidFiles.Count
+        InitialValidFilesCount = ValidFiles.Count
 
         Try
             For Each SourceFile As String In IO.Directory.GetFiles(Src_FilePath)
@@ -703,6 +703,7 @@ Public Class SynchronizeForm
                 If IsIncludedInSync(SourceFile) Then
                     Dim DestinationExists As Boolean = IO.File.Exists(DestinationFile)
                     Dim RelativeFilePath As String = SourceFile.Substring(Context.SourcePath.Length)
+
                     If Not DestinationExists OrElse (PropagateUpdates AndAlso SourceIsMoreRecent(SourceFile, DestinationFile)) Then
                         AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, Context.Action, DestinationExists), Suffix)
                         Log.LogInfo(String.Format("SearchForUpdates: {0} ""{1}"" ({2}).", If(DestinationExists, "[Update]", "[New File]"), SourceFile, SourceFile.Substring(Context.SourcePath.Length)))
@@ -740,17 +741,18 @@ Public Class SynchronizeForm
             End Try
         End If
 
-        If InitialCount = ValidFiles.Count Then
+        If InitialValidFilesCount = ValidFiles.Count Then
             If Not EmptyDirectories Then
-                'IsSingularity => Don't copy this folder over (not present yet)
-                If IsSingularity Then
+                If IsNewFolder Then
+                    'Don't copy this folder over (not present yet)
                     Status.FoldersToCreate -= 1
                     Status.TotalActionsCount -= 1
                     RemoveFromSyncingList(Context.Source)
+                Else
+                    'TODO: Check this part. The call wasn't an else block before.
+                    RemoveValidFile(Folder)
                 End If
-                '(Could be Else =>) Delete it (aka don't mark it for preservation).
-                'LATER: This could normally be safely put in an else case, since no folder can be a singularity (=not in dest) and a valid file (=it's in dest and should stay there).
-                RemoveValidFile(Folder)
+
                 'Problem: What if ancestors of a folder have been marked valid, and the folder is empty?
                 'If the folder didn't exist, it's ancestors won't be created, since only the folder itself is added.
                 'Yet if ancestors exist, should they be removed? Let's say NO for now.

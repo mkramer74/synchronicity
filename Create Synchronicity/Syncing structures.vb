@@ -56,8 +56,8 @@ End Enum
 Structure SyncingAction
     Public Action As TypeOfAction
     Public Source As SideOfSource
-    Public SourcePath As String
-    Public DestinationPath As String
+    Public SourceRootPath As String
+    Public DestinationRootPath As String
 End Structure
 
 Structure SyncingItem

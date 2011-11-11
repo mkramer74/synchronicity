@@ -500,14 +500,14 @@ Public Class SynchronizeForm
 
         Me.Invoke(New Action(AddressOf LaunchTimer))
         Context.Source = SideOfSource.Left
-        Context.SourcePath = Source
-        Context.DestinationPath = Destination
+        Context.SourceRootPath = Source
+        Context.DestinationRootPath = Destination
         Context.Action = TypeOfAction.Copy
         Init_Synchronization(Handler.LeftCheckedNodes, Context)
 
         Context.Source = SideOfSource.Right
-        Context.SourcePath = Destination
-        Context.DestinationPath = Source
+        Context.SourceRootPath = Destination
+        Context.DestinationRootPath = Source
         Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) 'Important: (Of Integer)
             Case SyncMethod.LRMirror
                 Context.Action = TypeOfAction.Delete
@@ -607,8 +607,8 @@ Public Class SynchronizeForm
 
     Private Sub Init_Synchronization(ByRef FoldersList As Dictionary(Of String, Boolean), ByVal Context As SyncingAction)
         For Each Folder As String In FoldersList.Keys
-            Log.LogInfo(String.Format("=> Scanning ""{0}"" top level folders: ""{1}""", Context.SourcePath, Folder))
-            If IO.Directory.Exists(CombinePathes(Context.SourcePath, Folder)) Then
+            Log.LogInfo(String.Format("=> Scanning ""{0}"" top level folders: ""{1}""", Context.SourceRootPath, Folder))
+            If IO.Directory.Exists(CombinePathes(Context.SourceRootPath, Folder)) Then
                 If Context.Action = TypeOfAction.Copy Then
                     'FIXED-BUG: Every ancestor of this folder should be added too.
                     'Careful with this, for it's a performance issue. Ancestors should only be added /once/.
@@ -663,57 +663,53 @@ Public Class SynchronizeForm
     ' to the status of the destination directory.
     ' TODO: Context is always copy here
     Private Sub SearchForChanges(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingAction)
-        If Not HasAcceptedDirname(Folder) Then Exit Sub
-
-        Dim Src_FilePath As String = CombinePathes(Context.SourcePath, Folder)
-        Dim Dest_FilePath As String = CombinePathes(Context.DestinationPath, Folder)
+        Dim SourceFolder As String = CombinePathes(Context.SourceRootPath, Folder)
+        Dim DestinationFolder As String = CombinePathes(Context.DestinationRootPath, Folder)
 
         'Optionally exclude hidden folders.
-        If IsExcludedSinceHidden(Src_FilePath) Then Exit Sub
+        If Not HasAcceptedDirname(Folder) OrElse IsExcludedSinceHidden(SourceFolder) Then Exit Sub
 
-        UpdateLabel(StatusData.SyncStep.Scan, Src_FilePath)
+        UpdateLabel(StatusData.SyncStep.Scan, SourceFolder)
         Log.LogInfo(String.Format("=> Scanning folder ""{0}"" for new or updated files.", Folder))
 
-        Dim PropagateUpdates As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)
-        Dim EmptyDirectories As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.ReplicateEmptyDirectories, True)
-
         Dim InitialValidFilesCount As Integer
-        Dim IsNewFolder As Boolean
-        IsNewFolder = Not IO.Directory.Exists(Dest_FilePath)
 
-        If IsNewFolder Then
-            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, Context.Action, False))
-            Log.LogInfo(String.Format("SearchForUpdates: [New folder] ""{0}"" ({1})", Dest_FilePath, Folder))
+        Dim IsNewFolder As Boolean
+        IsNewFolder = Not IO.Directory.Exists(DestinationFolder)
+
+        'TDOD: Factor out.
+        If IsNewFolder OrElse FolderAttributesChanged(SourceFolder, DestinationFolder) Then
+            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, Context.Action, Not IsNewFolder))
+            Log.LogInfo(String.Format("SearchForUpdates: [New folder] ""{0}"" ({1})", DestinationFolder, Folder))
         Else
             AddValidFile(Folder)
-            'TODO: Sync folder attributes
-            Log.LogInfo(String.Format("SearchForUpdates: [Valid folder] ""{0}"" ({1})", Dest_FilePath, Folder))
+            Log.LogInfo(String.Format("SearchForUpdates: [Valid folder] ""{0}"" ({1})", DestinationFolder, Folder))
         End If
 
         InitialValidFilesCount = ValidFiles.Count
 
         Try
-            For Each SourceFile As String In IO.Directory.GetFiles(Src_FilePath)
-                Dim Suffix As String = If(CompressionEnabled(), Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, ""), "")
-                Dim DestinationFile As String = CombinePathes(Dest_FilePath, IO.Path.GetFileName(SourceFile) & Suffix)
+            For Each SourceFile As String In IO.Directory.GetFiles(SourceFolder)
+                Dim Suffix As String = GetCompressionExt()
+                Dim DestinationFile As String = CombinePathes(DestinationFolder, IO.Path.GetFileName(SourceFile) & Suffix)
 
                 Log.LogInfo("Scanning " & SourceFile)
                 'First check if the file is part of the synchronization profile.
                 'Then, check whether it requires updating.
                 If IsIncludedInSync(SourceFile) Then
-                    Dim DestinationExists As Boolean = IO.File.Exists(DestinationFile)
-                    Dim RelativeFilePath As String = SourceFile.Substring(Context.SourcePath.Length)
+                    Dim IsNewFile As Boolean = Not IO.File.Exists(DestinationFile)
+                    Dim RelativeFilePath As String = SourceFile.Substring(Context.SourceRootPath.Length)
 
-                    If Not DestinationExists OrElse (PropagateUpdates AndAlso SourceIsMoreRecent(SourceFile, DestinationFile)) Then
-                        AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, Context.Action, DestinationExists), Suffix)
-                        Log.LogInfo(String.Format("SearchForUpdates: {0} ""{1}"" ({2}).", If(DestinationExists, "[Update]", "[New File]"), SourceFile, SourceFile.Substring(Context.SourcePath.Length)))
+                    If IsNewFile OrElse SourceIsMoreRecent(SourceFile, DestinationFile) Then
+                        AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, Context.Action, Not IsNewFile), Suffix)
+                        Log.LogInfo(String.Format("SearchForUpdates: {0} ""{1}"" ({2}).", If(IsNewFile, "[New File]", "[Update]"), SourceFile, RelativeFilePath))
                     Else
                         'Adds an entry to not delete this when cleaning up the other side.
                         AddValidFile(RelativeFilePath & Suffix)
-                        Log.LogInfo(String.Format("SearchForUpdates: [Valid] ""{0}"" ({1})", SourceFile, SourceFile.Substring(Context.SourcePath.Length)))
+                        Log.LogInfo(String.Format("SearchForUpdates: [Valid] ""{0}"" ({1})", SourceFile, RelativeFilePath))
                     End If
                 Else
-                    Log.LogInfo(String.Format("SearchForUpdates: [Invalid filename] ""{0}"" ({1})", SourceFile, SourceFile.Substring(Context.SourcePath.Length)))
+                    Log.LogInfo(String.Format("SearchForUpdates: [Invalid filename] ""{0}""", SourceFile))
                 End If
 
                 Status.FilesScanned += 1
@@ -728,11 +724,11 @@ Public Class SynchronizeForm
 
         If Recursive Then
             Try
-                For Each SubFolder As String In IO.Directory.GetDirectories(Src_FilePath)
+                For Each SubFolder As String In IO.Directory.GetDirectories(SourceFolder)
 #If LINUX Then
                     If IsSymLink(SubFolder) Then Continue For
 #End If
-                    SearchForChanges(SubFolder.Substring(Context.SourcePath.Length), True, Context)
+                    SearchForChanges(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
                 Next
             Catch Ex As Exception
 #If DEBUG Then
@@ -742,7 +738,7 @@ Public Class SynchronizeForm
         End If
 
         If InitialValidFilesCount = ValidFiles.Count Then
-            If Not EmptyDirectories Then
+            If Not Handler.GetSetting(Of Boolean)(ProfileSetting.ReplicateEmptyDirectories, True) Then
                 If IsNewFolder Then
                     'Don't copy this folder over (not present yet)
                     Status.FoldersToCreate -= 1
@@ -766,14 +762,14 @@ Public Class SynchronizeForm
         If Not HasAcceptedDirname(Folder) Then Exit Sub
 
         'Here, Source is set to be the right folder, and dest to be the left folder
-        Dim Src_FilePath As String = CombinePathes(Context.SourcePath, Folder)
-        Dim Dest_FilePath As String = CombinePathes(Context.DestinationPath, Folder)
+        Dim Src_FilePath As String = CombinePathes(Context.SourceRootPath, Folder)
+        Dim Dest_FilePath As String = CombinePathes(Context.DestinationRootPath, Folder)
 
         UpdateLabel(StatusData.SyncStep.Scan, Src_FilePath)
         Log.LogInfo(String.Format("=> Scanning folder ""{0}"" for files to delete.", Folder))
         Try
             For Each File As String In IO.Directory.GetFiles(Src_FilePath)
-                Dim RelativeFName As String = File.Substring(Context.SourcePath.Length)
+                Dim RelativeFName As String = File.Substring(Context.SourceRootPath.Length)
                 If Not IsValidFile(RelativeFName) Then
                     AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, Context.Action, False))
                     Log.LogInfo(String.Format("Cleanup: [Delete] ""{0}"" ({1})", File, RelativeFName))
@@ -795,7 +791,7 @@ Public Class SynchronizeForm
 #If LINUX Then
                     If IsSymLink(SubFolder) Then Continue For
 #End If
-                    SearchForCrap(SubFolder.Substring(Context.SourcePath.Length), True, Context)
+                    SearchForCrap(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
                 Next
             Catch Ex As Exception
 #If DEBUG Then
@@ -820,8 +816,10 @@ Public Class SynchronizeForm
     End Sub
 
     Private Sub CopyFile(ByVal SourceFile As String, ByVal DestFile As String)
-        Dim Compression As Boolean = CompressionEnabled()
-        If Compression Then DestFile &= Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "")
+        Dim Suffix As String = GetCompressionExt()
+        Dim Compression As Boolean = Suffix <> ""
+
+        If Compression Then DestFile &= Suffix
 
         Log.LogInfo(String.Format("CopyFile: Source: {0}, Destination: {1}", SourceFile, DestFile))
 
@@ -899,18 +897,30 @@ Public Class SynchronizeForm
         Return Not MatchesPattern(Path, ExcludedDirPatterns)
     End Function
 
-    Private Function CompressionEnabled() As Boolean
-        Return Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "") <> "" 'AndAlso GetSize(File) > ConfigOptions.CompressionThreshold
+    Private Function GetCompressionExt() As String
+        Return Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "") 'AndAlso GetSize(File) > ConfigOptions.CompressionThreshold
     End Function
 
-    Private Function SourceIsMoreRecent(ByVal Source As String, ByVal Destination As String) As Boolean 'Assumes Source and Destination exist.
+    'TODO: File attributes only mirrored upon creation as of now.
+    Private Function FolderAttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean
+        Const AttributesMask As IO.FileAttributes = IO.FileAttributes.Hidden Or IO.FileAttributes.System Or IO.FileAttributes.Encrypted
+
+        Dim SourceInfo As New IO.DirectoryInfo(AbsSource)
+        Dim DestInfo As New IO.DirectoryInfo(AbsDest)
+
+        'TODO: Disable when in two-ways mode
+        'TODO: Check this
+        Return ((SourceInfo.Attributes And AttributesMask) <> (DestInfo.Attributes And AttributesMask))
+    End Function
+
+    Private Function SourceIsMoreRecent(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean 'Assumes Source and Destination exist.
         If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)) Then Return False 'LATER: Require expert mode?
 
-        Log.LogInfo(String.Format("SourceIsMoreRecent: {0}, {1}", Source, Destination))
+        Log.LogInfo(String.Format("SourceIsMoreRecent: {0}, {1}", AbsSource, AbsDest))
 
-        Dim SourceFATTime As Date = NTFSToFATTime(IO.File.GetLastWriteTimeUtc(Source)).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0))
-        Dim DestFATTime As Date = NTFSToFATTime(IO.File.GetLastWriteTimeUtc(Destination))
-        Log.LogInfo(String.Format("SourceIsMoreRecent: S:({0}, {1}); D:({2}, {3})", Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(Source)), Interaction.FormatDate(SourceFATTime), Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(Destination)), Interaction.FormatDate(DestFATTime)))
+        Dim SourceFATTime As Date = NTFSToFATTime(IO.File.GetLastWriteTimeUtc(AbsSource)).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0))
+        Dim DestFATTime As Date = NTFSToFATTime(IO.File.GetLastWriteTimeUtc(AbsDest))
+        Log.LogInfo(String.Format("SourceIsMoreRecent: S:({0}, {1}); D:({2}, {3})", Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(AbsSource)), Interaction.FormatDate(SourceFATTime), Interaction.FormatDate(IO.File.GetLastWriteTimeUtc(AbsDest)), Interaction.FormatDate(DestFATTime)))
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.FuzzyDstCompensation, False) Then
             Dim HoursDiff As Integer = CInt((SourceFATTime - DestFATTime).TotalHours)
@@ -918,8 +928,8 @@ Public Class SynchronizeForm
         End If
 
         'User-enabled checks
-        If Handler.GetSetting(Of Boolean)(ProfileSetting.Checksum, False) AndAlso Md5(Source) <> Md5(Destination) Then Return True
-        If Handler.GetSetting(Of Boolean)(ProfileSetting.CheckFileSize, False) AndAlso GetSize(Source) <> GetSize(Destination) Then Return True
+        If Handler.GetSetting(Of Boolean)(ProfileSetting.Checksum, False) AndAlso Md5(AbsSource) <> Md5(AbsDest) Then Return True
+        If Handler.GetSetting(Of Boolean)(ProfileSetting.CheckFileSize, False) AndAlso GetSize(AbsSource) <> GetSize(AbsDest) Then Return True
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.StrictDateComparison, True) Then
             If SourceFATTime = DestFATTime Then Return False
@@ -928,8 +938,10 @@ Public Class SynchronizeForm
         End If
         Log.LogInfo("SourceIsMoreRecent: Filetimes differ")
 
+        'TODO: Attributes are only mirrored upon creation.
+
         'StrictMirror is disabled in constructor if Method is not LRMirror
-        If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False 'FIXME: Strict mirror in two-ways incremental mode.
+        If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False
 
         Return True
     End Function

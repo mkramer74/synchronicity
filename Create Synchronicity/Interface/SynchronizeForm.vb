@@ -570,7 +570,12 @@ Public Class SynchronizeForm
                         Select Case Entry.Action
                             Case TypeOfAction.Copy
                                 IO.Directory.CreateDirectory(DestPath)
-                                IO.Directory.SetCreationTimeUtc(DestPath, IO.Directory.GetCreationTimeUtc(SourcePath).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0)))
+
+                                Dim SourceInfo As New IO.DirectoryInfo(SourcePath)
+                                Dim DestInfo As New IO.DirectoryInfo(DestPath)
+                                DestInfo.Attributes = SourceInfo.Attributes 'FIXME: Attributes are never updated
+                                DestInfo.CreationTimeUtc = SourceInfo.CreationTimeUtc.AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0))
+
                                 Status.CreatedFolders += 1
                             Case TypeOfAction.Delete
                                 If IO.Directory.GetFiles(SourcePath).GetLength(0) = 0 Then
@@ -681,6 +686,7 @@ Public Class SynchronizeForm
             Log.LogInfo(String.Format("SearchForUpdates: [New folder] ""{0}"" ({1})", Dest_FilePath, Folder))
         Else
             AddValidFile(Folder)
+            'TODO: Sync folder attributes
             Log.LogInfo(String.Format("SearchForUpdates: [Valid folder] ""{0}"" ({1})", Dest_FilePath, Folder))
         End If
 

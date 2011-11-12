@@ -160,4 +160,5 @@ GROUP=Grupo
 COMPARE_SIZE=Comparar tamaño de archivo
 MORE=Más (sólo expertos)
 NO_PROFILES=No tienes perfiles. Haz click en "{0}" para crear uno
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

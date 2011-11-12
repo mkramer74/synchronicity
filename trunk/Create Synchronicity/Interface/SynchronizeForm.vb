@@ -267,6 +267,7 @@ Public Class SynchronizeForm
         End If
 
         Dim EstimateString As String = ""
+        'FIXME.
         If Status.CurrentStep = StatusData.SyncStep.SyncLR AndAlso Status.TimeElapsed.TotalSeconds > 2 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
             Dim RemainingSeconds As Double = 60 * Math.Round(Math.Min(Integer.MaxValue / 2, (Status.BytesScanned / Status.Speed) - Status.TimeElapsed.TotalSeconds) / 60, 0)
             EstimateString = String.Format(" / ~{0}", FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds))))
@@ -373,7 +374,7 @@ Public Class SynchronizeForm
                         ErrorListItem.SubItems.Add(Err.Details)
                         ErrorListItem.SubItems.Add(Err.Ex.Message)
                         PreviewList.Items.Add(ErrorListItem)
-                        ErrorListItem.ImageIndex = 7
+                        ErrorListItem.ImageIndex = 8
                     Next
 
                     PreviewList.Columns(0).AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent)
@@ -401,10 +402,11 @@ Public Class SynchronizeForm
                     Dim PostSyncAction As String = Handler.GetSetting(Of String)(ProfileSetting.PostSyncAction)
                     If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction <> Nothing Then
                         Try
-                            ConfigHandler.LogAppEvent(Translation.Translate("\POST_SYNC"))
+                            Interaction.ShowBalloonTip(Translation.Translate("\POST_SYNC"))
                             Diagnostics.Process.Start(PostSyncAction, ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination)))
                         Catch Ex As Exception
-                            Log.HandleError(Ex)
+                            Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
+                            ConfigHandler.LogAppEvent(Ex.ToString)
                         End Try
                     End If
                 End If
@@ -437,8 +439,8 @@ Public Class SynchronizeForm
         Select Case Item.Action
             Case TypeOfAction.Copy
                 If Item.Type = TypeOfItem.Folder Then
-                    ListItem.ImageIndex = 5
-                    Status.FoldersToCreate += 1
+                    ListItem.ImageIndex = If(Item.IsUpdate, 6, 5)
+                        Status.FoldersToCreate += 1
                 End If
                 If Item.Type = TypeOfItem.File Then
                     Select Case Side
@@ -451,7 +453,7 @@ Public Class SynchronizeForm
                 End If
             Case TypeOfAction.Delete
                 If Item.Type = TypeOfItem.Folder Then
-                    ListItem.ImageIndex = 6
+                    ListItem.ImageIndex = 7
                     Status.FoldersToDelete += 1
                 End If
                 If Item.Type = TypeOfItem.File Then
@@ -526,7 +528,7 @@ Public Class SynchronizeForm
         Dim SetMaxCallback As New SetIntCall(AddressOf SetMax)
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False) Then
-            Log.HandleError(New Exception(), "This is a preview-only profile") 'FIXME: Translate
+            Log.HandleError(New Exception(), "This is a preview-only profile") 'FIXME: Translate (or remove)
             Me.Close()
             Exit Sub
         End If

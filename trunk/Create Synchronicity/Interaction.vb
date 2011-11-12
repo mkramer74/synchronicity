@@ -22,17 +22,13 @@ Friend Module Interaction
         End If
     End Sub
 
-    Private Function RemoveNewLines(ByVal Msg As String) As String
-        Return Msg.Replace(Environment.NewLine, " // ")
-    End Function
-
     Public Sub ToggleStatusIcon(ByVal Status As Boolean)
         StatusIcon.Visible = Status And (Not CommandLine.Silent)
     End Sub
 
     Public Sub ShowBalloonTip(ByVal Msg As String, Optional ByVal File As String = "")
         If CommandLine.Silent Or Not StatusIcon.Visible Then
-            ConfigHandler.LogAppEvent(String.Format("Interaction: Balloon tip discarded. The message was ""{0}"".", RemoveNewLines(Msg)))
+            ConfigHandler.LogAppEvent(String.Format("Interaction: Balloon tip discarded: [{0}].", Msg))
             Exit Sub
         End If
 
@@ -75,7 +71,7 @@ Friend Module Interaction
 
     Public Function ShowMsg(ByVal Text As String, Optional ByVal Caption As String = "", Optional ByVal Buttons As MessageBoxButtons = MessageBoxButtons.OK, Optional ByVal Icon As MessageBoxIcon = MessageBoxIcon.None) As DialogResult
         If CommandLine.Silent Then
-            ConfigHandler.LogAppEvent(String.Format("Interaction: Message Box discarded with default answer. The message was ""{0}"", and the caption was ""{1}"".", RemoveNewLines(Text), RemoveNewLines(Caption)))
+            ConfigHandler.LogAppEvent(String.Format("Interaction: Message Box discarded with default answer: [{0}] - [{1}].", Caption, Text))
             Return DialogResult.OK
         End If
 

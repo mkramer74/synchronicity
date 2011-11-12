@@ -163,4 +163,5 @@ GROUP=Grupa
 COMPARE_SIZE=Porównaj rozmiar pliku
 MORE=Więcej (opcje zaawansowane)
 ->NO_PROFILES=
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

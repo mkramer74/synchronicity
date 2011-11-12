@@ -159,4 +159,5 @@ GROUP=መደብ
 COMPARE_SIZE=የፋይል መጠን አመዛዝን
 MORE=ተጨማሪ (ለኤክስፐርቶች ብቻ)
 NO_PROFILES=ምንም ፕሮፋይሎች የሎትም። አዲስ ለመፍጠር "{0}"ን ይጫኑ።
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

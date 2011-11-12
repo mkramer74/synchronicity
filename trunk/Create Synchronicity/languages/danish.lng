@@ -160,4 +160,5 @@ CREATE_DEST=Muliggør oprettelse af profiler med dynamisk destinationsmappe.
 ->COMPARE_SIZE=
 ->MORE=
 ->NO_PROFILES=
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

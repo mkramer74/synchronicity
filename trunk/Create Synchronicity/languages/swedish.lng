@@ -160,4 +160,5 @@ GROUP=Grupp
 COMPARE_SIZE=Jämför filstorlek
 MORE=Mer (bara för experter)
 NO_PROFILES=Du har ingen profil. Klicka "{0}" för att skapa en.
-POST_SYNC=Startar postsynkåtgärder: "{0}"
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

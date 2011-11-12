@@ -160,4 +160,5 @@ CATCHUP_MISSED_BACKUPS_TAG=Näitab, mida tehakse siis, kui arvuti automaatvarund
 ->COMPARE_SIZE=
 ->MORE=
 ->NO_PROFILES=
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

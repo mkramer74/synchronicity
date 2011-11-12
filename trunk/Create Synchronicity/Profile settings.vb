@@ -138,7 +138,8 @@ NotInheritable Class ProfileHandler
                 System.Diagnostics.Process.Start(Action, Dest).WaitForExit()
                 NeedsWakeup = False
             Catch Ex As Exception
-                ConfigHandler.LogAppEvent("Unable to run wake-up script") 'FIXME: Translate
+                Interaction.ShowMsg(Translation.Translate("\WAKEUP_FAILED"))
+                ConfigHandler.LogAppEvent(Ex.ToString)
                 IsValid = False
             End Try
         End If

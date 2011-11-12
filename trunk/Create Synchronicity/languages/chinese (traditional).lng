@@ -159,4 +159,5 @@ GROUP=群組
 COMPARE_SIZE=比對檔案大小
 MORE=更多 (專家使用)
 NO_PROFILES=你還沒有任何配置。請按"{0}"新增。
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

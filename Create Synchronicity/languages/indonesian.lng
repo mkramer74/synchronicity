@@ -160,4 +160,5 @@ GROUP=Grup
 COMPARE_SIZE=Bandingkan ukuran berkas
 MORE=Lebih lanjut (hanya jika ahli)
 NO_PROFILES=Anda tidak memiliki profil. Klik "{0}" untuk membuat profil.
-POST_SYNC=Melaksanakan tindakan pasca-sinkronisasi: "{0}"
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

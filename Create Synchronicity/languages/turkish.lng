@@ -160,4 +160,5 @@ GROUP=Grup
 COMPARE_SIZE=Dosya boyutlarını karşılaştır
 MORE=Daha Fazlası (sadece deneyimli kullanıcılar)
 NO_PROFILES=Profiliniz yok. "{0}"'ı tıklayarak yeni bir profil oluşturun.
-POST_SYNC=Eşzamanlama sonrası "{0}" işlemi başlatılıyor.
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

@@ -213,7 +213,7 @@ NotInheritable Class ConfigHandler
             Static UniqueID As String = Guid.NewGuid().ToString
 
             Using AppLog As New IO.StreamWriter(Singleton.GetUserFilesRootDir() & ProgramSetting.AppLogName, True)
-                AppLog.WriteLine(String.Format("[{0}][{1}] {2}", UniqueID, Date.Now.ToString(), EventData))
+                AppLog.WriteLine(String.Format("[{0}][{1}] {2}", UniqueID, Date.Now.ToString(), EventData.Replace(Environment.NewLine, " // ")))
             End Using
         End If
     End Sub

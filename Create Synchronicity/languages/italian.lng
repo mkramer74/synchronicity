@@ -159,4 +159,5 @@ GROUP=Gruppo
 COMPARE_SIZE=Confronta dimensioni file
 MORE=Altro (solo esperti)
 ->NO_PROFILES=
-->POST_SYNC=
+->WAKEUP_FAILED=
+->POSTSYNC_FAILED=

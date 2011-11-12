@@ -905,10 +905,12 @@ Public Class SynchronizeForm
     Private Function FolderAttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean
         Const AttributesMask As IO.FileAttributes = IO.FileAttributes.Hidden Or IO.FileAttributes.System Or IO.FileAttributes.Encrypted
 
+        ' Disable when in two-ways mode
+        If Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = ProfileSetting.SyncMethod.BiIncremental Then Return False
+
         Dim SourceInfo As New IO.DirectoryInfo(AbsSource)
         Dim DestInfo As New IO.DirectoryInfo(AbsDest)
 
-        'TODO: Disable when in two-ways mode
         'TODO: Check this
         Return ((SourceInfo.Attributes And AttributesMask) <> (DestInfo.Attributes And AttributesMask))
     End Function

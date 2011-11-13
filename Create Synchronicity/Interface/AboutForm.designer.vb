@@ -59,8 +59,8 @@ Partial Class AboutForm
         'FlowLayoutPanel
         '
         Me.FlowLayoutPanel.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.FlowLayoutPanel.AutoScroll = True
         Me.FlowLayoutPanel.Controls.Add(Me.LinkToProductPage)
         Me.FlowLayoutPanel.Controls.Add(Me.LinkToWebsite)
@@ -150,7 +150,7 @@ Partial Class AboutForm
         'UpdatesOption
         '
         Me.UpdatesOption.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.UpdatesOption.Location = New System.Drawing.Point(12, 147)
         Me.UpdatesOption.Name = "UpdatesOption"
         Me.UpdatesOption.Size = New System.Drawing.Size(502, 34)
@@ -172,7 +172,7 @@ Partial Class AboutForm
         'LanguagesList
         '
         Me.LanguagesList.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.LanguagesList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.LanguagesList.Location = New System.Drawing.Point(288, 187)
         Me.LanguagesList.Name = "LanguagesList"

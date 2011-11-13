@@ -113,7 +113,7 @@ Partial Class SettingsForm
         'FromTextBox
         '
         Me.FromTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.FromTextBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
         Me.FromTextBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories
         Me.FromTextBox.Location = New System.Drawing.Point(62, 19)
@@ -125,7 +125,7 @@ Partial Class SettingsForm
         'DirectoriesBox
         '
         Me.DirectoriesBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DirectoriesBox.Controls.Add(Me.SwapButton)
         Me.DirectoriesBox.Controls.Add(Me.BrowseRButton)
         Me.DirectoriesBox.Controls.Add(Me.BrowseLButton)
@@ -173,7 +173,7 @@ Partial Class SettingsForm
         'ToTextBox
         '
         Me.ToTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.ToTextBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
         Me.ToTextBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories
         Me.ToTextBox.Location = New System.Drawing.Point(62, 45)
@@ -392,8 +392,8 @@ Partial Class SettingsForm
         'ViewsBox
         '
         Me.ViewsBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.ViewsBox.Controls.Add(Me.ViewsLayoutPanel)
         Me.ViewsBox.Location = New System.Drawing.Point(12, 89)
         Me.ViewsBox.Name = "ViewsBox"
@@ -405,7 +405,7 @@ Partial Class SettingsForm
         'SynchronizationMethodBox
         '
         Me.SynchronizationMethodBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.SynchronizationMethodBox.Controls.Add(Me.StrictMirrorOption)
         Me.SynchronizationMethodBox.Controls.Add(Me.MethodLayoutPanel)
         Me.SynchronizationMethodBox.Location = New System.Drawing.Point(12, 255)
@@ -483,7 +483,7 @@ Partial Class SettingsForm
         'IncludeExcludeBox
         '
         Me.IncludeExcludeBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.IncludeExcludeBox.Controls.Add(Me.CopyAllFilesCheckBox)
         Me.IncludeExcludeBox.Controls.Add(Me.IncludeExcludeLayoutPanel)
         Me.IncludeExcludeBox.Controls.Add(Me.ReplicateEmptyDirectoriesOption)
@@ -529,7 +529,7 @@ Partial Class SettingsForm
         'IncludedTypesTextBox
         '
         Me.IncludedTypesTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.IncludedTypesTextBox.Location = New System.Drawing.Point(3, 26)
         Me.IncludedTypesTextBox.Name = "IncludedTypesTextBox"
         Me.IncludedTypesTextBox.Size = New System.Drawing.Size(341, 21)
@@ -539,7 +539,7 @@ Partial Class SettingsForm
         'ExcludedTypesTextBox
         '
         Me.ExcludedTypesTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.ExcludedTypesTextBox.Location = New System.Drawing.Point(350, 26)
         Me.ExcludedTypesTextBox.Name = "ExcludedTypesTextBox"
         Me.ExcludedTypesTextBox.Size = New System.Drawing.Size(341, 21)
@@ -600,8 +600,8 @@ Partial Class SettingsForm
         'CancelBtn
         '
         Me.CancelBtn.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.CancelBtn.Location = New System.Drawing.Point(103, 3)
         Me.CancelBtn.Name = "CancelBtn"
@@ -613,8 +613,8 @@ Partial Class SettingsForm
         'SaveButton
         '
         Me.SaveButton.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.SaveButton.Location = New System.Drawing.Point(3, 3)
         Me.SaveButton.Name = "SaveButton"
         Me.SaveButton.Size = New System.Drawing.Size(94, 25)
@@ -629,7 +629,7 @@ Partial Class SettingsForm
         'AdvancedBox
         '
         Me.AdvancedBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.AdvancedBox.Controls.Add(Me.GroupLabel)
         Me.AdvancedBox.Controls.Add(Me.GroupNameBox)
         Me.AdvancedBox.Controls.Add(Me.StrictDateComparisonOption)
@@ -722,7 +722,7 @@ Partial Class SettingsForm
         'BottomDescLabel
         '
         Me.BottomDescLabel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BottomDescLabel.Location = New System.Drawing.Point(12, 507)
         Me.BottomDescLabel.Name = "BottomDescLabel"
         Me.BottomDescLabel.Size = New System.Drawing.Size(497, 31)

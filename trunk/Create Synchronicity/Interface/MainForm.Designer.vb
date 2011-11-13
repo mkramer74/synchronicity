@@ -119,14 +119,13 @@ Partial Class MainForm
         Me.SyncIcons.TransparentColor = System.Drawing.Color.Empty
         Me.SyncIcons.Images.SetKeyName(0, "edit-redo.png")
         Me.SyncIcons.Images.SetKeyName(1, "edit-redo-add.png")
-        Me.SyncIcons.Images.SetKeyName(2, "view-refresh.png")
+        Me.SyncIcons.Images.SetKeyName(2, "view-refresh-32.png")
         Me.SyncIcons.Images.SetKeyName(3, "document-new.png")
         '
         'InfoPanel
         '
         Me.InfoPanel.Controls.Add(Me.InfoLayout)
         Me.InfoPanel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.InfoPanel.Font = Main.SmallFont
         Me.InfoPanel.Location = New System.Drawing.Point(0, 262)
         Me.InfoPanel.Name = "InfoPanel"
         Me.InfoPanel.Size = New System.Drawing.Size(355, 160)
@@ -135,8 +134,8 @@ Partial Class MainForm
         'InfoLayout
         '
         Me.InfoLayout.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.InfoLayout.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
         Me.InfoLayout.ColumnCount = 4
         Me.InfoLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
@@ -174,9 +173,9 @@ Partial Class MainForm
         '
         Me.TimeOffset.AutoSize = True
         Me.TimeOffset.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TimeOffset.Location = New System.Drawing.Point(292, 57)
+        Me.TimeOffset.Location = New System.Drawing.Point(296, 57)
         Me.TimeOffset.Name = "TimeOffset"
-        Me.TimeOffset.Size = New System.Drawing.Size(35, 27)
+        Me.TimeOffset.Size = New System.Drawing.Size(31, 27)
         Me.TimeOffset.TabIndex = 15
         Me.TimeOffset.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -184,9 +183,9 @@ Partial Class MainForm
         '
         Me.Scheduling.AutoSize = True
         Me.Scheduling.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Scheduling.Location = New System.Drawing.Point(96, 57)
+        Me.Scheduling.Location = New System.Drawing.Point(104, 57)
         Me.Scheduling.Name = "Scheduling"
-        Me.Scheduling.Size = New System.Drawing.Size(89, 27)
+        Me.Scheduling.Size = New System.Drawing.Size(79, 27)
         Me.Scheduling.TabIndex = 14
         Me.Scheduling.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -196,7 +195,7 @@ Partial Class MainForm
         Me.SchedulingLabel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SchedulingLabel.Location = New System.Drawing.Point(4, 57)
         Me.SchedulingLabel.Name = "SchedulingLabel"
-        Me.SchedulingLabel.Size = New System.Drawing.Size(85, 27)
+        Me.SchedulingLabel.Size = New System.Drawing.Size(93, 27)
         Me.SchedulingLabel.TabIndex = 13
         Me.SchedulingLabel.Text = "\SCH_LABEL"
         Me.SchedulingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -206,9 +205,9 @@ Partial Class MainForm
         Me.Destination.AutoSize = True
         Me.InfoLayout.SetColumnSpan(Me.Destination, 3)
         Me.Destination.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Destination.Location = New System.Drawing.Point(96, 113)
+        Me.Destination.Location = New System.Drawing.Point(104, 113)
         Me.Destination.Name = "Destination"
-        Me.Destination.Size = New System.Drawing.Size(231, 28)
+        Me.Destination.Size = New System.Drawing.Size(223, 28)
         Me.Destination.TabIndex = 11
         Me.Destination.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.Destination.UseMnemonic = False
@@ -219,7 +218,7 @@ Partial Class MainForm
         Me.DestinationLabel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DestinationLabel.Location = New System.Drawing.Point(4, 113)
         Me.DestinationLabel.Name = "DestinationLabel"
-        Me.DestinationLabel.Size = New System.Drawing.Size(85, 28)
+        Me.DestinationLabel.Size = New System.Drawing.Size(93, 28)
         Me.DestinationLabel.TabIndex = 10
         Me.DestinationLabel.Text = "\DESTINATION"
         Me.DestinationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -229,9 +228,9 @@ Partial Class MainForm
         Me.Source.AutoSize = True
         Me.InfoLayout.SetColumnSpan(Me.Source, 3)
         Me.Source.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Source.Location = New System.Drawing.Point(96, 85)
+        Me.Source.Location = New System.Drawing.Point(104, 85)
         Me.Source.Name = "Source"
-        Me.Source.Size = New System.Drawing.Size(231, 27)
+        Me.Source.Size = New System.Drawing.Size(223, 27)
         Me.Source.TabIndex = 9
         Me.Source.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.Source.UseMnemonic = False
@@ -242,7 +241,7 @@ Partial Class MainForm
         Me.SourceLabel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SourceLabel.Location = New System.Drawing.Point(4, 85)
         Me.SourceLabel.Name = "SourceLabel"
-        Me.SourceLabel.Size = New System.Drawing.Size(85, 27)
+        Me.SourceLabel.Size = New System.Drawing.Size(93, 27)
         Me.SourceLabel.TabIndex = 8
         Me.SourceLabel.Text = "\SOURCE"
         Me.SourceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -251,9 +250,9 @@ Partial Class MainForm
         '
         Me.FileTypes.AutoSize = True
         Me.FileTypes.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FileTypes.Location = New System.Drawing.Point(292, 29)
+        Me.FileTypes.Location = New System.Drawing.Point(296, 29)
         Me.FileTypes.Name = "FileTypes"
-        Me.FileTypes.Size = New System.Drawing.Size(35, 27)
+        Me.FileTypes.Size = New System.Drawing.Size(31, 27)
         Me.FileTypes.TabIndex = 7
         Me.FileTypes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -261,9 +260,9 @@ Partial Class MainForm
         '
         Me.FileTypesLabel.AutoSize = True
         Me.FileTypesLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FileTypesLabel.Location = New System.Drawing.Point(192, 29)
+        Me.FileTypesLabel.Location = New System.Drawing.Point(190, 29)
         Me.FileTypesLabel.Name = "FileTypesLabel"
-        Me.FileTypesLabel.Size = New System.Drawing.Size(93, 27)
+        Me.FileTypesLabel.Size = New System.Drawing.Size(99, 27)
         Me.FileTypesLabel.TabIndex = 6
         Me.FileTypesLabel.Text = "\FILETYPES"
         Me.FileTypesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -272,9 +271,9 @@ Partial Class MainForm
         '
         Me.Method.AutoSize = True
         Me.Method.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Method.Location = New System.Drawing.Point(96, 29)
+        Me.Method.Location = New System.Drawing.Point(104, 29)
         Me.Method.Name = "Method"
-        Me.Method.Size = New System.Drawing.Size(89, 27)
+        Me.Method.Size = New System.Drawing.Size(79, 27)
         Me.Method.TabIndex = 5
         Me.Method.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -284,7 +283,7 @@ Partial Class MainForm
         Me.MethodLabel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.MethodLabel.Location = New System.Drawing.Point(4, 29)
         Me.MethodLabel.Name = "MethodLabel"
-        Me.MethodLabel.Size = New System.Drawing.Size(85, 27)
+        Me.MethodLabel.Size = New System.Drawing.Size(93, 27)
         Me.MethodLabel.TabIndex = 4
         Me.MethodLabel.Text = "\METHOD"
         Me.MethodLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -293,9 +292,9 @@ Partial Class MainForm
         '
         Me.LimitedCopy.AutoSize = True
         Me.LimitedCopy.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.LimitedCopy.Location = New System.Drawing.Point(292, 1)
+        Me.LimitedCopy.Location = New System.Drawing.Point(296, 1)
         Me.LimitedCopy.Name = "LimitedCopy"
-        Me.LimitedCopy.Size = New System.Drawing.Size(35, 27)
+        Me.LimitedCopy.Size = New System.Drawing.Size(31, 27)
         Me.LimitedCopy.TabIndex = 3
         Me.LimitedCopy.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -303,9 +302,9 @@ Partial Class MainForm
         '
         Me.LimitedCopyLabel.AutoSize = True
         Me.LimitedCopyLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.LimitedCopyLabel.Location = New System.Drawing.Point(192, 1)
+        Me.LimitedCopyLabel.Location = New System.Drawing.Point(190, 1)
         Me.LimitedCopyLabel.Name = "LimitedCopyLabel"
-        Me.LimitedCopyLabel.Size = New System.Drawing.Size(93, 27)
+        Me.LimitedCopyLabel.Size = New System.Drawing.Size(99, 27)
         Me.LimitedCopyLabel.TabIndex = 2
         Me.LimitedCopyLabel.Text = "\LIMITED_COPY"
         Me.LimitedCopyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -314,9 +313,9 @@ Partial Class MainForm
         '
         Me.ProfileName.AutoSize = True
         Me.ProfileName.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.ProfileName.Location = New System.Drawing.Point(96, 1)
+        Me.ProfileName.Location = New System.Drawing.Point(104, 1)
         Me.ProfileName.Name = "ProfileName"
-        Me.ProfileName.Size = New System.Drawing.Size(89, 27)
+        Me.ProfileName.Size = New System.Drawing.Size(79, 27)
         Me.ProfileName.TabIndex = 1
         Me.ProfileName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -326,7 +325,7 @@ Partial Class MainForm
         Me.NameLabel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.NameLabel.Location = New System.Drawing.Point(4, 1)
         Me.NameLabel.Name = "NameLabel"
-        Me.NameLabel.Size = New System.Drawing.Size(85, 27)
+        Me.NameLabel.Size = New System.Drawing.Size(93, 27)
         Me.NameLabel.TabIndex = 0
         Me.NameLabel.Text = "\NAME"
         Me.NameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -335,9 +334,9 @@ Partial Class MainForm
         '
         Me.TimeOffsetLabel.AutoSize = True
         Me.TimeOffsetLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TimeOffsetLabel.Location = New System.Drawing.Point(192, 57)
+        Me.TimeOffsetLabel.Location = New System.Drawing.Point(190, 57)
         Me.TimeOffsetLabel.Name = "TimeOffsetLabel"
-        Me.TimeOffsetLabel.Size = New System.Drawing.Size(93, 27)
+        Me.TimeOffsetLabel.Size = New System.Drawing.Size(99, 27)
         Me.TimeOffsetLabel.TabIndex = 12
         Me.TimeOffsetLabel.Text = "\TIME_OFFSET"
         Me.TimeOffsetLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft

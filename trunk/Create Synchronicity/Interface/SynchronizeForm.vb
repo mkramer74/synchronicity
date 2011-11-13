@@ -807,6 +807,10 @@ Public Class SynchronizeForm
         End If
     End Sub
 
+    Private Sub UpdateProgress(Progress As Long) ', ByRef ContinueRunning As Boolean) 'ContinueRunning = Not [STOP]
+        Status.BytesCopied += Progress
+    End Sub
+
     Private Sub CopyFile(ByVal SourceFile As String, ByVal DestFile As String)
         Dim Suffix As String = GetCompressionExt()
         Dim Compression As Boolean = Suffix <> ""
@@ -815,10 +819,13 @@ Public Class SynchronizeForm
 
         Log.LogInfo(String.Format("CopyFile: Source: {0}, Destination: {1}", SourceFile, DestFile))
 
-        If IO.File.Exists(DestFile) Then IO.File.SetAttributes(DestFile, IO.FileAttributes.Normal)
+        If IO.File.Exists(DestFile) Then
+            IO.File.SetAttributes(DestFile, IO.FileAttributes.Normal)
+        End If
+
         If Compression Then
             Static GZipCompressor As Compressor = LoadCompressionDll()
-            GZipCompressor.CompressFile(SourceFile, DestFile, Sub(Progress As Long) Status.BytesCopied += Progress) ', ByRef ContinueRunning As Boolean) 'ContinueRunning = Not [STOP]
+            GZipCompressor.CompressFile(SourceFile, DestFile, AddressOf UpdateProgress)
         Else
             If IO.File.Exists(DestFile) Then
                 Try
@@ -826,7 +833,7 @@ Public Class SynchronizeForm
                     IO.File.Copy(SourceFile, DestFile, True)
                 Catch Ex As IO.IOException
                     Dim TempDest As String = DestFile & IO.Path.GetRandomFileName(), DestBack As String = DestFile & IO.Path.GetRandomFileName()
-                    IO.File.Copy(SourceFile, TempDest, False) 'Don't overwrite, in case of a random filename collision.
+                    IO.File.Copy(SourceFile, TempDest, False) 'TODO: ?: "Don't overwrite, in case of a random filename collision".
                     IO.File.Move(DestFile, DestBack) : IO.File.Move(TempDest, DestFile)
                     IO.File.Delete(DestBack)
                 End Try

@@ -371,28 +371,28 @@ Public Class SettingsForm
         CheckSettings()
     End Sub
 
-    Private Sub LoadTree(ByVal Tree As TreeView, ByVal OriginalPath As String, ByVal CheckedNodes As Dictionary(Of String, Boolean), Optional ByVal ForceLoad As Boolean = False)
+    Private Sub LoadTree(ByVal Tree As TreeView, ByVal OriginalPath As String, ByVal CheckedNodes As Dictionary(Of String, Boolean), Optional ByVal DynamicDest As Boolean = False)
         Tree.Nodes.Clear()
 
         Dim Path As String = ProfileHandler.TranslatePath(OriginalPath) & ProgramSetting.DirSep
-        Tree.Enabled = OriginalPath <> "" AndAlso (ForceLoad OrElse IO.Directory.Exists(Path))
+        Tree.Enabled = OriginalPath <> "" AndAlso (DynamicDest OrElse IO.Directory.Exists(Path))
 
         If Tree.Enabled Then
             Tree.BackColor = Drawing.Color.White
             Tree.Nodes.Add("")
             SetRootPathDisplay(True) 'Needed for the FullPath method, see tracker #3006324
-            If Not ForceLoad Then
+            If Not DynamicDest Then
                 Try
                     For Each Dir As String In IO.Directory.GetDirectories(Path)
                         Application.DoEvents()
                         Tree.Nodes(0).Nodes.Add(GetFileOrFolderName(Dir))
                     Next
 
-                    'Expanding root is crucial here, since children were already added, but not their subchildren, and expand only works on node which already have subchildren.
+                    'Expanding root is crucial here, since children were already added, but not their subchildren, and expand only works on nodes that already have subchildren.
                     Tree.Nodes(0).Expand()
                     LoadCheckState(Tree, CheckedNodes)
-                Catch Ex As Exception
-                    Tree.Nodes.Clear() 'TODO: When does this happen?
+                Catch Ex As Exception 'Root folder cannot be read
+                    Tree.Nodes.Clear()
                     Tree.Enabled = False
                 End Try
             End If

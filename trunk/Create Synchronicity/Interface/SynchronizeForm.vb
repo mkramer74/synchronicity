@@ -485,7 +485,7 @@ Public Class SynchronizeForm
     End Sub
 
     Private Sub Scan()
-        Dim Context As New SyncingAction
+        Dim Context As New SyncingContext
         Dim TaskDoneCallback As New TaskDoneCall(AddressOf StepCompleted)
 
         'Pass 1: Create actions L->R for files/folder copy, and mark dest files that should be kept
@@ -504,21 +504,18 @@ Public Class SynchronizeForm
         Context.Source = SideOfSource.Left
         Context.SourceRootPath = Source
         Context.DestinationRootPath = Destination
-        Context.Action = TypeOfAction.Copy
-        Init_Synchronization(Handler.LeftCheckedNodes, Context)
+        Init_Synchronization(Handler.LeftCheckedNodes, Context, TypeOfAction.Copy)
 
         Context.Source = SideOfSource.Right
         Context.SourceRootPath = Destination
         Context.DestinationRootPath = Source
         Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) 'Important: (Of Integer)
             Case SyncMethod.LRMirror
-                Context.Action = TypeOfAction.Delete
-                Init_Synchronization(Handler.RightCheckedNodes, Context)
+                Init_Synchronization(Handler.RightCheckedNodes, Context, TypeOfAction.Delete)
             Case SyncMethod.LRIncremental
                 'Pass
             Case SyncMethod.BiIncremental
-                Context.Action = TypeOfAction.Copy
-                Init_Synchronization(Handler.RightCheckedNodes, Context)
+                Init_Synchronization(Handler.RightCheckedNodes, Context, TypeOfAction.Copy)
         End Select
         Me.Invoke(TaskDoneCallback, StatusData.SyncStep.Scan)
     End Sub
@@ -607,18 +604,18 @@ Public Class SynchronizeForm
         Next
     End Sub
 
-    Private Sub Init_Synchronization(ByRef FoldersList As Dictionary(Of String, Boolean), ByVal Context As SyncingAction)
+    Private Sub Init_Synchronization(ByRef FoldersList As Dictionary(Of String, Boolean), ByVal Context As SyncingContext, ByVal Action As TypeOfAction)
         For Each Folder As String In FoldersList.Keys
             Log.LogInfo(String.Format("=> Scanning ""{0}"" top level folders: ""{1}""", Context.SourceRootPath, Folder))
             If IO.Directory.Exists(CombinePathes(Context.SourceRootPath, Folder)) Then
-                If Context.Action = TypeOfAction.Copy Then
+                If Action = TypeOfAction.Copy Then
                     'FIXED-BUG: Every ancestor of this folder should be added too.
                     'Careful with this, for it's a performance issue. Ancestors should only be added /once/.
                     'How to do that? Well, if ancestors of a folder have not been scanned, it means that this folder wasn't reached by a recursive call, but by a initial call.
                     'Therefore, only the folders in the sync config file should be added.
                     AddValidAncestors(Folder)
                     SearchForChanges(Folder, FoldersList(Folder), Context)
-                ElseIf Context.Action = TypeOfAction.Delete Then
+                ElseIf Action = TypeOfAction.Delete Then
                     SearchForCrap(Folder, FoldersList(Folder), Context)
                 End If
             End If
@@ -664,7 +661,7 @@ Public Class SynchronizeForm
     ' This procedure searches for changes in the source directory, in regards
     ' to the status of the destination directory.
     ' TODO: Context is always copy here
-    Private Sub SearchForChanges(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingAction)
+    Private Sub SearchForChanges(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingContext)
         Dim SourceFolder As String = CombinePathes(Context.SourceRootPath, Folder)
         Dim DestinationFolder As String = CombinePathes(Context.DestinationRootPath, Folder)
 
@@ -681,7 +678,7 @@ Public Class SynchronizeForm
 
         'TDOD: Factor out.
         If IsNewFolder OrElse FolderAttributesChanged(SourceFolder, DestinationFolder) Then
-            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, Context.Action, Not IsNewFolder))
+            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, TypeOfAction.Copy, Not IsNewFolder))
             Log.LogInfo(String.Format("SearchForUpdates: [New folder] ""{0}"" ({1})", DestinationFolder, Folder))
         Else
             AddValidFile(Folder)
@@ -703,7 +700,7 @@ Public Class SynchronizeForm
                     Dim RelativeFilePath As String = SourceFile.Substring(Context.SourceRootPath.Length)
 
                     If IsNewFile OrElse SourceIsMoreRecent(SourceFile, DestinationFile) Then
-                        AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, Context.Action, Not IsNewFile), Suffix)
+                        AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, TypeOfAction.Copy, Not IsNewFile), Suffix)
                         Log.LogInfo(String.Format("SearchForUpdates: {0} ""{1}"" ({2}).", If(IsNewFile, "[New File]", "[Update]"), SourceFile, RelativeFilePath))
                     Else
                         'Adds an entry to not delete this when cleaning up the other side.
@@ -718,9 +715,7 @@ Public Class SynchronizeForm
                 If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesScanned += GetSize(SourceFile) 'Degrades performance.
             Next
         Catch Ex As Exception
-#If DEBUG Then
-            Log.HandleError(Ex)
-#End If
+            Log.HandleSilentError(Ex)
             'Error with entering the folder || Thread aborted.
         End Try
 
@@ -733,9 +728,7 @@ Public Class SynchronizeForm
                     SearchForChanges(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
                 Next
             Catch Ex As Exception
-#If DEBUG Then
-                Log.HandleError(Ex)
-#End If
+                Log.HandleSilentError(Ex)
             End Try
         End If
 
@@ -759,7 +752,7 @@ Public Class SynchronizeForm
     End Sub
 
     'TODO: Context is always delete here.
-    Private Sub SearchForCrap(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingAction)
+    Private Sub SearchForCrap(ByVal Folder As String, ByVal Recursive As Boolean, ByVal Context As SyncingContext)
         ' Folder exclusion doesn't work exactly the same as file exclusion: if "Source\a" is excluded, "Dest\a" doesn't get deleted. That way one can safely exclude "Source\System Volume Information" and the like.
         If Not HasAcceptedDirname(Folder) Then Exit Sub
 
@@ -773,7 +766,7 @@ Public Class SynchronizeForm
             For Each File As String In IO.Directory.GetFiles(Src_FilePath)
                 Dim RelativeFName As String = File.Substring(Context.SourceRootPath.Length)
                 If Not IsValidFile(RelativeFName) Then
-                    AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, Context.Action, False))
+                    AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, TypeOfAction.Delete, False))
                     Log.LogInfo(String.Format("Cleanup: [Delete] ""{0}"" ({1})", File, RelativeFName))
                 Else
                     Log.LogInfo(String.Format("Cleanup: [Keep] ""{0}"" ({1})", File, RelativeFName))
@@ -782,9 +775,7 @@ Public Class SynchronizeForm
                 Status.FilesScanned += 1
             Next
         Catch Ex As Exception
-#If DEBUG Then
-            Log.HandleError(Ex)
-#End If
+            Log.HandleSilentError(Ex)
         End Try
 
         If Recursive Then
@@ -796,16 +787,14 @@ Public Class SynchronizeForm
                     SearchForCrap(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
                 Next
             Catch Ex As Exception
-#If DEBUG Then
-                Log.HandleError(Ex)
-#End If
+                Log.HandleSilentError(Ex)
             End Try
         End If
 
         ' Folder.Length = 0 <=> This is the root folder, not to be deleted.
         If Folder.Length <> 0 AndAlso Not IsValidFile(Folder) Then
             Log.LogInfo(String.Format("Cleanup: [Delete folder] ""{0}"" ({1}).", Dest_FilePath, Folder))
-            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, Context.Action, False))
+            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, TypeOfAction.Delete, False))
         End If
     End Sub
 
@@ -917,6 +906,7 @@ Public Class SynchronizeForm
         Return ((SourceInfo.Attributes And AttributesMask) <> (DestInfo.Attributes And AttributesMask))
     End Function
 
+    'FIXME: Handle read errors more gracefully (eg. invalid file time).
     Private Function SourceIsMoreRecent(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean 'Assumes Source and Destination exist.
         If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)) Then Return False 'LATER: Require expert mode?
 

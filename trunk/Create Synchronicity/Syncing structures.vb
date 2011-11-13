@@ -53,8 +53,7 @@ Public Enum SideOfSource As Integer
     Right = 1
 End Enum
 
-Structure SyncingAction
-    Public Action As TypeOfAction
+Structure SyncingContext
     Public Source As SideOfSource
     Public SourceRootPath As String
     Public DestinationRootPath As String

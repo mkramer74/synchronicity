@@ -100,7 +100,7 @@ Friend NotInheritable Class MessageLoop
                 End If
                 MainFormInstance.ApplicationTimer.Start() 'First tick fires after ApplicationTimer.Interval milliseconds.
 #If DEBUG Then
-            ElseIf CommandLine.RunAs = CommandLine.RunMode.Scanner Then 'FIXME: Does not exit
+            ElseIf CommandLine.RunAs = CommandLine.RunMode.Scanner Then
                 Explore(CommandLine.ScanPath)
                 ExitNeeded = True : Exit Sub
 #End If
@@ -387,8 +387,6 @@ Friend NotInheritable Class MessageLoop
 #End Region
 
 #If DEBUG Then
-
-
     Shared Sub Explore(ByVal Path As String)
         Path = IO.Path.GetFullPath(Path)
         Using Writer As New IO.StreamWriter(IO.Path.Combine(ProgramConfig.LogRootDir, "scan-results.txt"), True)

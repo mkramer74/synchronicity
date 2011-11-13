@@ -380,7 +380,7 @@ Public Class SynchronizeForm
                     PreviewList.Columns(0).AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent)
                     ErrorColumn.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent)
 
-                    If Quiet Then 'TODO: Show ballon tip every time? -> Remember to modify init function to show icon if so.
+                    If Quiet Then 'Later: Show ballon tip every time? In that case, modify New to enable status icon.
                         If Status.Failed Then
                             System.Threading.Thread.Sleep(5000) 'Wait a little before failing
                             Interaction.ShowBalloonTip(Status.FailureMsg)
@@ -557,7 +557,7 @@ Public Class SynchronizeForm
                 Select Case Entry.Type
                     Case TypeOfItem.File
                         Select Case Entry.Action
-                            Case TypeOfAction.Copy
+                            Case TypeOfAction.Copy 'FIXME: File attributes are never updated
                                 CopyFile(SourcePath, DestPath)
                             Case TypeOfAction.Delete
                                 IO.File.SetAttributes(SourcePath, IO.FileAttributes.Normal)
@@ -572,7 +572,7 @@ Public Class SynchronizeForm
 
                                 Dim SourceInfo As New IO.DirectoryInfo(SourcePath)
                                 Dim DestInfo As New IO.DirectoryInfo(DestPath)
-                                DestInfo.Attributes = SourceInfo.Attributes 'FIXME: Attributes are never updated
+                                DestInfo.Attributes = SourceInfo.Attributes
                                 DestInfo.CreationTimeUtc = SourceInfo.CreationTimeUtc.AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0))
 
                                 Status.CreatedFolders += 1
@@ -582,7 +582,7 @@ Public Class SynchronizeForm
                                         IO.Directory.Delete(SourcePath)
                                     Catch ex As Exception
                                         Dim DirInfo As New IO.DirectoryInfo(SourcePath)
-                                        DirInfo.Attributes = IO.FileAttributes.Normal
+                                        DirInfo.Attributes = IO.FileAttributes.Normal 'TODO: Check
                                         DirInfo.Delete()
                                     End Try
                                     Status.DeletedFolders += 1
@@ -807,10 +807,6 @@ Public Class SynchronizeForm
         End If
     End Sub
 
-    Private Sub UpdateProgress(Progress As Long) ', ByRef ContinueRunning As Boolean) 'ContinueRunning = Not [STOP]
-        Status.BytesCopied += Progress
-    End Sub
-
     Private Sub CopyFile(ByVal SourceFile As String, ByVal DestFile As String)
         Dim Suffix As String = GetCompressionExt()
         Dim Compression As Boolean = Suffix <> ""
@@ -825,7 +821,7 @@ Public Class SynchronizeForm
 
         If Compression Then
             Static GZipCompressor As Compressor = LoadCompressionDll()
-            GZipCompressor.CompressFile(SourceFile, DestFile, AddressOf UpdateProgress)
+            GZipCompressor.CompressFile(SourceFile, DestFile, Sub(Progress As Long) Status.BytesCopied += Progress) ', ByRef ContinueRunning As Boolean) 'ContinueRunning = Not [STOP]
         Else
             If IO.File.Exists(DestFile) Then
                 Try
@@ -913,7 +909,7 @@ Public Class SynchronizeForm
         End Try
     End Function
 
-    'FIXME: Handle read errors more gracefully (eg. invalid file time).
+    'Error catching for this function is done in the calling section
     Private Function SourceIsMoreRecent(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean 'Assumes Source and Destination exist.
         If (Not Handler.GetSetting(Of Boolean)(ProfileSetting.PropagateUpdates, True)) Then Return False 'LATER: Require expert mode?
 
@@ -939,9 +935,7 @@ Public Class SynchronizeForm
         End If
         Log.LogInfo("SourceIsMoreRecent: Filetimes differ")
 
-        'TODO: Attributes are only mirrored upon creation.
-
-        'StrictMirror is disabled in constructor if Method is not LRMirror
+        'StrictMirror is disabled in constructor if Method != LRMirror
         If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False
 
         Return True
@@ -1007,11 +1001,6 @@ Public Class SynchronizeForm
         End Using
     End Function
 
-    'TODO: This could be a useful function for NAS drives known to round NTFS timestamps, but currently only DLink does, and they do it incorrectly (there's a bug in their drivers)
-    Private Shared Function RoundToSecond(ByVal NTFSTime As Date) As Date
-        Return (New Date(NTFSTime.Year, NTFSTime.Month, NTFSTime.Day, NTFSTime.Hour, NTFSTime.Minute, NTFSTime.Second).AddSeconds(If(NTFSTime.Millisecond > 500, 1, 0)))
-    End Function
-
     Private Shared Function NTFSToFATTime(ByVal NTFSTime As Date) As Date
         Return (New Date(NTFSTime.Year, NTFSTime.Month, NTFSTime.Day, NTFSTime.Hour, NTFSTime.Minute, NTFSTime.Second).AddSeconds(If(NTFSTime.Millisecond = 0, NTFSTime.Second Mod 2, 2 - (NTFSTime.Second Mod 2))))
     End Function
@@ -1033,6 +1022,11 @@ Public Class SynchronizeForm
         Check_StaticFATTimes()
         Check_HardwareFATTimes()
     End Sub
+
+    'LATER: This could be a useful function for NAS drives known to round NTFS timestamps, but currently only DLink does, and they do it incorrectly (there's a bug in their drivers)
+    Private Shared Function RoundToSecond(ByVal NTFSTime As Date) As Date
+        Return (New Date(NTFSTime.Year, NTFSTime.Month, NTFSTime.Day, NTFSTime.Hour, NTFSTime.Minute, NTFSTime.Second).AddSeconds(If(NTFSTime.Millisecond > 500, 1, 0)))
+    End Function
 
     Public Shared Sub Check_StaticFATTimes()
         System.Diagnostics.Debug.WriteLine("Starting hardcoded NTFS -> FAT tests")

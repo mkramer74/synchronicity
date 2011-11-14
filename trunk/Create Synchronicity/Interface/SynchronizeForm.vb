@@ -570,10 +570,9 @@ Public Class SynchronizeForm
                             Case TypeOfAction.Copy
                                 IO.Directory.CreateDirectory(DestPath)
 
-                                Dim SourceInfo As New IO.DirectoryInfo(SourcePath)
-                                Dim DestInfo As New IO.DirectoryInfo(DestPath)
-                                DestInfo.Attributes = SourceInfo.Attributes
-                                DestInfo.CreationTimeUtc = SourceInfo.CreationTimeUtc.AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0))
+                                'FIXME: Folder attributes sometimes don't apply well.
+                                IO.File.SetAttributes(DestPath, IO.File.GetAttributes(SourcePath))
+                                IO.Directory.SetCreationTimeUtc(DestPath, IO.Directory.GetCreationTimeUtc(SourcePath).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0)))
 
                                 Status.CreatedFolders += 1
                             Case TypeOfAction.Delete
@@ -670,12 +669,8 @@ Public Class SynchronizeForm
         UpdateLabel(StatusData.SyncStep.Scan, SourceFolder)
         Log.LogInfo(String.Format("=> Scanning folder ""{0}"" for new or updated files.", Folder))
 
-        Dim InitialValidFilesCount As Integer
-
-        Dim IsNewFolder As Boolean
-        IsNewFolder = Not IO.Directory.Exists(DestinationFolder)
-
         'LATER: Factor out.
+        Dim IsNewFolder As Boolean = Not IO.Directory.Exists(DestinationFolder)
         If IsNewFolder OrElse AttributesChanged(SourceFolder, DestinationFolder) Then
             AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, TypeOfAction.Copy, Not IsNewFolder))
             Log.LogInfo(String.Format("SearchForChanges: [New folder] ""{0}"" ({1})", DestinationFolder, Folder))
@@ -684,8 +679,7 @@ Public Class SynchronizeForm
             Log.LogInfo(String.Format("SearchForChanges: [Valid folder] ""{0}"" ({1})", DestinationFolder, Folder))
         End If
 
-        InitialValidFilesCount = ValidFiles.Count
-
+        Dim InitialValidFilesCount As Integer = ValidFiles.Count
         Try
             For Each SourceFile As String In IO.Directory.GetFiles(SourceFolder)
                 Log.LogInfo("Scanning " & SourceFile)
@@ -895,11 +889,11 @@ Public Class SynchronizeForm
         Return Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "") 'AndAlso GetSize(File) > ConfigOptions.CompressionThreshold
     End Function
 
-    'TODO: File attributes only mirrored upon creation as of now.
     Private Function AttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean
         Const AttributesMask As IO.FileAttributes = IO.FileAttributes.Hidden Or IO.FileAttributes.System Or IO.FileAttributes.Encrypted
 
         ' Disabled in two-ways mode
+        If Not Handler.GetSetting(Of Boolean)(ProfileSetting.SyncFolderAttributes, False) Then Return False
         If Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = ProfileSetting.SyncMethod.BiIncremental Then Return False
 
         Try

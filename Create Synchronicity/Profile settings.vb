@@ -37,6 +37,7 @@ Friend Module ProfileSetting
     Public Const ExcludeHidden As String = "Exclude hidden entries"
     Public Const DiscardAfter As String = "Discard after"
     Public Const PreviewOnly As String = "Preview only"
+    Public Const SyncFolderAttributes As String = "Sync folder attributes"
     '</>
 
     'Disabled: would require keeping a list of modified files to work, since once a source file is deleted in the source, there's no way to tell when it had been last modified, and hence no way to calculate the appropriate deletion date.
@@ -74,7 +75,7 @@ NotInheritable Class ProfileHandler
         If GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) <> ProfileSetting.SyncMethod.LRMirror Then
             'Disable Mirror-Specific settings.
             SetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)
-            SetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0) 'TODO: Does this really need to be disabled? In incremental mode, it currently means "do not update this file anymore".
+            SetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0)
         End If
 
         'Sanity checks: if no folders were included on the right due to automatic destination creation, select all folders

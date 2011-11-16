@@ -24,6 +24,10 @@ Structure LogItem
     Sub New(ByVal _Item As SyncingItem, ByVal _Side As SideOfSource, ByVal _Success As Boolean) ', Optional ByVal _ErrorId As Integer = -1)
         Item = _Item : Side = _Side : Success = _Success ' : ErrorId = _ErrorId
     End Sub
+
+    Function GetHeader() As String
+        Return If(Success, Translation.Translate("\SUCCEDED"), Translation.Translate("\FAILED"))
+    End Function
 End Structure
 
 Friend NotInheritable Class LogHandler
@@ -116,12 +120,11 @@ Friend NotInheritable Class LogHandler
         End If
     End Sub
 
-    Private Shared Sub PutFormatted(ByVal Title As String, ByVal Contents As String(), ByRef LogW As IO.StreamWriter)
+    Private Shared Sub PutFormatted(ByVal Contents As String(), ByRef LogW As IO.StreamWriter)
         If ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False) Then
-            LogW.WriteLine(Title & "	" & String.Join("	", Contents))
+            LogW.WriteLine(String.Join("	", Contents))
         Else
             LogW.WriteLine("<tr>")
-            LogW.WriteLine("	<td>" & Title & "</td>")
             For Each Cell As String In Contents
                 LogW.WriteLine("	<td>" & Cell & "</td>")
             Next
@@ -185,19 +188,19 @@ Friend NotInheritable Class LogHandler
 
 #If DEBUG Then
                 For Each Info As String In DebugInfo
-                    PutFormatted("Info", New String() {Info}, LogWriter)
+                    PutFormatted(New String() {"Info", Info}, LogWriter)
                 Next
 #End If
 
                 PutHTML(LogWriter, "<table>")
                 For Each Record As LogItem In Log
-                    PutFormatted(If(Record.Success, Translation.Translate("\SUCCEDED"), Translation.Translate("\FAILED")), New String() {Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(Record.Side), Record.Item.Path}, LogWriter)
+                    PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(Record.Side), Record.Item.Path}, LogWriter)
                 Next
                 PutHTML(LogWriter, "</table>")
 
                 PutHTML(LogWriter, "<table>")
                 For Each Err As ErrorItem In Errors
-                    PutFormatted(Translation.Translate("\ERROR"), New String() {Err.Details, Err.Ex.Message, Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
+                    PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message, Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
                 Next
                 PutHTML(LogWriter, "</table>")
 

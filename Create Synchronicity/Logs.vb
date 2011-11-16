@@ -108,7 +108,10 @@ Friend NotInheritable Class LogHandler
             LogW.WriteLine("	<body>")
         End If
 
-        LogW.WriteLine("<h1>" & LogTitle & "</h1>")
+
+        PutHTML(LogW, "<h1>")
+        LogW.WriteLine(LogTitle)
+        PutHTML(LogW, "</h1>")
     End Sub
 
     Private Shared Sub CloseHTMLHeaders(ByRef LogW As IO.StreamWriter)
@@ -170,7 +173,7 @@ Friend NotInheritable Class LogHandler
 
             Try
                 'Log format: <h2>, then two <table>s (info, errors)
-                LogWriter.WriteLine("<h2>" & Date.Now.ToString("g") & "</h2>")
+                LogWriter.WriteLine("<h2>" & Date.Now.ToString("g") & "</h2>") 'Must be kept, to detect log boundaries
 
                 PutHTML(LogWriter, "<p>")
                 LogWriter.WriteLine(String.Format("Create Synchronicity v{0}", Application.ProductVersion))

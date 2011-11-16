@@ -87,6 +87,15 @@ Friend NotInheritable Class MessageLoop
 
         If CommandLine.Help Then
             Interaction.ShowMsg(String.Format("Create Synchronicity, version {1}.{0}{0}Profiles folder: ""{2}"".{0}{0}Available commands: see manual.{0}{0}License information: See ""Release notes.txt"".{0}{0}Full manual: See {3}.{0}{0}You can support this software! See {4}.{0}{0}Happy syncing!", Environment.NewLine, Application.ProductVersion, ProgramConfig.ConfigRootDir, Branding.Help, Branding.Contribute), "Help!")
+#If DEBUG Then
+            Dim FreeSpace As New Text.StringBuilder()
+            For Each Drive As IO.DriveInfo In IO.DriveInfo.GetDrives()
+                If Drive.IsReady Then
+                    FreeSpace.AppendLine(String.Format("{0} -> {1:0,0} B free/{2:0,0} B", Drive.Name, Drive.TotalFreeSpace, Drive.TotalSize))
+                End If
+            Next
+            Interaction.ShowMsg(FreeSpace.ToString)
+#End If
         Else
             If CommandLine.RunAs = CommandLine.RunMode.Queue Or CommandLine.RunAs = CommandLine.RunMode.Scheduler Then
                 Interaction.ToggleStatusIcon(True)

@@ -256,7 +256,7 @@ Structure CommandLine
     Shared NoUpdates As Boolean '= False
     Shared NoStop As Boolean '= False
 #If DEBUG Then
-    Shared ScanPath As String
+    Shared ScanPath As String = ""
 #End If
 
     Shared Sub ReadArgs(ByVal ArgsList As List(Of String))

@@ -59,6 +59,7 @@ NotInheritable Class ProfileHandler
     Public ProfileName As String
     Public IsNewProfile As Boolean
     Public Scheduler As New ScheduleInfo()
+
     Public Configuration As New Dictionary(Of String, String)
     Public LeftCheckedNodes As New Dictionary(Of String, Boolean)
     Public RightCheckedNodes As New Dictionary(Of String, Boolean)

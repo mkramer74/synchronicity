@@ -33,6 +33,8 @@ Public Class SynchronizeForm
     Private ScanThread As Threading.Thread
     Private SyncThread As Threading.Thread
 
+    Private LeftRootPath, RightRootPath As String 'Translated path to left and right folders
+
     Private Delegate Sub TaskDoneCall(ByVal Id As StatusData.SyncStep)
     Private Delegate Sub SetIntCall(ByVal Id As StatusData.SyncStep, ByVal Max As Integer)
 
@@ -76,7 +78,7 @@ Public Class SynchronizeForm
         Me.CreateHandle()
         Translation.TranslateControl(Me)
         Me.Icon = ProgramConfig.Icon
-        Me.Text = String.Format(Me.Text, Handler.ProfileName, Handler.GetSetting(Of String)(ProfileSetting.Source), Handler.GetSetting(Of String)(ProfileSetting.Destination)) 'Feature requests #3037548, #3055740
+        Me.Text = String.Format(Me.Text, Handler.ProfileName, LeftRootPath, RightRootPath) 'Feature requests #3037548, #3055740
 
         Labels = New String() {"", Step1StatusLabel.Text, Step2StatusLabel.Text, Step3StatusLabel.Text}
 
@@ -217,15 +219,15 @@ Public Class SynchronizeForm
         Dim CurItem As ListViewItem = PreviewList.SelectedItems(0)
         If CurItem.Tag Is Nothing OrElse CurItem.SubItems.Count < 3 Then Return False
 
-        Dim Left As String, Right As String
-        Left = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source)) & CurItem.SubItems(3).Text
-        Right = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination)) & CurItem.SubItems(3).Text
+        Dim LeftFile As String, RightFile As String
+        LeftFile = LeftRootPath & CurItem.SubItems(3).Text
+        RightFile = RightRootPath & CurItem.SubItems(3).Text
 
         Select Case CType(CurItem.Tag, StatusData.SyncStep)
             Case StatusData.SyncStep.SyncLR
-                Source = Left : Dest = Right
+                Source = LeftFile : Dest = RightFile
             Case StatusData.SyncStep.SyncRL
-                Source = Right : Dest = Left
+                Source = RightFile : Dest = LeftFile
             Case Else
                 'In errors list
                 Return False
@@ -411,7 +413,7 @@ Public Class SynchronizeForm
                     End If
                 End If
 
-                Log.SaveAndDispose(Handler.GetSetting(Of String)(ProfileSetting.Source), Handler.GetSetting(Of String)(ProfileSetting.Destination), Status)
+                Log.SaveAndDispose(LeftRootPath, RightRootPath, Status)
 
                 If (Quiet And Not Me.Visible) Or CommandLine.NoStop Then
                     Me.Close()
@@ -497,18 +499,15 @@ Public Class SynchronizeForm
 
         ValidFiles.Clear()
 
-        Dim Source As String = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
-        Dim Destination As String = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
-
         Me.Invoke(New Action(AddressOf LaunchTimer))
         Context.Source = SideOfSource.Left
-        Context.SourceRootPath = Source
-        Context.DestinationRootPath = Destination
+        Context.SourceRootPath = LeftRootPath
+        Context.DestinationRootPath = RightRootPath
         Init_Synchronization(Handler.LeftCheckedNodes, Context, TypeOfAction.Copy)
 
         Context.Source = SideOfSource.Right
-        Context.SourceRootPath = Destination
-        Context.DestinationRootPath = Source
+        Context.SourceRootPath = RightRootPath
+        Context.DestinationRootPath = LeftRootPath
         Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) 'Important: (Of Integer)
             Case SyncMethod.LRMirror
                 Init_Synchronization(Handler.RightCheckedNodes, Context, TypeOfAction.Delete)

@@ -159,11 +159,6 @@
     <Compile Include="Interface\MainForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="My Project\Resources.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Profile settings.vb" />
     <Compile Include="Program settings.vb" />
     <Compile Include="Revision.vb" />
@@ -217,11 +212,6 @@
     <EmbeddedResource Include="Interface\SynchronizeForm.resx">
       <DependentUpon>SynchronizeForm.vb</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="My Project\Resources.resx">
-      <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

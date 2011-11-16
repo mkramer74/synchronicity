@@ -108,10 +108,7 @@ Friend NotInheritable Class LogHandler
             LogW.WriteLine("	<body>")
         End If
 
-
-        PutHTML(LogW, "<h1>")
-        LogW.WriteLine(LogTitle)
-        PutHTML(LogW, "</h1>")
+        LogW.WriteLine("<h1>" + LogTitle + "</h1>")
     End Sub
 
     Private Shared Sub CloseHTMLHeaders(ByRef LogW As IO.StreamWriter)

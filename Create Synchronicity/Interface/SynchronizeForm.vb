@@ -402,10 +402,10 @@ Public Class SynchronizeForm
 
                     ' Search for a post-sync action, requiring that Expert mode be enabled.
                     Dim PostSyncAction As String = Handler.GetSetting(Of String)(ProfileSetting.PostSyncAction)
-                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction <> Nothing Then
+                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction IsNot Nothing Then
                         Try
                             Interaction.ShowBalloonTip(Translation.Translate("\POST_SYNC"))
-                            Diagnostics.Process.Start(PostSyncAction, ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination)))
+                            Diagnostics.Process.Start(PostSyncAction, RightRootPath)
                         Catch Ex As Exception
                             Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
                             ConfigHandler.LogAppEvent(Ex.ToString)
@@ -529,16 +529,13 @@ Public Class SynchronizeForm
             Exit Sub
         End If
 
-        Dim Left As String = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
-        Dim Right As String = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
-
         Me.Invoke(New Action(AddressOf LaunchTimer))
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncLR, SyncingList(SideOfSource.Left).Count})
-        Do_Task(SideOfSource.Left, SyncingList(SideOfSource.Left), Left, Right, StatusData.SyncStep.SyncLR)
+        Do_Task(SideOfSource.Left, SyncingList(SideOfSource.Left), LeftRootPath, RightRootPath, StatusData.SyncStep.SyncLR)
         Me.Invoke(TaskDoneCallback, StatusData.SyncStep.SyncLR)
 
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncRL, SyncingList(SideOfSource.Right).Count})
-        Do_Task(SideOfSource.Right, SyncingList(SideOfSource.Right), Right, Left, StatusData.SyncStep.SyncRL)
+        Do_Task(SideOfSource.Right, SyncingList(SideOfSource.Right), RightRootPath, LeftRootPath, StatusData.SyncStep.SyncRL)
         Me.Invoke(TaskDoneCallback, StatusData.SyncStep.SyncRL)
     End Sub
 

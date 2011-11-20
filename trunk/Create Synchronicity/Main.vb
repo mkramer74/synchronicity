@@ -150,6 +150,7 @@ Friend NotInheritable Class MessageLoop
         ' Load program configuration
         ProgramConfig = ConfigHandler.GetSingleton
         Translation = LanguageHandler.GetSingleton
+        Profiles = New Dictionary(Of String, ProfileHandler)
 
         Try
             SmallFont = New Drawing.Font("Verdana", 7.0!)
@@ -190,7 +191,7 @@ Friend NotInheritable Class MessageLoop
     End Sub
 
     Shared Sub ReloadProfiles()
-        Profiles = New Dictionary(Of String, ProfileHandler)
+        Profiles.Clear() 'Initialized in InitializeSharedObjects
 
         For Each ConfigFile As String In IO.Directory.GetFiles(ProgramConfig.ConfigRootDir, "*.sync")
             Dim Name As String = IO.Path.GetFileNameWithoutExtension(ConfigFile)

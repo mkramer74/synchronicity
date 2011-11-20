@@ -64,6 +64,9 @@ Public Class SynchronizeForm
         Log = New LogHandler(ConfigName)
         Handler = New ProfileHandler(ConfigName)
 
+        LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
+        RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
+
         ColumnSorter = New ListViewColumnSorter(3)
         PreviewList.ListViewItemSorter = ColumnSorter
 

@@ -43,7 +43,7 @@ Public Class SettingsForm
             ToTextBox.AutoCompleteMode = AutoCompleteMode.None
         End If
 
-        GroupNameBox.Items.AddRange(Groups.ToArray)
+        If Groups IsNot Nothing Then GroupNameBox.Items.AddRange(Groups.ToArray)
 
         ' Add any initialization after the InitializeComponent() call.
         Handler = New ProfileHandler(Name)

@@ -93,7 +93,7 @@ NotInheritable Class ProfileHandler
                 Try
                     ConfigLine = FileReader.ReadLine()
                     Dim Param() As String = ConfigLine.Split(":".ToCharArray, 2)
-                    If Not Configuration.ContainsKey(Param(0)) Then Configuration.Add(Param(0), Param(1))
+                    If Not (ConfigLine = "" Or Configuration.ContainsKey(Param(0))) Then Configuration.Add(Param(0), Param(1))
                 Catch ex As IndexOutOfRangeException
                     Interaction.ShowMsg(String.Format(Translation.Translate("\INVALID_SETTING"), ConfigLine))
                 Catch ex As Exception 'Something worse than finding a simple misformatted line has occured
@@ -286,8 +286,8 @@ NotInheritable Class ProfileHandler
     End Sub
 
     Public Shared Function TranslatePath(ByVal Path As String) As String
+        If Path Is Nothing Then Return Nothing
         Return TranslatePath_Unsafe(Path).TrimEnd(ProgramSetting.DirSep) 'Careful with Linux root
-        'This part is just for the extra safety, since a fix is also included in TranslatePath_Unsafe.
         'Prevents a very annoying bug, where the presence of a slash at the end of the base directory would confuse the engine (#3052979)
     End Function
 
@@ -319,9 +319,9 @@ NotInheritable Class ProfileHandler
 
             If Path.StartsWith("""") And Not Label = "" Then
                 For Each Drive As IO.DriveInfo In IO.DriveInfo.GetDrives
-                    'The drive's name ends with a "\". If RelativePath = "", then TrimEnd on the RelativePath won't do anything.
-                    'This is the line why this function is called unsafe, but it's been made safe anyway: dirty code that get fixed later on crosses me. The point is that a source/destination path should *never* end with a DirSep, otherwise the system gets confused as to what is a relative path and what is the base path.
+                    'The drive's name ends with a "\". If RelativePath = "", then TrimEnd on the RelativePath won't do anything; that's why you trim after joining
                     If Not Drive.Name(0) = "A"c AndAlso Drive.IsReady AndAlso String.Compare(Drive.VolumeLabel, Label, True) = 0 Then
+                        'This is the line why this function is called unsafe: no path should *ever* end with a DirSep, otherwise the system gets confused as to what base and added path sections are.
                         Translated_Path = (Drive.Name & RelativePath.TrimStart(ProgramSetting.DirSep)).TrimEnd(ProgramSetting.DirSep) 'Bug #3052979
                         Exit For
                     End If

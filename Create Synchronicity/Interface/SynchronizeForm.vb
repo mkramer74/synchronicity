@@ -287,9 +287,11 @@ Friend Class SynchronizeForm
         FoldersCreated.Text = Status.CreatedFolders & "/" & Status.FoldersToCreate
 
         SyncLock Lock
-            Step1StatusLabel.Text = Labels(1)
-            Step2StatusLabel.Text = Labels(2)
-            Step3StatusLabel.Text = Labels(3)
+            If Labels IsNot Nothing Then
+                Step1StatusLabel.Text = Labels(1)
+                Step2StatusLabel.Text = Labels(2)
+                Step3StatusLabel.Text = Labels(3)
+            End If
             Interaction.StatusIcon.Text = StatusLabel
         End SyncLock
     End Sub

@@ -8,7 +8,7 @@
 
 Option Strict On
 
-Public Class SettingsForm
+Friend Class SettingsForm
     Dim Handler As ProfileHandler
     Dim ProcessingNodes As Boolean '= False 'Some background activity is occuring, don't record events.
     Dim InhibitAutocheck As Boolean '= False 'Record events, but don't treat them as user input.
@@ -43,7 +43,7 @@ Public Class SettingsForm
             ToTextBox.AutoCompleteMode = AutoCompleteMode.None
         End If
 
-        If Groups IsNot Nothing Then GroupNameBox.Items.AddRange(Groups.ToArray)
+        GroupNameBox.Items.AddRange(Groups.ToArray)
 
         ' Add any initialization after the InitializeComponent() call.
         Handler = New ProfileHandler(Name)

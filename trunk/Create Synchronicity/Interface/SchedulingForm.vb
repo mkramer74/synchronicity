@@ -1,6 +1,6 @@
 ﻿Imports System.Windows.Forms
 
-Public Class SchedulingForm
+Friend Class SchedulingForm
     Dim Handler As ProfileHandler
 
     Sub New(ByVal Name As String)

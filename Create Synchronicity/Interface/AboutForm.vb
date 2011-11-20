@@ -6,7 +6,7 @@
 'Created by:	Clément Pit--Claudel.
 'Web site:		http://synchronicity.sourceforge.net.
 
-Public Class AboutForm
+Friend Class AboutForm
     Private Shared Sub SetLinkArea(ByVal Link As LinkLabel)
         If Link.Text.IndexOf("\"c) = -1 Or Link.Text.IndexOf("/"c) = -1 Then Exit Sub
 

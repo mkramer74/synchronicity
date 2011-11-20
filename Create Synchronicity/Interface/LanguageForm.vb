@@ -1,4 +1,4 @@
-﻿Public Class LanguageForm
+﻿Friend Class LanguageForm
     Sub New()
         ' This call is required by the designer.
         InitializeComponent()

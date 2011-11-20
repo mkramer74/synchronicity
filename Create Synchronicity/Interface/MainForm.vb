@@ -6,7 +6,7 @@
 'Created by:	Clément Pit--Claudel.
 'Web site:		http://synchronicity.sourceforge.net.
 
-Public Class MainForm
+Friend Class MainForm
     Dim CurView As Integer
     Dim ProfilesGroups As New List(Of String)
     Dim Views() As View = New View() {View.Tile, View.Details, View.LargeIcon}
@@ -95,7 +95,7 @@ Public Class MainForm
     Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
         Application.Exit()
     End Sub
-    
+
     Private Sub ToolStripHeader_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripHeader.Click
         Diagnostics.Process.Start(Application.ExecutablePath)
     End Sub

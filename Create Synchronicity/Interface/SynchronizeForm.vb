@@ -8,7 +8,7 @@
 
 Option Strict On
 
-Public Class SynchronizeForm
+Friend Class SynchronizeForm
     Private Log As LogHandler
     Private Handler As ProfileHandler
 
@@ -445,7 +445,7 @@ Public Class SynchronizeForm
             Case TypeOfAction.Copy
                 If Item.Type = TypeOfItem.Folder Then
                     ListItem.ImageIndex = If(Item.IsUpdate, 6, 5)
-                        Status.FoldersToCreate += 1
+                    Status.FoldersToCreate += 1
                 End If
                 If Item.Type = TypeOfItem.File Then
                     Select Case Side
@@ -527,7 +527,7 @@ Public Class SynchronizeForm
         Dim SetMaxCallback As New SetIntCall(AddressOf SetMax)
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False) Then
-            Log.HandleError(New Exception(), "This is a preview-only profile") 'FIXME: Translate (or remove)
+            Log.HandleError(New InvalidOperationException(), "This is a preview-only profile") 'FIXME: Translate (or remove)
             Me.Close()
             Exit Sub
         End If

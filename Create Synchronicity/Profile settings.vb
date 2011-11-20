@@ -98,7 +98,7 @@ NotInheritable Class ProfileHandler
                     Interaction.ShowMsg(String.Format(Translation.Translate("\INVALID_SETTING"), ConfigLine))
                 Catch ex As Exception 'Something worse than finding a simple misformatted line has occured
                     Interaction.ShowMsg(Translation.Translate("\INVALID_CONFIG"))
-                    Configuration.Clear()
+                    Configuration.Clear() 'FIXME: Why?
                     Return False
                 End Try
             End While

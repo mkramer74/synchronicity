@@ -63,7 +63,7 @@ Friend NotInheritable Class LogHandler
     End Sub
 
     <Diagnostics.Conditional("Debug")>
-    Sub HandleSilentError(ByVal Ex As Exception, Optional ByVal Details As String = "")
+    Sub HandleSilentError(ByVal Ex As Exception, Optional ByVal Details As String = "Debug message")
 #If DEBUG Then
         HandleError(Ex, Details)
 #End If

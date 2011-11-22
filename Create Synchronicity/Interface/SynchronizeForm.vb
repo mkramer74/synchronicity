@@ -674,10 +674,10 @@ Friend Class SynchronizeForm
         Dim IsNewFolder As Boolean = Not IO.Directory.Exists(DestinationFolder)
         If IsNewFolder OrElse AttributesChanged(SourceFolder, DestinationFolder) Then
             AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, TypeOfAction.Copy, Not IsNewFolder))
-            Log.LogInfo(String.Format("SearchForChanges: [New folder] ""{0}"" ({1})", DestinationFolder, Folder))
+            Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3})", If(IsNewFolder, "[New folder]", "[Updated folder]"), SourceFolder, DestinationFolder, Folder))
         Else
             AddValidFile(Folder)
-            Log.LogInfo(String.Format("SearchForChanges: [Valid folder] ""{0}"" ({1})", DestinationFolder, Folder))
+            Log.LogInfo(String.Format("SearchForChanges: [Valid folder] ""{0}"" ""{1}"" ({2})", SourceFolder, DestinationFolder, Folder))
         End If
 
         Dim InitialValidFilesCount As Integer = ValidFiles.Count
@@ -694,11 +694,11 @@ Friend Class SynchronizeForm
 
                         If IsNewFile OrElse SourceIsMoreRecent(SourceFile, DestinationFile) Then
                             AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, TypeOfAction.Copy, Not IsNewFile), Suffix)
-                            Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ({2}).", If(IsNewFile, "[New File]", "[Update]"), SourceFile, RelativeFilePath))
+                            Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3}).", If(IsNewFile, "[New File]", "[Updated file]"), SourceFile, DestinationFile, RelativeFilePath))
                         Else
                             'Adds an entry to not delete this when cleaning up the other side.
                             AddValidFile(RelativeFilePath & Suffix)
-                            Log.LogInfo(String.Format("SearchForChanges: [Valid] ""{0}"" ({1})", SourceFile, RelativeFilePath))
+                            Log.LogInfo(String.Format("SearchForChanges: [Valid] ""{0}"" ""{1}"" ({2})", SourceFile, DestinationFile, RelativeFilePath))
                         End If
                     Else
                         Log.LogInfo(String.Format("SearchForChanges: [Excluded file] ""{0}""", SourceFile))
@@ -706,7 +706,7 @@ Friend Class SynchronizeForm
 
                     If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesScanned += GetSize(SourceFile) 'Degrades performance.
                 Catch Ex As Exception
-                    Log.HandleError(Ex)
+                    Log.HandleError(Ex, SourceFile)
                 End Try
 
                 Status.FilesScanned += 1

@@ -80,32 +80,7 @@ Friend NotInheritable Class LogHandler
         Dim LogTitle As String = String.Format(Translation.Translate("\LOG_TITLE"), LogName)
 
         If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then
-            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"">")
-            LogW.WriteLine("<html xmlns=""http://www.w3.org/1999/xhtml"" xml:lang=""en"" encoding=""utf-8"">")
-            LogW.WriteLine("	<head>")
-            LogW.WriteLine("		<title>" & LogTitle & "</title>")
-            LogW.WriteLine("		<meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" />")
-            LogW.WriteLine("		<style type=""text/css"">")
-            LogW.WriteLine("			body {")
-            LogW.WriteLine("				font-family: verdana, courier;")
-            LogW.WriteLine("				font-size: 0.8em;")
-            LogW.WriteLine("				margin: auto;")
-            LogW.WriteLine("				width: 80%;")
-            LogW.WriteLine("			}")
-            LogW.WriteLine("			table {")
-            LogW.WriteLine("				border-collapse: collapse;")
-            LogW.WriteLine("				width: 100%;")
-            LogW.WriteLine("			}")
-            LogW.WriteLine("			table tr td:nth-child(3n+2) {word-break: break-all;}")
-            LogW.WriteLine("			th, td {")
-            LogW.WriteLine("				min-width: 5em;")
-            LogW.WriteLine("				border: solid grey;")
-            LogW.WriteLine("				border-width: 1px 0 0 0;")
-            LogW.WriteLine("				padding: 1em;")
-            LogW.WriteLine("			}")
-            LogW.WriteLine("		</style>")
-            LogW.WriteLine("	</head>")
-            LogW.WriteLine("	<body>")
+            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml"" xml:lang=""en"" encoding=""utf-8""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family: verdana, courier;font-size: 0.8em;margin: auto;width: 80%;}table{border-collapse: collapse;width: 100%;}table tr td:nth-child(3n+2){word-break: break-all;}th, td{min-width: 5em;border: solid grey;border-width: 1px 0 0 0;padding: 1em;}</style></head><body>")
         End If
 
         LogW.WriteLine("<h1>" & LogTitle & "</h1>")
@@ -116,8 +91,7 @@ Friend NotInheritable Class LogHandler
         If ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False) Then
             LogW.WriteLine()
         Else
-            LogW.WriteLine("	</body>")
-            LogW.WriteLine("</html>")
+            LogW.WriteLine("</body></html>")
         End If
     End Sub
 

@@ -162,3 +162,4 @@ MORE=Meer (enkel experts)
 NO_PROFILES=Je hebt geen profiel. Klik "{0}" om een te creëren.
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

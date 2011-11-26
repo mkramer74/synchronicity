@@ -162,3 +162,4 @@ MORE=Plus (reservé aux experts)
 NO_PROFILES=Vous n'avez paramétré aucun profil. Cliquez sur "{0}" pour en créer un.
 WAKEUP_FAILED=Echec du script d'initialisation
 POSTSYNC_FAILED=Echec du script de finalisation
+LATEST=Aller au plus récent

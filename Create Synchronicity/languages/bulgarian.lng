@@ -162,3 +162,4 @@ CREATE_DEST=Динамично създаване на папка (в момен
 ->NO_PROFILES=
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

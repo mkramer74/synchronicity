@@ -165,3 +165,4 @@ CATCHUP_MISSED_BACKUPS_TAG=Показывает, что делать, если �
 ->NO_PROFILES=
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

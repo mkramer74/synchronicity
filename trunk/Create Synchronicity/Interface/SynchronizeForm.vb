@@ -35,7 +35,7 @@ Friend Class SynchronizeForm
 
     Private LeftRootPath, RightRootPath As String 'Translated path to left and right folders
 
-    Private Delegate Sub TaskDoneCall(ByVal Id As StatusData.SyncStep)
+    Private Delegate Sub StepCompletedCall(ByVal Id As StatusData.SyncStep)
     Private Delegate Sub SetIntCall(ByVal Id As StatusData.SyncStep, ByVal Max As Integer)
 
     Friend Event SyncFinished(ByVal Name As String, ByVal Completed As Boolean)
@@ -493,7 +493,7 @@ Friend Class SynchronizeForm
 
     Private Sub Scan()
         Dim Context As New SyncingContext
-        Dim TaskDoneCallback As New TaskDoneCall(AddressOf StepCompleted)
+        Dim StepCompletedCallback As New StepCompletedCall(AddressOf StepCompleted)
 
         'Pass 1: Create actions L->R for files/folder copy, and mark dest files that should be kept
         'Pass 2: Create actions R->L for files/folder copy/deletion, based on what was marked as ValidFile, aka based on what should be kept.
@@ -521,11 +521,11 @@ Friend Class SynchronizeForm
             Case SyncMethod.BiIncremental
                 Init_Synchronization(Handler.RightCheckedNodes, Context, TypeOfAction.Copy)
         End Select
-        Me.Invoke(TaskDoneCallback, StatusData.SyncStep.Scan)
+        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.Scan)
     End Sub
 
     Private Sub Sync()
-        Dim TaskDoneCallback As New TaskDoneCall(AddressOf StepCompleted)
+        Dim StepCompletedCallback As New StepCompletedCall(AddressOf StepCompleted)
         Dim SetMaxCallback As New SetIntCall(AddressOf SetMax)
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False) Then
@@ -537,11 +537,11 @@ Friend Class SynchronizeForm
         Me.Invoke(New Action(AddressOf LaunchTimer))
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncLR, SyncingList(SideOfSource.Left).Count})
         Do_Task(SideOfSource.Left, SyncingList(SideOfSource.Left), LeftRootPath, RightRootPath, StatusData.SyncStep.SyncLR)
-        Me.Invoke(TaskDoneCallback, StatusData.SyncStep.SyncLR)
+        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.SyncLR)
 
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncRL, SyncingList(SideOfSource.Right).Count})
         Do_Task(SideOfSource.Right, SyncingList(SideOfSource.Right), RightRootPath, LeftRootPath, StatusData.SyncStep.SyncRL)
-        Me.Invoke(TaskDoneCallback, StatusData.SyncStep.SyncRL)
+        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.SyncRL)
     End Sub
 
     '"Source" is "current side", with the corresponding side stored in "Side"

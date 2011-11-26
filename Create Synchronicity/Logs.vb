@@ -121,7 +121,6 @@ Friend NotInheritable Class LogHandler
             'Load the contents of the previous log, excluding the closing tags
             Dim MaxArchivesCount As Integer = ProgramConfig.GetProgramSetting(Of Integer)(ProgramSetting.MaxLogEntries, 7)
             Dim Archives As New List(Of Text.StringBuilder)
-            Archives.Add(New Text.StringBuilder())
 
             Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a id=""latest"">|</body>|</html>")
 
@@ -133,7 +132,7 @@ Friend NotInheritable Class LogHandler
                             Archives.Add(New Text.StringBuilder())
                             If Archives.Count > MaxArchivesCount Then Archives.RemoveAt(0) 'Don't store more than ConfigOptions.MaxLogEntries in memory
                         End If
-                        If Not StrippedLines.IsMatch(Line) Then Archives(Archives.Count - 1).AppendLine(Line)
+                        If Archives.Count > 0 AndAlso (Not StrippedLines.IsMatch(Line)) Then Archives(Archives.Count - 1).AppendLine(Line)
                     End While
                 End Using
             End If

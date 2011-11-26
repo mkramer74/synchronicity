@@ -163,3 +163,4 @@ NO_PROFILES=You have no profiles. Click "{0}" to create one.
 POST_SYNC=Launching post-sync action: "{0}"
 WAKEUP_FAILED=Unable to run wake-up script
 POSTSYNC_FAILED=Unable to run post-sync script
+LATEST=Go to latest

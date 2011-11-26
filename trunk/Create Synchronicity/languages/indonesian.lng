@@ -162,3 +162,4 @@ MORE=Lebih lanjut (hanya jika ahli)
 NO_PROFILES=Anda tidak memiliki profil. Klik "{0}" untuk membuat profil.
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

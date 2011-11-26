@@ -162,3 +162,4 @@ CATCHUP_MISSED_BACKUPS_TAG=Signalizuje co dělat jestliže počítač byl vypnut
 ->NO_PROFILES=
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

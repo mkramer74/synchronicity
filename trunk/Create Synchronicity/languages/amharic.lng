@@ -161,3 +161,4 @@ MORE=ተጨማሪ (ለኤክስፐርቶች ብቻ)
 NO_PROFILES=ምንም ፕሮፋይሎች የሎትም። አዲስ ለመፍጠር "{0}"ን ይጫኑ።
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

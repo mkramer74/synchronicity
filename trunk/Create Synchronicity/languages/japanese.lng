@@ -162,3 +162,4 @@ MORE=追加（管理者のみ）
 NO_PROFILES=プロファイルが設定されていません。 "{0}" からプロファイルを作成してください。
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
+->LATEST=

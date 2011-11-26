@@ -123,7 +123,7 @@ Friend NotInheritable Class LogHandler
             Dim Archives As New List(Of Text.StringBuilder)
             Archives.Add(New Text.StringBuilder())
 
-            Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a id=""latest""/>|</body>|</html>")
+            Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a id=""latest"">|</body>|</html>")
 
             If Not NewLog And Not Debug Then
                 Using LogReader As New IO.StreamReader(ProgramConfig.GetLogPath(LogName))
@@ -147,7 +147,7 @@ Friend NotInheritable Class LogHandler
 
             Try
                 'Log format: <h2>, then two <table>s (info, errors)
-                PutHTML(LogWriter, "<a id=""latest""/>")
+                PutHTML(LogWriter, "<a id=""latest""></a>")
                 LogWriter.WriteLine("<h2>" & Date.Now.ToString("g") & "</h2>") 'Must be kept, to detect log boundaries
 
                 PutHTML(LogWriter, "<p>")

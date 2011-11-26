@@ -123,7 +123,7 @@ Friend NotInheritable Class LogHandler
             Dim Archives As New List(Of Text.StringBuilder)
             Archives.Add(New Text.StringBuilder())
 
-            Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a id=""latest""/>|</body>|</html)>")
+            Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a id=""latest""/>|</body>|</html>")
 
             If Not NewLog And Not Debug Then
                 Using LogReader As New IO.StreamReader(ProgramConfig.GetLogPath(LogName))

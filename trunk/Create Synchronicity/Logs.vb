@@ -47,7 +47,7 @@ Friend NotInheritable Class LogHandler
         IO.Directory.CreateDirectory(ProgramConfig.LogRootDir)
 
         'Disposed
-        LogId = DateTime.UtcNow.Ticks.ToString()
+        LogId = "cs_" + DateTime.UtcNow.Ticks.ToString()
         LogTitle = String.Format("<h2 id=""{0}"">{1}</h2>", LogId, Date.Now.ToString("g"))
 
         LogName = _LogName

@@ -86,7 +86,7 @@ Friend NotInheritable Class LogHandler
         Dim LogTitle As String = String.Format(Translation.Translate("\LOG_TITLE"), LogName)
 
         If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then
-            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family: verdana, courier;font-size: 0.8em;margin: auto;width: 80%;}table{border-collapse: collapse;width: 100%;}table tr td:nth-child(3n+2){word-break: break-all;}th, td{min-width: 5em;border: solid grey;border-width: 1px 0 0 0;padding: 1em;}</style></head><body>")
+            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family:Consolas, Courier, monospace;font-size:0.8em;margin:auto;width:80%;}table{border-collapse:collapse;width:100%;}th, td{border:solid grey;border-width:1px 0 0 0;margin-right:2em;white-space:nowrap;}tr:nth-child(odd){background-color:#EEE;}tr td:nth-child(5), .errors tr td:nth-child(2){word-break: break-all;}</style></head><body>")
         End If
 
         LogW.WriteLine("<h1>" & LogTitle & "</h1>")
@@ -176,7 +176,7 @@ Friend NotInheritable Class LogHandler
 #End If
 
                 If Log.Count > 0 Then
-                    PutHTML(LogWriter, "<table>")
+                    PutHTML(LogWriter, "<table class=""actions"">")
                     For Each Record As LogItem In Log
                         PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(Record.Side), Record.Item.Path}, LogWriter)
                     Next
@@ -184,7 +184,7 @@ Friend NotInheritable Class LogHandler
                 End If
 
                 If Errors.Count > 0 Then
-                    PutHTML(LogWriter, "<table>")
+                    PutHTML(LogWriter, "<table class=""errors"">")
                     For Each Err As ErrorItem In Errors
                         PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message, Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
                     Next

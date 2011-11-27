@@ -5,22 +5,23 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<style type="text/css">
 		body {
-			font-family: verdana, courier;
-			font-size: 0.8em;
-			margin: auto;
-			width: 80%;
+			font-family:	Consolas, Courier, monospace;
+			font-size:		0.8em;
+			margin:			auto;
+			width:			80%;
 		}
 		table {
-			border-collapse: collapse;
-			width: 100%;
+			border-collapse:	collapse;
+			width:				100%;
 		}
-		table tr td:nth-child(3n+2) {word-break: break-all;}
 		th, td {
-			min-width: 5em;
-			border: solid grey;
-			border-width: 1px 0 0 0;
-			padding: 1em;
+			border:			solid grey;
+			border-width:	1px 0 0 0;
+			margin-right:	2em;
+			white-space:	nowrap;
 		}
+		tr:nth-child(odd) {background-color:#EEE;}
+		tr td:nth-child(5), .errors tr td:nth-child(2) {word-break: break-all;}
 	</style>
 </head>
 <body>

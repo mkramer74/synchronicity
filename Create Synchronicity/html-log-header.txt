@@ -12,20 +12,23 @@
 		}
 		table {
 			border-collapse:	collapse;
+			margin:				1em 0;
 			width:				100%;
 		}
 		th, td {
 			border:			solid grey;
 			border-width:	1px 0;
 			padding-right:	2em;
-			white-space:	nowrap;
 		}
 		tr:nth-child(odd) {
 			background-color:	#EEE;
 		}
-		tr td:nth-child(5), .errors tr td:nth-child(2) {
-			word-break:		break-all;
+		.actions tr td {
+			white-space:	nowrap; /* Forbid line breaks in labels like "Left -> Right" */
+		}
+		.actions tr td:nth-child(5), .errors tr td:nth-child(2) {
 			white-space:	normal;
+			word-break:		break-all; /* Break long paths */
 		}
 		tr td:last-child {
 			padding-right:	0;

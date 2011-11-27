@@ -17,11 +17,19 @@
 		th, td {
 			border:			solid grey;
 			border-width:	1px 0 0 0;
-			margin-right:	2em;
+			padding-right:	2em;
 			white-space:	nowrap;
 		}
-		tr:nth-child(odd) {background-color:#EEE;}
-		tr td:nth-child(5), .errors tr td:nth-child(2) {word-break: break-all;}
+		tr:nth-child(odd) {
+			background-color:	#EEE;
+		}
+		tr td:nth-child(5), .errors tr td:nth-child(2) {
+			word-break:		break-all;
+			white-space:	normal;
+		}
+		tr td:last-child {
+			padding-right:	0;
+		}
 	</style>
 </head>
 <body>

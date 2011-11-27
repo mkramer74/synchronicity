@@ -38,12 +38,18 @@ Friend NotInheritable Class LogHandler
     Public DebugInfo As List(Of String)
 #End If
 
-    Private Disposed As Boolean
+    Private Disposed As Boolean '= False
+
+    Private LogId As String 'HTML 'id' to current log
+    Private LogTitle As String 'Store current date when launching sync
 
     Sub New(ByVal _LogName As String)
         IO.Directory.CreateDirectory(ProgramConfig.LogRootDir)
 
-        'Disposed = False
+        'Disposed
+        LogId = DateTime.UtcNow.Ticks.ToString()
+        LogTitle = String.Format("<h2 id=""{0}"">{1}</h2>", LogId, Date.Now.ToString("g"))
+
         LogName = _LogName
         Errors = New List(Of ErrorItem)
         Log = New List(Of LogItem)
@@ -80,11 +86,11 @@ Friend NotInheritable Class LogHandler
         Dim LogTitle As String = String.Format(Translation.Translate("\LOG_TITLE"), LogName)
 
         If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then
-            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml"" xml:lang=""en"" encoding=""utf-8""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family: verdana, courier;font-size: 0.8em;margin: auto;width: 80%;}table{border-collapse: collapse;width: 100%;}table tr td:nth-child(3n+2){word-break: break-all;}th, td{min-width: 5em;border: solid grey;border-width: 1px 0 0 0;padding: 1em;}</style></head><body>")
+            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family: verdana, courier;font-size: 0.8em;margin: auto;width: 80%;}table{border-collapse: collapse;width: 100%;}table tr td:nth-child(3n+2){word-break: break-all;}th, td{min-width: 5em;border: solid grey;border-width: 1px 0 0 0;padding: 1em;}</style></head><body>")
         End If
 
         LogW.WriteLine("<h1>" & LogTitle & "</h1>")
-        LogW.WriteLine("<a href=""#latest"">" & Translation.Translate("\LATEST") & "</a>") 'FIXME!
+        LogW.WriteLine(String.Format("<p><a href=""#{0}"">{1}</a></p>", LogId, Translation.Translate("\LATEST")))
     End Sub
 
     Private Shared Sub CloseHTMLHeaders(ByRef LogW As IO.StreamWriter)
@@ -122,13 +128,14 @@ Friend NotInheritable Class LogHandler
             Dim MaxArchivesCount As Integer = ProgramConfig.GetProgramSetting(Of Integer)(ProgramSetting.MaxLogEntries, 7)
             Dim Archives As New List(Of Text.StringBuilder)
 
-            Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a id=""latest"">|</body>|</html>")
+            Dim TitleLine As New Text.RegularExpressions.Regex("<h2.*>")
+            Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a.*>|</body>|</html>")
 
             If Not NewLog And Not Debug Then
                 Using LogReader As New IO.StreamReader(ProgramConfig.GetLogPath(LogName))
                     While Not LogReader.EndOfStream
                         Dim Line As String = LogReader.ReadLine()
-                        If Line.Contains("<h2>") Then
+                        If TitleLine.IsMatch(Line) Then
                             Archives.Add(New Text.StringBuilder())
                             If Archives.Count > MaxArchivesCount Then Archives.RemoveAt(0) 'Don't store more than ConfigOptions.MaxLogEntries in memory
                         End If
@@ -146,8 +153,7 @@ Friend NotInheritable Class LogHandler
 
             Try
                 'Log format: <h2>, then two <table>s (info, errors)
-                PutHTML(LogWriter, "<a id=""latest""></a>")
-                LogWriter.WriteLine("<h2>" & Date.Now.ToString("g") & "</h2>") 'Must be kept, to detect log boundaries
+                LogWriter.WriteLine(LogTitle) 'Must be kept, to detect log boundaries
 
                 PutHTML(LogWriter, "<p>")
                 LogWriter.WriteLine(String.Format("Create Synchronicity v{0}", Application.ProductVersion))
@@ -169,17 +175,21 @@ Friend NotInheritable Class LogHandler
                 Next
 #End If
 
-                PutHTML(LogWriter, "<table>")
-                For Each Record As LogItem In Log
-                    PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(Record.Side), Record.Item.Path}, LogWriter)
-                Next
-                PutHTML(LogWriter, "</table>")
+                If Log.Count > 0 Then
+                    PutHTML(LogWriter, "<table>")
+                    For Each Record As LogItem In Log
+                        PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(Record.Side), Record.Item.Path}, LogWriter)
+                    Next
+                    PutHTML(LogWriter, "</table>")
+                End If
 
-                PutHTML(LogWriter, "<table>")
-                For Each Err As ErrorItem In Errors
-                    PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message, Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
-                Next
-                PutHTML(LogWriter, "</table>")
+                If Errors.Count > 0 Then
+                    PutHTML(LogWriter, "<table>")
+                    For Each Err As ErrorItem In Errors
+                        PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message, Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
+                    Next
+                    PutHTML(LogWriter, "</table>")
+                End If
 
                 CloseHTMLHeaders(LogWriter)
 

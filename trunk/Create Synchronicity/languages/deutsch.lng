@@ -1,4 +1,4 @@
-﻿# Create Synchronicity German Language file
+# Create Synchronicity German Language file
 # Translation by Florian Haag, with a few additions by Jeanne Tourette
 # Tag outdated strings with "->". For example, write "->ID=Translation" if the string ID needs to be retranslated from English.
 #
@@ -159,7 +159,8 @@ MD5=Sicherung mit MD5-Prüfsumme überprüfen
 GROUP=Gruppe
 COMPARE_SIZE=Dateigröße vergleichen
 MORE=Mehr (für erfahrene Benutzer)
-NO_PROFILES=Es sind keine Profile vorhanden. Bitte "{0}" klicken, um eins zu erzeugen.
-->WAKEUP_FAILED=
-->POSTSYNC_FAILED=
-->LATEST=
+NO_PROFILES=Es sind keine Profile vorhanden. Bitte "{0}" klicken, um eines zu erzeugen.
+POST_SYNC=Aktion nach Synchronisierung wird gestartet: "{0}"
+WAKEUP_FAILED=Kann das Skript, das nach dem Beenden des Schlafmodus gestartet werden soll, nicht ausführen
+POSTSYNC_FAILED=Kann das Skript, das nach der Synchronisierung gestartet werden soll, nicht ausführen
+LATEST=Zum neuesten springen

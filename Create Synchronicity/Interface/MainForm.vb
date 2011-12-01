@@ -82,6 +82,14 @@ Friend Class MainForm
                         ProgramConfig.SetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, Not EMEnabled)
                         Interaction.ShowMsg("Expert mode " & If(EMEnabled, "disabled", "enabled") & "!")
                     End If
+                Case Keys.H
+                    Dim History As New Text.StringBuilder()
+                    For Each Profile As ProfileHandler In Profiles.Values
+                        Dim LastRun As Date = Profile.GetLastRun()
+                        History.AppendFormat("{0}: {1}{2}", Profile.ProfileName, If(LastRun = ScheduleInfo.DATE_NEVER, "-", LastRun.ToShortDateString), Environment.NewLine)
+                    Next
+                    Interaction.ShowMsg(History.ToString, "History") 'FIXME
+
                 Case Keys.L
                     SetView(1)
                 Case Keys.Add

@@ -4,7 +4,7 @@ chinese (simplified):8
 chinese (traditional):3
 czech:12
 danish:9
-deutsch:3
+deutsch:0
 dutch:3
 english:0
 estonian:12

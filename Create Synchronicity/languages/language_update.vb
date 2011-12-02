@@ -6,90 +6,104 @@
 'Created by:	Clément Pit--Claudel.
 'Web site:		http://synchronicity.sourceforge.net.
 
+Option Strict On
+
 Imports System
-Imports System.Windows.Forms
 Imports System.Collections.Generic
 
-Imports Microsoft.VisualBasic
-
 Module Update_Languages
+    Function ReadList(Prompt As String) As List(Of String)
+        Console.WriteLine(Prompt)
+        Return New List(Of String)(Console.ReadLine().Split(" ".ToCharArray, StringSplitOptions.RemoveEmptyEntries))
+    End Function
+
+    Structure Translation
+        Dim Text As String
+        Dim Updated As Boolean
+    End Structure
+
+    Const COMMENT As String = "#"
+    Const UPDATE As String = "->"
+
     Sub Main()
         Dim Languages As New List(Of String)
 
-        Languages.AddRange(IO.Directory.GetFiles(Application.StartupPath, "*.lng"))
+        Languages.AddRange(IO.Directory.GetFiles(Environment.CurrentDirectory, "*.lng"))
 
-        Dim Input As String
-        Console.WriteLine("Please input a space-separated list of all updated strings")
-        Input = Console.ReadLine() : Dim Updated As New List(Of String)(Input.Split(" "c))
+        Dim Updated As List(Of String) = ReadList("Please input a space-separated list of all updated strings")
+        Dim Created As List(Of String) = ReadList("Please input a space-separated list of all added strings")
+        Dim Deleted As List(Of String) = ReadList("Please input a space-separated list of all removed strings")
 
-        Console.WriteLine("Please input a space-separated list of all added strings")
-        Input = Console.ReadLine() : Dim NewVars As New List(Of String)(Input.Split(" "c))
+        Using TODOList As New IO.StreamWriter(IO.Path.Combine(Environment.CurrentDirectory, "TODO.txt"))
+            For Each FilePath As String In Languages
+                Console.WriteLine("Updating " & IO.Path.GetFileNameWithoutExtension(FilePath))
+                Try
+                    Dim Todo As Integer = 0
+                    Dim Comments As New List(Of String)
+                    Dim Translations As New Dictionary(Of String, Translation)
 
-        Console.WriteLine("Please input a space-separated list of all removed strings")
-        Input = Console.ReadLine() : Dim DelVars As New List(Of String)(Input.Split(" "c))
+                    Using Reader As New IO.StreamReader(FilePath, System.Text.Encoding.UTF8)
+                        While Not Reader.EndOfStream
+                            Dim Line As String = Reader.ReadLine
 
-        Updated.Remove("")
-        NewVars.Remove("")
-        DelVars.Remove("")
-
-        Dim TODOList As New IO.StreamWriter(Application.StartupPath & "\" & "TODO.txt")
-
-        For Each File As String In Languages
-            Try
-                Dim Reader As New IO.StreamReader(File, System.Text.Encoding.UTF8)
-                Dim Output As New List(Of String)
-                Dim FName = IO.Path.GetFileNameWithoutExtension(File)
-
-                Dim TODO As Integer = 0
-
-                While Reader.Peek() > 0
-                    Dim Line As String = Reader.ReadLine
-                    If Line.StartsWith("#") Then
-                        Output.Add(Line)
-                    Else
-                        Dim Contents() As String = Line.Split("=")
-
-                        Try
-                            Dim Key As String = If(Contents(0).StartsWith("->"), Contents(0).Remove(0, "->".Length), Contents(0))
-
-                            If Not DelVars.Contains(Key) Then
-                                If Key <> Contents(0) Or Updated.Contains(Key) Then
-                                    TODO += 1 : Output.Add("->" & Key & "=" & Contents(1))
-                                    Console.WriteLine("    " & FName & ": " & Key & " should be updated")
-                                Else
-                                    Output.Add(Line)
-                                End If
+                            If Line.StartsWith(COMMENT) Then
+                                Comments.Add(Line)
                             Else
-                                Console.WriteLine("    " & FName & ": " & Key & " has been removed")
+                                Try
+                                    Dim Tab As String() = Line.Split("=".ToCharArray, 2)
+                                    Dim Key As String = Tab(0)
+                                    Dim Value As New Translation With {.Text = Tab(1)}
+
+                                    If Key.StartsWith(UPDATE) Then
+                                        Value.Updated = True
+                                        Key = Key.Substring(UPDATE.Length)
+                                    End If
+
+                                    If Updated.Contains(Key) Then Value.Updated = True
+
+                                    If Deleted.Contains(Key) Then
+                                        Console.WriteLine("Key removed: " & Key)
+                                        Continue While
+                                    End If
+
+									If Value.Updated Then Todo += 1
+									Translations.Add(Key, Value)
+                                Catch Ex As Exception
+                                    Console.WriteLine(Ex.ToString)
+                                End Try
                             End If
-                        Catch ex As Exception
-                Console.WriteLine("Exception in " & FName & " at line " & Line)
-            End Try
-                    End If
-                End While
-                Reader.Close()
+                        End While
+                    End Using
 
-                For Each NewString As String In NewVars
-                    Output.Add("->" & NewString & "=")
-                Next
-                TODO += NewVars.Count
+                    For Each NewKey As String In Created
+                        If Not Translations.ContainsKey(NewKey) Then
+                            Translations.Add(NewKey, New Translation With {.Updated = True, .Text = ""})
+                            Todo += 1
+                        End If
+                    Next
 
-                Dim LanguageName As String = File.Remove(File.LastIndexOf(".")).Substring(File.LastIndexOf("\") + 1)
-                TODOList.WriteLine(LanguageName & ":" & TODO)
+                    Using Writer As New IO.StreamWriter(FilePath, False, System.Text.Encoding.UTF8)
+                        For Each CommentString As String In Comments
+                            Writer.WriteLine(CommentString)
+                        Next
 
-                Dim Writer As New IO.StreamWriter(File, False, System.Text.Encoding.UTF8)
-                For Each Line As String In Output
-                    Writer.WriteLine(Line)
-                Next
-                Writer.Close()
+                        For Each Pair As KeyValuePair(Of String, Translation) In Translations
+                            Writer.WriteLine("{0}{1}={2}", If(Pair.Value.Updated, UPDATE, ""), Pair.Key, Pair.Value.Text)
+                        Next
+                    End Using
 
-                Console.WriteLine("Updated " & File)
-            Catch Ex As Exception
-                Console.WriteLine("Exception " & Ex.Message & Microsoft.VisualBasic.vbNewLine & Ex.StackTrace)
-            End Try
-        Next
+                    Dim LanguageName As String = IO.Path.GetFileNameWithoutExtension(FilePath)
+                    TODOList.WriteLine(LanguageName & ":" & Todo)
 
-        TODOList.Close()
+                    Console.WriteLine("Updated " & FilePath)
+
+                Catch Ex As Exception
+                    Console.WriteLine(Ex.ToString())
+                End Try
+            Next
+        End Using
+
+        Console.WriteLine("Done!")
         Console.ReadLine()
     End Sub
 End Module

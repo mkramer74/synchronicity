@@ -78,15 +78,15 @@ Friend Class MainForm
                     Interaction.StartProcess(ProgramConfig.ConfigRootDir)
                 Case Keys.E
                     If e.Alt Then
-                        Dim EMEnabled As Boolean = ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False)
-                        ProgramConfig.SetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, Not EMEnabled)
-                        Interaction.ShowMsg("Expert mode " & If(EMEnabled, "disabled", "enabled") & "!")
+                        Dim NewState As Boolean = Not ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False)
+                        ProgramConfig.SetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, NewState)
+                        Interaction.ShowMsg("Expert mode " & If(NewState, "enabled", "disabled") & "!")
                     End If
                 Case Keys.H
                     Dim History As New Text.StringBuilder()
                     For Each Profile As ProfileHandler In Profiles.Values
                         Dim LastRun As Date = Profile.GetLastRun()
-                        History.AppendFormat("{0}: {1}{2}", Profile.ProfileName, If(LastRun = ScheduleInfo.DATE_NEVER, "-", LastRun.ToShortDateString), Environment.NewLine)
+                        History.AppendFormat("""{0}""{2}	{1}{2}", Profile.ProfileName, Profile.FormatLastRun(), Environment.NewLine)
                     Next
                     Interaction.ShowMsg(History.ToString, "History") 'FIXME
 

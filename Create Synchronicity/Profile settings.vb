@@ -352,6 +352,11 @@ NotInheritable Class ProfileHandler
         SetSetting(Of Date)(ProfileSetting.LastRun, Date.Now)
         SaveConfigFile()
     End Sub
+
+    Public Function FormatLastRun() As String
+        Dim LastRun As Date = GetLastRun()
+        Return If(LastRun = ScheduleInfo.DATE_NEVER, "-", String.Format(Translation.Translate("\LAST_SYNC"), (Date.Now - LastRun).Days, (Date.Now - LastRun).Hours, LastRun.ToString))
+    End Function
 End Class
 
 Structure SchedulerEntry

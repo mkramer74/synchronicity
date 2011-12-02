@@ -113,8 +113,7 @@ Friend Class SynchronizeForm
 
             Interaction.ToggleStatusIcon(True)
             If Catchup Then
-                Dim LastRun As Date = Handler.GetLastRun()
-                Interaction.ShowBalloonTip(String.Format(Translation.Translate("\CATCHING_UP"), Handler.ProfileName, (Date.Now - LastRun).Days, (Date.Now - LastRun).Hours, LastRun.ToString))
+                Interaction.ShowBalloonTip(String.Format(Translation.Translate("\CATCHING_UP"), Handler.ProfileName, Handler.FormatLastRun()))
             Else
                 Interaction.ShowBalloonTip(String.Format(Translation.Translate("\RUNNING_TASK"), Handler.ProfileName))
             End If

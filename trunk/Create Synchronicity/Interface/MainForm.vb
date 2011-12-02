@@ -202,7 +202,7 @@ Friend Class MainForm
     End Sub
 
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
-        If Interaction.ShowMsg(String.Format(Translation.Translate("\DELETE_PROFILE"), CurrentProfile), Translation.Translate("\CONFIRM_DELETION"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+        If Interaction.ShowMsg(Translation.TranslateFormat("\DELETE_PROFILE", CurrentProfile), Translation.Translate("\CONFIRM_DELETION"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
             Profiles(CurrentProfile).DeleteConfigFile()
             Profiles(CurrentProfile) = Nothing
             Actions.Items.RemoveAt(Actions.SelectedIndices(0))
@@ -274,15 +274,15 @@ Friend Class MainForm
         Actions.Items.Add(CreateProfileItem).Group = Actions.Groups(0)
 
         ProfilesGroups.Clear()
-        For Each ProfilePair As KeyValuePair(Of String, ProfileHandler) In Profiles
-            Dim ProfileName As String = ProfilePair.Key
-            Dim NewItem As ListViewItem = Actions.Items.Add(ProfileName)
+        For Each Profile As ProfileHandler In Profiles.Values
+            Dim NewItem As ListViewItem = Actions.Items.Add(Profile.ProfileName)
 
             NewItem.Group = Actions.Groups(1)
-            NewItem.ImageIndex = Profiles(ProfileName).GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) + If(ProfilePair.Value.Scheduler.Frequency = ScheduleInfo.Freq.Never, 0, 4)
-            NewItem.SubItems.Add(GetMethodName(ProfileName)).ForeColor = Drawing.Color.DarkGray
+            NewItem.ImageIndex = Profile.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) + If(Profile.Scheduler.Frequency = ScheduleInfo.Freq.Never, 0, 4)
+            NewItem.SubItems.Add(Profile.FormatMethod()).ForeColor = Drawing.Color.DarkGray
+            NewItem.SubItems.Add(Profile.FormatLastRun())
 
-            Dim GroupName As String = Profiles(ProfileName).GetSetting(Of String)(ProfileSetting.Group, "")
+            Dim GroupName As String = Profile.GetSetting(Of String)(ProfileSetting.Group, "")
             If GroupName <> "" Then
                 If Not ProfilesGroups.Contains(GroupName) Then
                     ProfilesGroups.Add(GroupName)
@@ -310,7 +310,7 @@ Friend Class MainForm
 
         If Clear Then Exit Sub
 
-        Method.Text = GetMethodName(Name)
+        Method.Text = Profiles(Name).FormatMethod()
         Source.Text = Profiles(Name).GetSetting(Of String)(ProfileSetting.Source)
         Destination.Text = Profiles(Name).GetSetting(Of String)(ProfileSetting.Destination)
 
@@ -346,17 +346,6 @@ Friend Class MainForm
                 FileTypes.Text = "-" & Profiles(Name).GetSetting(Of String)(ProfileSetting.ExcludedTypes, "")
         End Select
     End Sub
-
-    Private Shared Function GetMethodName(ByVal Name As String) As String
-        Select Case Profiles(Name).GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod)  'Important: (Of Integer)
-            Case ProfileSetting.SyncMethod.LRMirror
-                Return Translation.Translate("\LR_MIRROR")
-            Case ProfileSetting.SyncMethod.BiIncremental
-                Return Translation.Translate("\TWOWAYS_INCREMENTAL")
-            Case Else
-                Return Translation.Translate("\LR_INCREMENTAL")
-        End Select
-    End Function
 
     Private Function CheckValidity() As Boolean
         If Not Profiles(CurrentProfile).ValidateConfigFile(True, True) Then

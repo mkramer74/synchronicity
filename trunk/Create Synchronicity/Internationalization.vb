@@ -54,6 +54,17 @@ Friend NotInheritable Class LanguageHandler
         Return If(Strings.ContainsKey(Code), Strings(Code), If(DefaultValue = "", Code, DefaultValue))
     End Function
 
+    'ParamArray requires building objects array, and adds binsize.
+    Public Function TranslateFormat(ByVal Code As String, ByVal Arg0 As Object) As String
+        Return String.Format(Translate(Code), Arg0)
+    End Function
+    Public Function TranslateFormat(ByVal Code As String, ByVal Arg0 As Object, ByVal Arg1 As Object) As String
+        Return String.Format(Translate(Code), Arg0, Arg1)
+    End Function
+    Public Function TranslateFormat(ByVal Code As String, ByVal Arg0 As Object, ByVal Arg1 As Object, ByVal Arg2 As Object) As String
+        Return String.Format(Translate(Code), Arg0, Arg1, Arg2)
+    End Function
+
     Public Sub TranslateControl(ByVal Ctrl As Control)
         If Ctrl Is Nothing Then Exit Sub
 

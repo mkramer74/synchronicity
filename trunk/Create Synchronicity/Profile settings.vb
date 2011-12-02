@@ -95,7 +95,7 @@ NotInheritable Class ProfileHandler
                     Dim Param() As String = ConfigLine.Split(":".ToCharArray, 2)
                     If Not (ConfigLine = "" Or Configuration.ContainsKey(Param(0))) Then Configuration.Add(Param(0), Param(1))
                 Catch ex As IndexOutOfRangeException
-                    Interaction.ShowMsg(String.Format(Translation.Translate("\INVALID_SETTING"), ConfigLine))
+                    Interaction.ShowMsg(Translation.TranslateFormat("\INVALID_SETTING", ConfigLine))
                 Catch ex As Exception 'Something worse than finding a simple misformatted line has occured
                     Interaction.ShowMsg(Translation.Translate("\INVALID_CONFIG"))
                     Configuration.Clear() 'FIXME: Why?
@@ -158,7 +158,7 @@ NotInheritable Class ProfileHandler
             Try
                 IO.Directory.CreateDirectory(Dest)
             Catch Ex As Exception
-                InvalidListing.Add(String.Format(Translation.Translate("\FOLDER_FAILED"), Dest, Ex.Message))
+                InvalidListing.Add(Translation.TranslateFormat("\FOLDER_FAILED", Dest, Ex.Message))
             End Try
         End If
 
@@ -170,7 +170,7 @@ NotInheritable Class ProfileHandler
         For Each Key As String In RequiredSettings
             If Not Configuration.ContainsKey(Key) Then
                 IsValid = False
-                InvalidListing.Add(String.Format(Translation.Translate("\SETTING_UNSET"), Key))
+                InvalidListing.Add(Translation.TranslateFormat("\SETTING_UNSET", Key))
             End If
         Next
 
@@ -196,11 +196,11 @@ NotInheritable Class ProfileHandler
         Else
             If WarnUnrootedPaths Then
                 If Not IO.Path.IsPathRooted(TranslatePath(GetSetting(Of String)(ProfileSetting.Source))) Then
-                    If Interaction.ShowMsg(String.Format(Translation.Translate("\LEFT_UNROOTED"), IO.Path.GetFullPath(GetSetting(Of String)(ProfileSetting.Source))), , MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Return False
+                    If Interaction.ShowMsg(Translation.TranslateFormat("\LEFT_UNROOTED", IO.Path.GetFullPath(GetSetting(Of String)(ProfileSetting.Source))), , MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Return False
                 End If
 
                 If Not IO.Path.IsPathRooted(TranslatePath(GetSetting(Of String)(ProfileSetting.Destination))) Then
-                    If Interaction.ShowMsg(String.Format(Translation.Translate("\RIGHT_UNROOTED"), IO.Path.GetFullPath(GetSetting(Of String)(ProfileSetting.Destination))), , MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Return False
+                    If Interaction.ShowMsg(Translation.TranslateFormat("\RIGHT_UNROOTED", IO.Path.GetFullPath(GetSetting(Of String)(ProfileSetting.Destination))), , MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Return False
                 End If
             End If
 
@@ -355,7 +355,18 @@ NotInheritable Class ProfileHandler
 
     Public Function FormatLastRun() As String
         Dim LastRun As Date = GetLastRun()
-        Return If(LastRun = ScheduleInfo.DATE_NEVER, "-", String.Format(Translation.Translate("\LAST_SYNC"), (Date.Now - LastRun).Days, (Date.Now - LastRun).Hours, LastRun.ToString))
+        Return If(LastRun = ScheduleInfo.DATE_NEVER, "-", Translation.TranslateFormat("\LAST_SYNC", (Date.Now - LastRun).Days, (Date.Now - LastRun).Hours, LastRun.ToString))
+    End Function
+
+    Public Function FormatMethod() As String
+        Select Case GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod)  'Important: (Of Integer)
+            Case ProfileSetting.SyncMethod.LRMirror
+                Return Translation.Translate("\LR_MIRROR")
+            Case ProfileSetting.SyncMethod.BiIncremental
+                Return Translation.Translate("\TWOWAYS_INCREMENTAL")
+            Case Else
+                Return Translation.Translate("\LR_INCREMENTAL")
+        End Select
     End Function
 End Class
 

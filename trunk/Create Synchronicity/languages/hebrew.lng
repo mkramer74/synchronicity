@@ -137,7 +137,6 @@ SCH_LABEL=תזמון:
 SCH_WAITING=ריצה הבאה: "{0}", {1}
 SYNCED_W_ERRORS=  ."{0}" סיימה בהצלחה סינכרון Create Synchronicity\n אולם קרו מספר שגיאות: אנא בדוק את קובץ היומן למידע נוסף.
 SYNCED_OK=.סיימה סינכרון בהצלחה Create Synchronicity 
- "{0}".
 FOLDER_AND_SUBFOLDERS=סנכרן קבצים ותיקיות
 FILES_ONLY=סנכרן קבצים בלבד
 SUBFOLDERS_ONLY=סנכרן תיקיות בלבד
@@ -165,3 +164,4 @@ RELOAD_TREES=טען עץ תיקיות
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
 ->LATEST=
+->POST_SYNC=

@@ -164,3 +164,4 @@ CATCHUP_MISSED_BACKUPS_TAG=Näitab, mida tehakse siis, kui arvuti automaatvarund
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
 ->LATEST=
+->POST_SYNC=

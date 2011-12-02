@@ -1,25 +1,25 @@
-amharic:1
-bulgarian:1
-chinese (simplified):1
-chinese (traditional):1
-czech:1
-danish:1
+amharic:4
+bulgarian:10
+chinese (simplified):9
+chinese (traditional):4
+czech:14
+danish:10
 deutsch:0
-dutch:1
+dutch:4
 english:0
-estonian:1
-francais:1
-greek:1
-hebrew:1
-hungarian:1
-indonesian:1
-italian:1
-japanese:1
-korean:1
-polish:1
-portuguese:1
-russian:1
-slovene:1
-spanish:1
-swedish:1
-turkish:1
+estonian:14
+francais:0
+greek:4
+hebrew:30
+hungarian:4
+indonesian:4
+italian:5
+japanese:4
+korean:9
+polish:5
+portuguese:5
+russian:14
+slovene:4
+spanish:4
+swedish:4
+turkish:4

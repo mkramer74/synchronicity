@@ -57,7 +57,7 @@ Friend Class SettingsForm
         MoreLabel.Visible = ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False)
 
         If Not Handler.IsNewProfile Then UpdateSettings(True)
-        Me.Text = String.Format(Translation.Translate("\PROFILE_SETTINGS"), Handler.ProfileName)
+        Me.Text = Translation.TranslateFormat("\PROFILE_SETTINGS", Handler.ProfileName)
     End Sub
 
     Private Sub SettingsForm_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown

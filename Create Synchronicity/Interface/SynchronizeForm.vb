@@ -113,9 +113,9 @@ Friend Class SynchronizeForm
 
             Interaction.ToggleStatusIcon(True)
             If Catchup Then
-                Interaction.ShowBalloonTip(String.Format(Translation.Translate("\CATCHING_UP"), Handler.ProfileName, Handler.FormatLastRun()))
+                Interaction.ShowBalloonTip(Translation.TranslateFormat("\CATCHING_UP", Handler.ProfileName, Handler.FormatLastRun()))
             Else
-                Interaction.ShowBalloonTip(String.Format(Translation.Translate("\RUNNING_TASK"), Handler.ProfileName))
+                Interaction.ShowBalloonTip(Translation.TranslateFormat("\RUNNING_TASK", Handler.ProfileName))
             End If
         Else
             If Not CalledShowModal Then Me.Visible = True 'Me.Show?
@@ -305,11 +305,11 @@ Friend Class SynchronizeForm
 
         Select Case Id
             Case StatusData.SyncStep.Scan
-                StatusText = String.Format(Translation.Translate("\STEP_1_STATUS"), StatusText)
+                StatusText = Translation.TranslateFormat("\STEP_1_STATUS", StatusText)
             Case StatusData.SyncStep.SyncLR
-                StatusText = String.Format(Translation.Translate("\STEP_2_STATUS"), Step2ProgressBar.Value, Step2ProgressBar.Maximum, StatusText)
+                StatusText = Translation.TranslateFormat("\STEP_2_STATUS", Step2ProgressBar.Value, Step2ProgressBar.Maximum, StatusText)
             Case StatusData.SyncStep.SyncRL
-                StatusText = String.Format(Translation.Translate("\STEP_3_STATUS"), Step3ProgressBar.Value, Step3ProgressBar.Maximum, StatusText)
+                StatusText = Translation.TranslateFormat("\STEP_3_STATUS", Step3ProgressBar.Value, Step3ProgressBar.Maximum, StatusText)
         End Select
 
         SyncLock Lock
@@ -391,12 +391,12 @@ Friend Class SynchronizeForm
                             System.Threading.Thread.Sleep(5000) 'Wait a little before failing
                             Interaction.ShowBalloonTip(Status.FailureMsg)
                         Else
-                            Interaction.ShowBalloonTip(String.Format(Translation.Translate("\SYNCED_W_ERRORS"), Handler.ProfileName), ProgramConfig.GetLogPath(Handler.ProfileName))
+                            Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), ProgramConfig.GetLogPath(Handler.ProfileName))
                         End If
                     End If
                 Else
                     'LATER: Add ballon to say the sync was cancelled.
-                    If Quiet And Not Status.Cancel Then Interaction.ShowBalloonTip(String.Format(Translation.Translate("\SYNCED_OK"), Handler.ProfileName), ProgramConfig.GetLogPath(Handler.ProfileName))
+                    If Quiet And Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), ProgramConfig.GetLogPath(Handler.ProfileName))
                 End If
 
                 ' Set last run only if the profile hasn't failed, and has synced completely.

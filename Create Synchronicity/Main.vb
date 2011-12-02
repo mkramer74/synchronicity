@@ -316,7 +316,7 @@ Friend NotInheritable Class MessageLoop
             Exit Sub
         Else
             Dim NextInQueue As SchedulerEntry = ScheduledProfiles(0)
-            Dim Status As String = String.Format(Translation.Translate("\SCH_WAITING"), NextInQueue.Name, If(NextInQueue.NextRun = ScheduleInfo.DATE_CATCHUP, "", NextInQueue.NextRun.ToString))
+            Dim Status As String = Translation.TranslateFormat("\SCH_WAITING", NextInQueue.Name, If(NextInQueue.NextRun = ScheduleInfo.DATE_CATCHUP, "...", NextInQueue.NextRun.ToString))
             Interaction.StatusIcon.Text = If(Status.Length >= 64, Status.Substring(0, 63), Status)
 
             If Date.Compare(NextInQueue.NextRun, Date.Now) <= 0 Then

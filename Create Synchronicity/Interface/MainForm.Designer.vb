@@ -36,7 +36,7 @@ Partial Class MainForm
         Dim ListViewItem1 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem(New String() {"\NEW_PROFILE_LABEL", "\NEW_PROFILE"}, 3)
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.Actions = New System.Windows.Forms.ListView()
-        Me.Actions_NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.MethodsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.SyncIcons = New System.Windows.Forms.ImageList(Me.components)
         Me.InfoPanel = New System.Windows.Forms.Panel()
@@ -76,6 +76,7 @@ Partial Class MainForm
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Donate = New System.Windows.Forms.PictureBox()
         Me.TipsLabel = New System.Windows.Forms.Label()
+        Me.LastRunColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.InfoPanel.SuspendLayout()
         Me.InfoLayout.SuspendLayout()
         Me.ActionsMenu.SuspendLayout()
@@ -85,7 +86,7 @@ Partial Class MainForm
         '
         'Actions
         '
-        Me.Actions.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.Actions_NameColumn, Me.MethodsColumn})
+        Me.Actions.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.NameColumn, Me.MethodsColumn, Me.LastRunColumn})
         Me.Actions.Dock = System.Windows.Forms.DockStyle.Fill
         ListViewGroup1.Header = "\ACTIONS"
         ListViewGroup1.Name = "Actions"
@@ -105,9 +106,9 @@ Partial Class MainForm
         Me.Actions.UseCompatibleStateImageBehavior = False
         Me.Actions.View = System.Windows.Forms.View.Tile
         '
-        'Actions_NameColumn
+        'NameColumn
         '
-        Me.Actions_NameColumn.Text = "\NAME"
+        Me.NameColumn.Text = "\NAME"
         '
         'MethodsColumn
         '
@@ -478,6 +479,10 @@ Partial Class MainForm
         Me.TipsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.TipsLabel.Visible = False
         '
+        'LastRunColumn
+        '
+        Me.LastRunColumn.Text = "\HISTORY"
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 13.0!)
@@ -523,7 +528,7 @@ Partial Class MainForm
     Friend WithEvents ChangeSettingsMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ViewLogMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SyncIcons As System.Windows.Forms.ImageList
-    Friend WithEvents Actions_NameColumn As System.Windows.Forms.ColumnHeader
+    Friend WithEvents NameColumn As System.Windows.Forms.ColumnHeader
     Friend WithEvents MethodsColumn As System.Windows.Forms.ColumnHeader
     Friend WithEvents ActionsMenuToolStripSeparator As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents DeleteToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -543,4 +548,5 @@ Partial Class MainForm
     Friend WithEvents HeaderSeparator As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents StatusIconMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents TipsLabel As System.Windows.Forms.Label
+    Friend WithEvents LastRunColumn As System.Windows.Forms.ColumnHeader
 End Class

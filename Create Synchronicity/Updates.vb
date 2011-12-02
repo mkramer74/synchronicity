@@ -31,7 +31,7 @@ Friend Module Updates
             End Try
 
             If ((New Version(LatestVersion)) > (New Version(Application.ProductVersion))) Then
-                If Interaction.ShowMsg(String.Format(Translation.Translate("\UPDATE_MSG"), Application.ProductVersion, LatestVersion), Translation.Translate("\UPDATE_TITLE"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                If Interaction.ShowMsg(Translation.TranslateFormat("\UPDATE_MSG", Application.ProductVersion, LatestVersion), Translation.Translate("\UPDATE_TITLE"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
                     Interaction.StartProcess(Branding.UpdatesTarget)
                     If ProgramConfig.CanGoOn Then MainFormInstance.Invoke(New Action(AddressOf Application.Exit))
                 End If

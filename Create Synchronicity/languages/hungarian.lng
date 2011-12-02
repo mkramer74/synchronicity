@@ -165,3 +165,4 @@ NO_PROFILES=Nincs profilod. Klikkelj ide "{0}" hogy készíts egyet.
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
 ->LATEST=
+->POST_SYNC=

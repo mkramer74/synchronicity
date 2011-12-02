@@ -164,3 +164,4 @@ CREATE_DEST=Динамично създаване на папка (в момен
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
 ->LATEST=
+->POST_SYNC=

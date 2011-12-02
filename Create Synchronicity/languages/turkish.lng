@@ -164,3 +164,4 @@ NO_PROFILES=Profiliniz yok. "{0}"'ı tıklayarak yeni bir profil oluşturun.
 ->WAKEUP_FAILED=
 ->POSTSYNC_FAILED=
 ->LATEST=
+->POST_SYNC=

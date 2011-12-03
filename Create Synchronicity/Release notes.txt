@@ -38,7 +38,7 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
-Dec. 02, 2011 - UPD: Add "last run" to detailed view (Ctrl+L)
+Dec. 02, 2011 - UPD: Detailed view now contains a history of last backups (Ctrl+L)
 Dec. 02, 2011 - NEW: Press Ctrl+H to display a history of your profiles.
 Nov. 27, 2011 - UPD: !Prettier logs : alternating rows, cleaner layout, direct shortcut to latest entry.
 Nov. 07, 2011 - NEW: Hidden setting: Preview-only profiles (#3089839).

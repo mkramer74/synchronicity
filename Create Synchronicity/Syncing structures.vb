@@ -126,7 +126,7 @@ Friend NotInheritable Class FileNamePattern
     End Function
 
     Private Shared Function Unbox(ByVal Str As String) As String
-        Return Str.Substring(1, Str.Length - 2).ToLower(Interaction.InvariantCulture) ' ToLower: Careful on linux ; No need to check length, MatchesPattern has done so before.
+        Return Str.Substring(1, Str.Length - 2).ToLower(Interaction.InvariantCulture) ' ToLower: Careful on linux ; No need to check that length > 2 here: IsBoxed already has.
     End Function
 
     Shared Function GetPattern(ByVal Str As String, Optional ByVal IsFolder As Boolean = False) As FileNamePattern

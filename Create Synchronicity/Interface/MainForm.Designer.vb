@@ -38,6 +38,7 @@ Partial Class MainForm
         Me.Actions = New System.Windows.Forms.ListView()
         Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.MethodsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.LastRunColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.SyncIcons = New System.Windows.Forms.ImageList(Me.components)
         Me.InfoPanel = New System.Windows.Forms.Panel()
         Me.InfoLayout = New System.Windows.Forms.TableLayoutPanel()
@@ -76,7 +77,6 @@ Partial Class MainForm
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Donate = New System.Windows.Forms.PictureBox()
         Me.TipsLabel = New System.Windows.Forms.Label()
-        Me.LastRunColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.InfoPanel.SuspendLayout()
         Me.InfoLayout.SuspendLayout()
         Me.ActionsMenu.SuspendLayout()
@@ -93,6 +93,7 @@ Partial Class MainForm
         ListViewGroup2.Header = "\PROFILES"
         ListViewGroup2.Name = "Profiles"
         Me.Actions.Groups.AddRange(New System.Windows.Forms.ListViewGroup() {ListViewGroup1, ListViewGroup2})
+        Me.Actions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable
         ListViewItem1.Group = ListViewGroup1
         ListViewItem1.StateImageIndex = 0
         Me.Actions.Items.AddRange(New System.Windows.Forms.ListViewItem() {ListViewItem1})
@@ -113,6 +114,10 @@ Partial Class MainForm
         'MethodsColumn
         '
         Me.MethodsColumn.Text = "\METHOD"
+        '
+        'LastRunColumn
+        '
+        Me.LastRunColumn.Text = ""
         '
         'SyncIcons
         '

@@ -27,7 +27,7 @@ Friend Class SynchronizeForm
     Private Preview As Boolean 'Should show a preview.
 
     Private Status As StatusData
-    Private ColumnSorter As ListViewColumnSorter
+    Private ColumnSorter As New ListViewColumnSorter(3)
 
     Private FullSyncThread As Threading.Thread
     Private ScanThread As Threading.Thread
@@ -67,7 +67,6 @@ Friend Class SynchronizeForm
         LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
 
-        ColumnSorter = New ListViewColumnSorter(3)
         PreviewList.ListViewItemSorter = ColumnSorter
 
         FileNamePattern.LoadPatternsList(IncludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.IncludedTypes, ""))
@@ -198,13 +197,7 @@ Friend Class SynchronizeForm
     End Sub
 
     Private Sub PreviewList_ColumnClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ColumnClickEventArgs) Handles PreviewList.ColumnClick
-        If e.Column = ColumnSorter.SortColumn Then
-            ColumnSorter.Order = If(ColumnSorter.Order = SortOrder.Ascending, SortOrder.Descending, SortOrder.Ascending)
-        Else
-            ColumnSorter.SortColumn = e.Column
-            ColumnSorter.Order = SortOrder.Ascending
-        End If
-
+        ColumnSorter.RegisterClick(e)
         PreviewList.Sort()
     End Sub
 

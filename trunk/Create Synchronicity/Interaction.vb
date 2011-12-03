@@ -117,4 +117,13 @@ Friend NotInheritable Class ListViewColumnSorter
             Return If(Order = SortOrder.Ascending, 1, -1) * String.Compare(xl.SubItems(SortColumn).Text, yl.SubItems(SortColumn).Text, True)
         End If
     End Function
+
+    Public Sub RegisterClick(ByVal e As ColumnClickEventArgs)
+        If e.Column = SortColumn Then
+            Order = If(Order = SortOrder.Ascending, SortOrder.Descending, SortOrder.Ascending)
+        Else
+            SortColumn = e.Column
+            Order = SortOrder.Ascending
+        End If
+    End Sub
 End Class

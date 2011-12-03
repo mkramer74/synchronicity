@@ -479,10 +479,6 @@ Partial Class MainForm
         Me.TipsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.TipsLabel.Visible = False
         '
-        'LastRunColumn
-        '
-        Me.LastRunColumn.Text = "\HISTORY"
-        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 13.0!)

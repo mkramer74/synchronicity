@@ -272,7 +272,7 @@ Friend Class MainForm
             NewItem.Group = Actions.Groups(1)
             NewItem.ImageIndex = Profile.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) + If(Profile.Scheduler.Frequency = ScheduleInfo.Freq.Never, 0, 4)
             NewItem.SubItems.Add(Profile.FormatMethod()).ForeColor = Drawing.Color.DarkGray
-            NewItem.SubItems.Add(Profile.FormatLastRun())
+            NewItem.SubItems.Add(Profile.FormatLastRun("D3"))
 
             Dim GroupName As String = Profile.GetSetting(Of String)(ProfileSetting.Group, "")
             If GroupName <> "" Then
@@ -319,7 +319,7 @@ Friend Class MainForm
         If Profiles(Name).Scheduler.Frequency = ScheduleInfo.Freq.Never Then
             Scheduling.Text = ""
         Else
-            Scheduling.Text &= ", " & Profiles(Name).Scheduler.Hour.ToString.PadLeft(2, "0"c) & Translation.Translate("\H_M_SEP") & Profiles(Name).Scheduler.Minute.ToString.PadLeft(2, "0"c)
+            Scheduling.Text &= ", " & Profiles(Name).Scheduler.Hour.ToString("D2") & Translation.Translate("\H_M_SEP") & Profiles(Name).Scheduler.Minute.ToString("D2")
         End If
 
         TimeOffset.Text = Profiles(Name).GetSetting(Of Integer)(ProfileSetting.TimeOffset).ToString

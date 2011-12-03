@@ -353,9 +353,9 @@ NotInheritable Class ProfileHandler
         SaveConfigFile()
     End Sub
 
-    Public Function FormatLastRun() As String
+    Public Function FormatLastRun(Optional ByVal Format As String = "") As String
         Dim LastRun As Date = GetLastRun()
-        Return If(LastRun = ScheduleInfo.DATE_NEVER, "-", Translation.TranslateFormat("\LAST_SYNC", (Date.Now - LastRun).Days, (Date.Now - LastRun).Hours, LastRun.ToString))
+        Return If(LastRun = ScheduleInfo.DATE_NEVER, "-", Translation.TranslateFormat("\LAST_SYNC", (Date.Now - LastRun).Days.ToString(Format), (Date.Now - LastRun).Hours.ToString(Format), LastRun.ToString))
     End Function
 
     Public Function FormatMethod() As String

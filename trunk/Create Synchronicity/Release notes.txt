@@ -38,8 +38,9 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Dec. 02, 2011 - UPD: Add "last run" to detailed view (Ctrl+L)
 Dec. 02, 2011 - NEW: Press Ctrl+H to display a history of your profiles.
-Nov. 27, 2011 - UPD: Prettier logs : alternating rows, cleaner layout, direct shortcut to latest entry.
+Nov. 27, 2011 - UPD: !Prettier logs : alternating rows, cleaner layout, direct shortcut to latest entry.
 Nov. 07, 2011 - NEW: Hidden setting: Preview-only profiles (#3089839).
 Nov. 04, 2011 - FIX: Subtle, non-critical corner-case bug: "Strict Mirror" sometimes remained on although syncing incrementally.
 Nov. 04, 2011 - UPD: Sync all profiles in a group from the command line.

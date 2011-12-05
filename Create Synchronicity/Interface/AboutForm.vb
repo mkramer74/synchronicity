@@ -30,7 +30,7 @@ Friend Class AboutForm
         SetLinkArea(VersionInfo)
 
         ProgramConfig.LoadProgramSettings()
-        LanguageHandler.FillLanguageListBox(LanguagesList)
+        LanguageHandler.FillLanguagesComboBox(LanguagesList)
         UpdatesOption.Checked = ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.AutoUpdates, False)
 
 #If CONFIG = "Linux" Then

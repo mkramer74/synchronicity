@@ -1,15 +1,15 @@
 amharic;አማርኛ;am
 bulgarian;Български;bg
-chinese (simplified);中文;zh
-chinese (traditional);中文;zh
+chinese (simplified);中文(简体);zh-CHS/zh-Hans
+chinese (traditional);中文(繁體);zh-CHT/zh-Hant
 czech;čeština;cs
 danish;dansk;da
-deutsch;german;de
+german;deutsch;de
 dutch;nederlands;nl
 english;english;en
 estonian;eesti;et
-francais;french;fr
-greek;Ελληνικά;el
+french;français;fr
+greek;eλληνικά;el
 hebrew;עִבְרִית;he
 hungarian;magyar;hu
 indonesian;bahasa indonesia;id
@@ -20,6 +20,6 @@ polish;polski;pl
 portuguese;português;pt
 russian;русский язык;ru
 spanish;español;es
-slovene;slovenščina;sl
+slovenian;slovenščina;sl
 swedish;svenska;sv
-turkish;Türkçe;tr
+turkish;türkçe;tr

@@ -9,7 +9,13 @@
 Friend NotInheritable Class LanguageHandler
     Private Shared Singleton As LanguageHandler
 
-    'Rename a few languages so as to use the Globalization namespace to retrieve localized names
+    Structure LangInfo
+        Dim CodeNames As List(Of String)
+        Dim NativeName As String
+    End Structure
+
+    'Renames : non-english file name -> english file name
+    'ReverseRenames : english file name -> non-english file name
     Private Shared Renames As New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase) From {{"francais", "french"}, {"slovene", "slovenian"}, {"deutsch", "german"}}
     Private Shared ReverseRenames As New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase) From {{"french", "francais"}, {"slovenian", "slovene"}, {"german", "deutsch"}}
 
@@ -119,44 +125,57 @@ Friend NotInheritable Class LanguageHandler
     End Sub
 
     Public Shared Sub FillLanguagesComboBox(ByVal LanguagesComboBox As ComboBox)
-        Dim Cultures As New Dictionary(Of String, Globalization.CultureInfo)(StringComparer.InvariantCultureIgnoreCase)
-        For Each Culture As Globalization.CultureInfo In Globalization.CultureInfo.GetCultures(Globalization.CultureTypes.AllCultures)
-            If Not Cultures.ContainsKey(Culture.EnglishName) Then Cultures.Add(Culture.EnglishName, Culture)
-        Next
+        Dim LanguagesInfo As New Dictionary(Of String, LangInfo)
 
-        Static AdditionalCultures As New Dictionary(Of String, String) From {{"amharic", "Amharic - አማርኛ (am)"}}
+        If IO.File.Exists(ProgramConfig.LocalNamesFile) Then
+            Using PropsReader As New IO.StreamReader(ProgramConfig.LocalNamesFile)
+                While Not PropsReader.EndOfStream
+                    Dim CurLanguage() As String = PropsReader.ReadLine.Split(";".ToCharArray)
 
-        Dim SystemLanguageIndex As Integer = -1 'Useful when populating the list in the first run dialog.
-        Dim ProgramLanguageIndex As Integer = -1 'Useful when populating the list in the About dialog.
-        Dim DefaultLanguageIndex As Integer = -1 'Useful if all else fails
+                    If CurLanguage.Length <> 3 Then Continue While
+                    LanguagesInfo.Add(CurLanguage(0), New LangInfo With {.NativeName = CurLanguage(1), .CodeNames = New List(Of String)(CurLanguage(2).ToLower.Split("/"c))})
+                End While
+            End Using
+        End If
+
+        ' Use strings to allow for some sorting.
+        Dim SystemLanguageItem As String = Nothing
+        Dim ProgramLanguageItem As String = Nothing
+        Dim DefaultLanguageItem As String = Nothing
+
+        Dim CurrentCulture As Globalization.CultureInfo = Globalization.CultureInfo.InstalledUICulture
         Dim CurProgramLanguage As String = TryRename(ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.Language, ""), Renames)
 
+        'Merge fr-CA, fr-FR, and so on to fr, and distinguish zh-Hans and zh-Hant.
+        If Not CurrentCulture.IsNeutralCulture Then CurrentCulture = CurrentCulture.Parent
+
         LanguagesComboBox.Items.Clear()
-
         For Each File As String In IO.Directory.GetFiles(ProgramConfig.LanguageRootDir, "*.lng")
-            Dim LanguageName As String = TryRename(IO.Path.GetFileNameWithoutExtension(File), Renames)
+            Dim EnglishName As String = TryRename(IO.Path.GetFileNameWithoutExtension(File), Renames)
+            Dim NewItemText As String = EnglishName
 
-            If String.Compare(LanguageName, CurProgramLanguage, True) = 0 Then ProgramLanguageIndex = LanguagesComboBox.Items.Count
-            If String.Compare(LanguageName, ProgramSetting.DefaultLanguage) = 0 Then DefaultLanguageIndex = LanguagesComboBox.Items.Count
-            If String.Compare(LanguageName, Globalization.CultureInfo.InstalledUICulture.EnglishName, True) = 0 Then SystemLanguageIndex = LanguagesComboBox.Items.Count
+            If LanguagesInfo.ContainsKey(EnglishName) Then
+                Dim Info As LanguageHandler.LangInfo = LanguagesInfo(EnglishName)
+                NewItemText = String.Format("{0} - {1} ({2})", EnglishName, Info.NativeName, Info.CodeNames(0))
 
-            If Cultures.ContainsKey(LanguageName) Then
-                Dim Culture As Globalization.CultureInfo = Cultures(LanguageName)
-                LanguagesComboBox.Items.Add(String.Format("{0} - {1} ({2})", Culture.EnglishName, Culture.NativeName, Culture.Name))
-            ElseIf AdditionalCultures.ContainsKey(LanguageName) Then
-                LanguagesComboBox.Items.Add(AdditionalCultures(LanguageName))
-            Else
-                LanguagesComboBox.Items.Add(LanguageName)
+                If Info.CodeNames.Contains(CurrentCulture.Name.ToLower) Then SystemLanguageItem = NewItemText
             End If
+
+            LanguagesComboBox.Items.Add(NewItemText)
+            If String.Compare(EnglishName, CurProgramLanguage, True) = 0 Then ProgramLanguageItem = NewItemText
+            If String.Compare(EnglishName, ProgramSetting.DefaultLanguage, True) = 0 Then DefaultLanguageItem = NewItemText
         Next
 
-        ProgramConfig.LoadProgramSettings()
-        If ProgramLanguageIndex <> -1 Then
-            LanguagesComboBox.SelectedIndex = ProgramLanguageIndex
-        ElseIf SystemLanguageIndex <> -1 Then
-            LanguagesComboBox.SelectedIndex = SystemLanguageIndex
-        ElseIf DefaultLanguageIndex <> -1 Then
-            LanguagesComboBox.SelectedIndex = DefaultLanguageIndex
+        LanguagesComboBox.Sorted = True
+
+        ProgramConfig.LoadProgramSettings() 'TODO: Why?
+
+        If ProgramLanguageItem IsNot Nothing Then
+            LanguagesComboBox.SelectedItem = ProgramLanguageItem
+        ElseIf SystemLanguageItem IsNot Nothing Then
+            LanguagesComboBox.SelectedItem = SystemLanguageItem
+        ElseIf DefaultLanguageItem IsNot Nothing Then
+            LanguagesComboBox.SelectedItem = DefaultLanguageItem
         ElseIf LanguagesComboBox.Items.Count > 0 Then
             LanguagesComboBox.SelectedIndex = 0
         End If
@@ -166,7 +185,7 @@ Friend NotInheritable Class LanguageHandler
     Public Shared Sub EnumerateCultures()
         Dim Builder As New Text.StringBuilder
         For Each Culture As Globalization.CultureInfo In Globalization.CultureInfo.GetCultures(Globalization.CultureTypes.AllCultures)
-            Builder.AppendLine(String.Join(Microsoft.VisualBasic.ControlChars.Tab, New String() {Culture.Name, Culture.DisplayName, Culture.NativeName, Culture.EnglishName, Culture.TwoLetterISOLanguageName, Culture.ThreeLetterISOLanguageName, Culture.ThreeLetterWindowsLanguageName})) ', LangInfo.LocalName, LangInfo.IsoLanguageName, LangInfo.WindowsCode
+            Builder.AppendLine(String.Join(Microsoft.VisualBasic.ControlChars.Tab, New String() {Culture.Name, Culture.Parent.Name, Culture.IsNeutralCulture.ToString, Culture.DisplayName, Culture.NativeName, Culture.EnglishName, Culture.TwoLetterISOLanguageName, Culture.ThreeLetterISOLanguageName, Culture.ThreeLetterWindowsLanguageName})) ', LangInfo.LocalName, LangInfo.IsoLanguageName, LangInfo.WindowsCode
         Next
 
         MessageBox.Show(Builder.ToString)

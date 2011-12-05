@@ -815,9 +815,14 @@ Friend Class SynchronizeForm
                     Using TestForAccess As New IO.FileStream(SourceFile, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.None) : End Using 'Checks whether the file can be accessed before trying to copy it. This line was added because if the file is only partially locked, CopyFileEx starts copying it, then fails on the way, and deletes the destination.
                     IO.File.Copy(SourceFile, DestFile, True)
                 Catch Ex As IO.IOException
-                    Dim TempDest As String = DestFile & IO.Path.GetRandomFileName(), DestBack As String = DestFile & IO.Path.GetRandomFileName()
-                    IO.File.Copy(SourceFile, TempDest, False) 'TODO: ?: "Don't overwrite, in case of a random filename collision".
-                    IO.File.Move(DestFile, DestBack) : IO.File.Move(TempDest, DestFile)
+                    Dim TempDest, DestBack As String
+                    Do
+                        TempDest = DestFile & IO.Path.GetRandomFileName()
+                        DestBack = DestFile & IO.Path.GetRandomFileName()
+                    Loop While IO.File.Exists(TempDest) Or IO.File.Exists(DestBack)
+                    IO.File.Copy(SourceFile, TempDest, False)
+                    IO.File.Move(DestFile, DestBack)
+                    IO.File.Move(TempDest, DestFile)
                     IO.File.Delete(DestBack)
                 End Try
             Else
@@ -885,7 +890,7 @@ Friend Class SynchronizeForm
     Private Function AttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean
         Const AttributesMask As IO.FileAttributes = IO.FileAttributes.Hidden Or IO.FileAttributes.System Or IO.FileAttributes.Encrypted
 
-        ' Disabled in two-ways mode
+        ' Disabled by default, and in two-ways mode
         If Not Handler.GetSetting(Of Boolean)(ProfileSetting.SyncFolderAttributes, False) Then Return False
         If Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = ProfileSetting.SyncMethod.BiIncremental Then Return False
 

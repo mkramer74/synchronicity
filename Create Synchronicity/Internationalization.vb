@@ -16,15 +16,14 @@ Friend NotInheritable Class LanguageHandler
 
     'Renames : non-english file name -> english file name
     'ReverseRenames : english file name -> non-english file name
-    Private Shared Renames As New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase) From {{"francais", "french"}, {"slovene", "slovenian"}, {"deutsch", "german"}}
-    Private Shared ReverseRenames As New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase) From {{"french", "francais"}, {"slovenian", "slovene"}, {"german", "deutsch"}}
+    Private Shared Renames As New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase) From {{"francais", "french"}, {"deutsch", "german"}}
 
-    Private Shared Function TryRename(ByVal LanguageName As String, ByVal Dic As Dictionary(Of String, String)) As String
-        Return If(Dic.ContainsKey(LanguageName), Dic(LanguageName), LanguageName)
+    Private Shared Function NewFilename(ByVal OldLanguageName As String) As String
+        Return If(Renames.ContainsKey(OldLanguageName), Renames(OldLanguageName), OldLanguageName)
     End Function
 
     Private Shared Function GetLanguageFilePath(ByVal LanguageName As String) As String
-        Return ProgramConfig.LanguageRootDir & ProgramSetting.DirSep & TryRename(LanguageName, ReverseRenames) & ".lng"
+        Return ProgramConfig.LanguageRootDir & ProgramSetting.DirSep & NewFilename(LanguageName) & ".lng"
     End Function
 
     Private Sub New()
@@ -144,14 +143,14 @@ Friend NotInheritable Class LanguageHandler
         Dim DefaultLanguageItem As String = Nothing
 
         Dim CurrentCulture As Globalization.CultureInfo = Globalization.CultureInfo.InstalledUICulture
-        Dim CurProgramLanguage As String = TryRename(ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.Language, ""), Renames)
+        Dim CurProgramLanguage As String = NewFilename(ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.Language, ""))
 
         'Merge fr-CA, fr-FR, and so on to fr, and distinguish zh-Hans and zh-Hant.
         If Not CurrentCulture.IsNeutralCulture Then CurrentCulture = CurrentCulture.Parent
 
         LanguagesComboBox.Items.Clear()
         For Each File As String In IO.Directory.GetFiles(ProgramConfig.LanguageRootDir, "*.lng")
-            Dim EnglishName As String = TryRename(IO.Path.GetFileNameWithoutExtension(File), Renames)
+            Dim EnglishName As String = IO.Path.GetFileNameWithoutExtension(File)
             Dim NewItemText As String = EnglishName
 
             If LanguagesInfo.ContainsKey(EnglishName) Then

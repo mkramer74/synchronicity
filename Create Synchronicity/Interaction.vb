@@ -98,8 +98,8 @@ Friend Module Interaction
     End Function
 End Module
 
-Friend NotInheritable Class ListViewColumnSorter
-    Implements System.Collections.IComparer
+Friend NotInheritable Class SyncingListSorter
+    Implements Collections.Generic.IComparer(Of SyncingItem)
 
     Public Order As SortOrder
     Public SortColumn As Integer
@@ -109,13 +109,22 @@ Friend NotInheritable Class ListViewColumnSorter
         Order = SortOrder.Ascending
     End Sub
 
-    Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements Collections.IComparer.Compare
-        Dim xl As ListViewItem = DirectCast(x, ListViewItem), yl As ListViewItem = DirectCast(y, ListViewItem)
-        If xl.SubItems.Count <= SortColumn Or yl.SubItems.Count <= SortColumn Then
-            Return 0
-        Else
-            Return If(Order = SortOrder.Ascending, 1, -1) * String.Compare(xl.SubItems(SortColumn).Text, yl.SubItems(SortColumn).Text, True)
-        End If
+    Public Function Compare(ByVal xs As SyncingItem, ByVal ys As SyncingItem) As Integer Implements Collections.Generic.IComparer(Of SyncingItem).Compare
+        Dim Result As Integer
+        Select Case SortColumn
+            Case 0
+                Result = xs.Type.CompareTo(ys.Type)
+            Case 1
+                Result = xs.Action.CompareTo(ys.Action)
+            Case 2
+                Result = xs.Side.CompareTo(ys.Side)
+            Case 3
+                Result = String.Compare(xs.Path, ys.Path, True)
+            Case Else
+                Result = xs.RealId.CompareTo(ys.RealId)
+        End Select
+
+        Return If(Order = SortOrder.Ascending, 1, -1) * Result
     End Function
 
     Public Sub RegisterClick(ByVal e As ColumnClickEventArgs)

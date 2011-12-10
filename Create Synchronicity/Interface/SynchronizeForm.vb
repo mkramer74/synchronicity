@@ -13,7 +13,7 @@ Friend Class SynchronizeForm
     Private Handler As ProfileHandler
 
     Private ValidFiles As New Dictionary(Of String, Boolean)
-    Private SyncingList As New Dictionary(Of SideOfSource, List(Of SyncingItem))
+    Private SyncingList As New List(Of SyncingItem)
     Private IncludedPatterns As New List(Of FileNamePattern)
     Private ExcludedPatterns As New List(Of FileNamePattern)
     Private ExcludedDirPatterns As New List(Of FileNamePattern)
@@ -27,7 +27,7 @@ Friend Class SynchronizeForm
     Private Preview As Boolean 'Should show a preview.
 
     Private Status As StatusData
-    Private ColumnSorter As New ListViewColumnSorter(3)
+    Private Sorter As New SyncingListSorter(3)
 
     Private FullSyncThread As Threading.Thread
     Private ScanThread As Threading.Thread
@@ -66,8 +66,6 @@ Friend Class SynchronizeForm
 
         LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
-
-        PreviewList.ListViewItemSorter = ColumnSorter
 
         FileNamePattern.LoadPatternsList(IncludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.IncludedTypes, ""))
         FileNamePattern.LoadPatternsList(ExcludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedTypes, ""))
@@ -127,7 +125,6 @@ Friend Class SynchronizeForm
         If IsValid Then
             ProgramConfig.IncrementSyncsCount()
             If Preview Then
-                PreviewList.Items.Clear() 'TODO: Needed?
                 ScanThread.Start()
             Else
                 FullSyncThread.Start()
@@ -182,7 +179,7 @@ Friend Class SynchronizeForm
         SyncThread.Start()
     End Sub
 
-    Private Sub StatusIcon_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+    Private Sub StatusIcon_Click(ByVal sender As Object, ByVal e As System.EventArgs) 'Handler dynamically added
         Me.Visible = Not Me.Visible
         Me.WindowState = FormWindowState.Normal
         If Me.Visible Then Me.Activate()
@@ -196,9 +193,35 @@ Friend Class SynchronizeForm
         UpdateStatuses()
     End Sub
 
+#If 0 Then
+    'Works, but not really efficiently, and flickers a lot.
+    Private Sub PreviewList_CacheVirtualItems(sender As Object, e As System.Windows.Forms.CacheVirtualItemsEventArgs) Handles PreviewList.CacheVirtualItems
+        Static PrevStartIndex As Integer = -1
+        Exit Sub
+        If PrevStartIndex <> e.StartIndex Then
+            PrevStartIndex = e.StartIndex
+            For id As Integer = 0 To PreviewList.Columns.Count - 1
+                PreviewList.AutoResizeColumn(id, ColumnHeaderAutoResizeStyle.ColumnContent)
+            Next
+        End If
+    End Sub
+#End If
+
+    Private Sub PreviewList_RetrieveVirtualItem(sender As System.Object, e As System.Windows.Forms.RetrieveVirtualItemEventArgs) Handles PreviewList.RetrieveVirtualItem
+        If Status.ShowingErrors Then
+            e.Item = Log.Errors(e.ItemIndex).ToListViewItem
+        Else
+            e.Item = SyncingList(e.ItemIndex).ToListViewItem
+        End If
+        'TODO: Auto-resizing would be nice, but AutoResizeColumns raises RetrieveVirtualItem, and the TopItem property doesn't work in virtual mode (crashes the debugger). CacheVirtualItems works, but flickers a lot.
+    End Sub
+
     Private Sub PreviewList_ColumnClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ColumnClickEventArgs) Handles PreviewList.ColumnClick
-        ColumnSorter.RegisterClick(e)
-        PreviewList.Sort()
+        If Status.ShowingErrors Then Exit Sub
+
+        Sorter.RegisterClick(e)
+        SyncingList.Sort(Sorter)
+        PreviewList.Refresh()
     End Sub
 
     Private Sub PreviewList_DoubleClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PreviewList.DoubleClick
@@ -209,23 +232,20 @@ Friend Class SynchronizeForm
     End Sub
 
     Private Function SetPathFromSelectedItem(ByRef Source As String, ByRef Dest As String) As Boolean
-        If PreviewList.SelectedIndices.Count = 0 Then Return False
+        'Exit if nothing is selected, or if in error mode
+        If PreviewList.SelectedIndices.Count = 0 OrElse Status.ShowingErrors Then Return False
 
-        Dim CurItem As ListViewItem = PreviewList.SelectedItems(0)
-        If CurItem.Tag Is Nothing OrElse CurItem.SubItems.Count < 3 Then Return False
+        Dim CurItem As SyncingItem = SyncingList(PreviewList.SelectedIndices(0))
 
         Dim LeftFile As String, RightFile As String
-        LeftFile = LeftRootPath & CurItem.SubItems(3).Text
-        RightFile = RightRootPath & CurItem.SubItems(3).Text
+        LeftFile = LeftRootPath & CurItem.Path
+        RightFile = RightRootPath & CurItem.Path
 
-        Select Case CType(CurItem.Tag, StatusData.SyncStep)
-            Case StatusData.SyncStep.SyncLR
+        Select Case CurItem.Side
+            Case SideOfSource.Left
                 Source = LeftFile : Dest = RightFile
-            Case StatusData.SyncStep.SyncRL
+            Case SideOfSource.Right
                 Source = RightFile : Dest = LeftFile
-            Case Else
-                'In errors list
-                Return False
         End Select
 
         Return True
@@ -347,7 +367,7 @@ Friend Class SynchronizeForm
                 SyncingTimer.Stop()
                 Status.CurrentStep = StatusData.SyncStep.SyncLR
                 If Preview Then
-                    UpdatePreviewList()
+                    ShowPreviewList()
                     StopBtn.Text = StopBtn.Tag.ToString.Split(";"c)(1)
                 End If
 
@@ -360,24 +380,13 @@ Friend Class SynchronizeForm
 
                 If Log.Errors.Count > 0 Or Status.Failed Then
                     PreviewList.Visible = True
-                    PreviewList.Items.Clear()
+                    Status.ShowingErrors = True
+                    PreviewList.VirtualListSize = Log.Errors.Count
+
                     PreviewList.Columns.Clear()
                     PreviewList.Columns.Add(Translation.Translate("\ERROR"))
                     PreviewList.Columns.Add(Translation.Translate("\PATH"))
-                    Dim ErrorColumn As ColumnHeader = PreviewList.Columns.Add(Translation.Translate("\ERROR_DETAIL"))
-                    ColumnSorter.SortColumn = ErrorColumn.Index
-
-                    Dim ErrorsList As New List(Of ErrorItem)(Log.Errors)
-                    For Each Err As ErrorItem In ErrorsList
-                        Dim ErrorListItem As New ListViewItem(Err.Ex.Source)
-                        ErrorListItem.SubItems.Add(Err.Details)
-                        ErrorListItem.SubItems.Add(Err.Ex.Message)
-                        PreviewList.Items.Add(ErrorListItem)
-                        ErrorListItem.ImageIndex = 8
-                    Next
-
-                    PreviewList.Columns(0).AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent)
-                    ErrorColumn.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent)
+                    PreviewList.Columns.Add(Translation.Translate("\ERROR_DETAIL"))
 
                     If Quiet Then 'Later: Show ballon tip every time? In that case, modify New to enable status icon.
                         If Status.Failed Then
@@ -420,47 +429,25 @@ Friend Class SynchronizeForm
         End Select
     End Sub
 
-    Private Sub UpdatePreviewList()
+    Private Sub ShowPreviewList()
+        ' This part computes acceptable defaut values for column widths, since using VirtualMode prevents from resizing based on actual values.
+        ' This part requires that VirtualMode be set to False.
+        Dim i1 As New SyncingItem() With {.Action = TypeOfAction.Copy, .Side = SideOfSource.Left, .Type = TypeOfItem.File, .Path = "".PadLeft(260)}
+        Dim i2 As New SyncingItem() With {.Action = TypeOfAction.Copy, .Side = SideOfSource.Right, .Type = TypeOfItem.File, .IsUpdate = True}
+        Dim i3 As New SyncingItem() With {.Action = TypeOfAction.Delete, .Side = SideOfSource.Right, .Type = TypeOfItem.Folder}
+
+        PreviewList.Items.Add(i1.ToListViewItem)
+        PreviewList.Items.Add(i2.ToListViewItem)
+        PreviewList.Items.Add(i3.ToListViewItem)
+
+        PreviewList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
+        PreviewList.Items.Clear()
+
+        PreviewList.VirtualMode = True
         PreviewList.Visible = True
-        If PreviewList.Items.Count > 0 Then PreviewList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
+        PreviewList.VirtualListSize = SyncingList.Count 'TODO: TotalActionsCount == SyncingList.Count : get rid of the former.
+
         If Not Status.Cancel Then SyncBtn.Enabled = True
-    End Sub
-
-    Private Sub AddPreviewItem(ByRef Item As SyncingItem, ByVal Side As SideOfSource)
-        Dim ListItem As New ListViewItem
-        ListItem = PreviewList.Items.Add(Item.FormatType())
-        ListItem.SubItems.Add(Item.FormatAction())
-        ListItem.SubItems.Add(Item.FormatDirection(Side))
-        ListItem.SubItems.Add(Item.Path)
-
-        ListItem.Tag = If(Side = SideOfSource.Left, StatusData.SyncStep.SyncLR, StatusData.SyncStep.SyncRL)
-
-        Select Case Item.Action
-            Case TypeOfAction.Copy
-                If Item.Type = TypeOfItem.Folder Then
-                    ListItem.ImageIndex = If(Item.IsUpdate, 6, 5)
-                    Status.FoldersToCreate += 1
-                End If
-                If Item.Type = TypeOfItem.File Then
-                    Select Case Side
-                        Case SideOfSource.Left
-                            ListItem.ImageIndex = If(Item.IsUpdate, 1, 0)
-                        Case SideOfSource.Right
-                            ListItem.ImageIndex = If(Item.IsUpdate, 3, 2)
-                    End Select
-                    Status.FilesToCreate += 1
-                End If
-            Case TypeOfAction.Delete
-                If Item.Type = TypeOfItem.Folder Then
-                    ListItem.ImageIndex = 7
-                    Status.FoldersToDelete += 1
-                End If
-                If Item.Type = TypeOfItem.File Then
-                    ListItem.ImageIndex = 4
-                    Status.FilesToDelete += 1
-                End If
-        End Select
-        Status.TotalActionsCount += 1
     End Sub
 
     Private Sub LaunchTimer()
@@ -491,8 +478,6 @@ Friend Class SynchronizeForm
         'Pass 2: Create actions R->L for files/folder copy/deletion, based on what was marked as ValidFile, aka based on what should be kept.
 
         SyncingList.Clear()
-        SyncingList.Add(SideOfSource.Left, New List(Of SyncingItem))
-        SyncingList.Add(SideOfSource.Right, New List(Of SyncingItem))
 
         ValidFiles.Clear()
 
@@ -526,21 +511,31 @@ Friend Class SynchronizeForm
             Exit Sub
         End If
 
+        'Restore original order before syncing.
+        Sorter.SortColumn = -1 ' Sorts according to initial index.
+        Sorter.Order = SortOrder.Ascending
+        SyncingList.Sort(Sorter)
+
         Me.Invoke(New Action(AddressOf LaunchTimer))
-        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncLR, SyncingList(SideOfSource.Left).Count})
-        Do_Task(SideOfSource.Left, SyncingList(SideOfSource.Left), LeftRootPath, RightRootPath, StatusData.SyncStep.SyncLR)
+        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncLR, Status.LeftActionsCount})
+        Do_Task(SideOfSource.Left, SyncingList, StatusData.SyncStep.SyncLR)
         Me.Invoke(StepCompletedCallback, StatusData.SyncStep.SyncLR)
 
-        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncRL, SyncingList(SideOfSource.Right).Count})
-        Do_Task(SideOfSource.Right, SyncingList(SideOfSource.Right), RightRootPath, LeftRootPath, StatusData.SyncStep.SyncRL)
+        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncRL, Status.RightActionsCount})
+        Do_Task(SideOfSource.Right, SyncingList, StatusData.SyncStep.SyncRL)
         Me.Invoke(StepCompletedCallback, StatusData.SyncStep.SyncRL)
     End Sub
 
     '"Source" is "current side", with the corresponding side stored in "Side"
-    Private Sub Do_Task(ByVal Side As SideOfSource, ByRef ListOfActions As List(Of SyncingItem), ByVal Source As String, ByVal Destination As String, ByVal CurrentStep As StatusData.SyncStep)
+    Private Sub Do_Task(ByVal Side As SideOfSource, ByRef ListOfActions As List(Of SyncingItem), ByVal CurrentStep As StatusData.SyncStep)
         Dim IncrementCallback As New SetIntCall(AddressOf Increment)
 
-        For Each Entry As SyncingItem In ListOfActions
+        Dim Source As String = If(Side = SideOfSource.Left, LeftRootPath, RightRootPath)
+        Dim Destination As String = If(Side = SideOfSource.Left, RightRootPath, LeftRootPath)
+
+        For Each Entry As SyncingItem In SyncingList
+            If Entry.Side <> Side Then Continue For
+
             Dim SourcePath As String = Source & Entry.Path
             Dim DestPath As String = Destination & Entry.Path
 
@@ -614,10 +609,33 @@ Friend Class SynchronizeForm
         Next
     End Sub
 
-    Private Sub AddToSyncingList(ByVal Side As SideOfSource, ByRef Entry As SyncingItem, Optional ByVal Suffix As String = "")
-        SyncingList(Side).Add(Entry)
-        SyncPreviewList(Side, 1)
+    Private Sub AddToSyncingList(ByVal Path As String, ByVal Type As TypeOfItem, ByVal Side As SideOfSource, ByVal Action As TypeOfAction, ByVal IsUpdate As Boolean, Optional ByVal Suffix As String = "")
+        Dim Entry As New SyncingItem With {.Path = Path, .Type = Type, .Side = Side, .Action = Action, .IsUpdate = IsUpdate, .RealId = SyncingList.Count}
+
+        SyncingList.Add(Entry)
         If Entry.Action <> TypeOfAction.Delete Then AddValidFile(Entry.Path & Suffix)
+
+        Select Case Entry.Action
+            Case TypeOfAction.Copy
+                If Entry.Type = TypeOfItem.Folder Then
+                    Status.FoldersToCreate += 1
+                ElseIf Entry.Type = TypeOfItem.File Then
+                    Status.FilesToCreate += 1
+                End If
+            Case TypeOfAction.Delete
+                If Entry.Type = TypeOfItem.Folder Then
+                    Status.FoldersToDelete += 1
+                ElseIf Entry.Type = TypeOfItem.File Then
+                    Status.FilesToDelete += 1
+                End If
+        End Select
+        Select Case Entry.Side
+            Case SideOfSource.Left
+                Status.LeftActionsCount += 1
+            Case SideOfSource.Right
+                Status.RightActionsCount += 1
+        End Select
+        Status.TotalActionsCount += 1
     End Sub
 
     Private Sub AddValidFile(ByVal File As String)
@@ -645,9 +663,16 @@ Friend Class SynchronizeForm
     End Function
 
     Private Sub RemoveFromSyncingList(ByVal Side As SideOfSource)
-        ValidFiles.Remove(SyncingList(Side)(SyncingList(Side).Count - 1).Path)
-        SyncingList(Side).RemoveAt(SyncingList(Side).Count - 1)
-        SyncPreviewList(Side, -1)
+        ValidFiles.Remove(SyncingList(SyncingList.Count - 1).Path) 'FIXME: Check
+        SyncingList.RemoveAt(SyncingList.Count - 1)
+
+        Status.TotalActionsCount -= 1
+        Select Case Side
+            Case SideOfSource.Left
+                Status.LeftActionsCount -= 1
+            Case SideOfSource.Right
+                Status.RightActionsCount -= 1
+        End Select
     End Sub
 
 
@@ -664,8 +689,9 @@ Friend Class SynchronizeForm
 
         'LATER: Factor out.
         Dim IsNewFolder As Boolean = Not IO.Directory.Exists(DestinationFolder)
-        If IsNewFolder OrElse AttributesChanged(SourceFolder, DestinationFolder) Then
-            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, TypeOfAction.Copy, Not IsNewFolder))
+        Dim ShouldUpdateFolder As Boolean = IsNewFolder OrElse AttributesChanged(SourceFolder, DestinationFolder)
+        If ShouldUpdateFolder Then
+            AddToSyncingList(Folder, TypeOfItem.Folder, Context.Source, TypeOfAction.Copy, Not IsNewFolder)
             Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3})", If(IsNewFolder, "[New folder]", "[Updated folder]"), SourceFolder, DestinationFolder, Folder))
         Else
             AddValidFile(Folder)
@@ -685,7 +711,7 @@ Friend Class SynchronizeForm
                         Dim RelativeFilePath As String = SourceFile.Substring(Context.SourceRootPath.Length)
 
                         If IsNewFile OrElse SourceIsMoreRecent(SourceFile, DestinationFile) Then
-                            AddToSyncingList(Context.Source, New SyncingItem(RelativeFilePath, TypeOfItem.File, TypeOfAction.Copy, Not IsNewFile), Suffix)
+                            AddToSyncingList(RelativeFilePath, TypeOfItem.File, Context.Source, TypeOfAction.Copy, Not IsNewFile, Suffix)
                             Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3}).", If(IsNewFile, "[New File]", "[Updated file]"), SourceFile, DestinationFile, RelativeFilePath))
                         Else
                             'Adds an entry to not delete this when cleaning up the other side.
@@ -720,10 +746,9 @@ Friend Class SynchronizeForm
 
         If InitialValidFilesCount = ValidFiles.Count Then
             If Not Handler.GetSetting(Of Boolean)(ProfileSetting.ReplicateEmptyDirectories, True) Then
-                If IsNewFolder Then
+                If ShouldUpdateFolder Then
                     'Don't copy this folder over (not present yet)
                     Status.FoldersToCreate -= 1
-                    Status.TotalActionsCount -= 1
                     RemoveFromSyncingList(Context.Source)
                 Else
                     'TODO: Check this part. The call wasn't an else block before.
@@ -753,7 +778,7 @@ Friend Class SynchronizeForm
 
                 Try
                     If Not IsValidFile(RelativeFName) Then
-                        AddToSyncingList(Context.Source, New SyncingItem(RelativeFName, TypeOfItem.File, TypeOfAction.Delete, False))
+                        AddToSyncingList(RelativeFName, TypeOfItem.File, Context.Source, TypeOfAction.Delete, False)
                         Log.LogInfo(String.Format("Cleanup: [Delete] ""{0}"" ({1})", File, RelativeFName))
                     Else
                         Log.LogInfo(String.Format("Cleanup: [Keep] ""{0}"" ({1})", File, RelativeFName))
@@ -782,15 +807,7 @@ Friend Class SynchronizeForm
         ' Folder.Length = 0 <=> This is the root folder, not to be deleted.
         If Folder.Length <> 0 AndAlso Not IsValidFile(Folder) Then
             Log.LogInfo(String.Format("Cleanup: [Delete folder] ""{0}"" ({1}).", DestinationFolder, Folder))
-            AddToSyncingList(Context.Source, New SyncingItem(Folder, TypeOfItem.Folder, TypeOfAction.Delete, False))
-        End If
-    End Sub
-
-    Private Sub SyncPreviewList(ByVal Side As SideOfSource, ByVal Count As Integer)
-        If Count > 0 Then
-            AddPreviewItem(SyncingList(Side)(SyncingList(Side).Count - 1), Side)
-        ElseIf Count < 0 Then
-            PreviewList.Items.RemoveAt(PreviewList.Items.Count - 1) 'The callers already takes care of updating the folders count correctly.
+            AddToSyncingList(Folder, TypeOfItem.Folder, Context.Source, TypeOfAction.Delete, False)
         End If
     End Sub
 
@@ -946,7 +963,7 @@ Friend Class SynchronizeForm
 #End Region
 
 #Region " Shared functions "
-    Private Shared Function CombinePathes(ByVal Dir As String, ByVal File As String) As String 'COULDDO: Should be optimized; IO.Path?
+    Private Shared Function CombinePathes(ByVal Dir As String, ByVal File As String) As String 'LATER: Should be optimized; IO.Path?
         Return Dir.TrimEnd(ProgramSetting.DirSep) & ProgramSetting.DirSep & File.TrimStart(ProgramSetting.DirSep)
     End Function
 

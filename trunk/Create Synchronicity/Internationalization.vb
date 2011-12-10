@@ -15,7 +15,6 @@ Friend NotInheritable Class LanguageHandler
     End Structure
 
     'Renames : non-english file name -> english file name
-    'ReverseRenames : english file name -> non-english file name
     Private Shared Renames As New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase) From {{"francais", "french"}, {"deutsch", "german"}}
 
     Private Shared Function NewFilename(ByVal OldLanguageName As String) As String
@@ -101,12 +100,14 @@ Friend NotInheritable Class LanguageHandler
                 Column.Text = Translate(Column.Text)
             Next
 
-            For Each Item As ListViewItem In List.Items
-                For Each SubItem As ListViewItem.ListViewSubItem In Item.SubItems
-                    SubItem.Text = Translate(SubItem.Text)
-                    SubItem.Tag = Translate(CStr(SubItem.Tag), ";")
+            If Not List.VirtualMode Then
+                For Each Item As ListViewItem In List.Items
+                    For Each SubItem As ListViewItem.ListViewSubItem In Item.SubItems
+                        SubItem.Text = Translate(SubItem.Text)
+                        SubItem.Tag = Translate(CStr(SubItem.Tag), ";")
+                    Next
                 Next
-            Next
+            End If
         End If
 
         If TypeOf Ctrl Is ContextMenuStrip Then

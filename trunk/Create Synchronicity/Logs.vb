@@ -13,6 +13,10 @@ Structure ErrorItem
     Sub New(ByVal _Ex As Exception, ByVal _Details As String)
         Ex = _Ex : Details = _Details
     End Sub
+
+    Function ToListViewItem() As ListViewItem
+        Return New ListViewItem(New String() {Ex.Source, Details, Ex.Message}, 8) 'TODO: Display something better than error source.
+    End Function
 End Structure
 
 Structure LogItem
@@ -178,7 +182,7 @@ Friend NotInheritable Class LogHandler
                 If Log.Count > 0 Then
                     PutHTML(LogWriter, "<table class=""actions"">")
                     For Each Record As LogItem In Log
-                        PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(Record.Side), Record.Item.Path}, LogWriter)
+                        PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(), Record.Item.Path}, LogWriter)
                     Next
                     PutHTML(LogWriter, "</table>")
                 End If

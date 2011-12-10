@@ -28,12 +28,16 @@ Structure StatusData
     Dim FilesToDelete As Long
     Dim FoldersToDelete As Long
     Dim TotalActionsCount As Long
+    Dim LeftActionsCount As Integer 'Used to set a ProgressBar's maximum
+    Dim RightActionsCount As Integer
     Dim CurrentStep As SyncStep
     Dim TimeElapsed As TimeSpan
     Dim Speed As Double
 
     Dim Cancel As Boolean
     Dim Failed As Boolean
+    Dim ShowingErrors As Boolean
+
     Dim FailureMsg As String
 End Structure
 
@@ -59,19 +63,15 @@ Structure SyncingContext
     Public DestinationRootPath As String
 End Structure
 
-Structure SyncingItem
+Class SyncingItem
     Public Path As String
     Public Type As TypeOfItem
+    Public Side As SideOfSource
 
     Public IsUpdate As Boolean
     Public Action As TypeOfAction
 
-    Sub New(ByVal _Path As String, ByVal _Type As TypeOfItem, ByVal _Action As TypeOfAction, ByVal _IsUpdate As Boolean)
-        Path = _Path
-        Type = _Type
-        Action = _Action
-        IsUpdate = _IsUpdate
-    End Sub
+    Public RealId As Integer ' Keeps track of the order in which items where inserted in the syncing list, hence making it possible to recover this insertion order even after sorting the list on other criterias
 
     Function FormatType() As String
         Select Case Type
@@ -93,7 +93,7 @@ Structure SyncingItem
         End Select
     End Function
 
-    Function FormatDirection(ByVal Side As SideOfSource) As String
+    Function FormatDirection() As String
         Select Case Side
             Case SideOfSource.Left
                 Return If(Action = TypeOfAction.Copy, Translation.Translate("\LR"), Translation.Translate("\LEFT"))
@@ -103,7 +103,34 @@ Structure SyncingItem
                 Return ""
         End Select
     End Function
-End Structure
+
+    Function ToListViewItem() As ListViewItem
+        Dim ListItem As New ListViewItem(New String() {FormatType(), FormatAction(), FormatDirection(), Path})
+
+        Dim Delta As Integer = If(IsUpdate, 1, 0)
+        Select Case Action
+            Case TypeOfAction.Copy
+                If Type = TypeOfItem.Folder Then
+                    ListItem.ImageIndex = 5 + Delta
+                ElseIf Type = TypeOfItem.File Then
+                    Select Case Side
+                        Case SideOfSource.Left
+                            ListItem.ImageIndex = 0 + Delta
+                        Case SideOfSource.Right
+                            ListItem.ImageIndex = 2 + Delta
+                    End Select
+                End If
+            Case TypeOfAction.Delete
+                If Type = TypeOfItem.Folder Then
+                    ListItem.ImageIndex = 7
+                ElseIf Type = TypeOfItem.File Then
+                    ListItem.ImageIndex = 4
+                End If
+        End Select
+
+        Return ListItem
+    End Function
+End Class
 
 Friend NotInheritable Class FileNamePattern
     Public Enum PatternType
@@ -166,3 +193,4 @@ Module FileHandling
         Return Path.Substring(Path.LastIndexOf(ProgramSetting.DirSep) + 1) 'IO.Path.* -> Bad because of separate file/folder handling.
     End Function
 End Module
+

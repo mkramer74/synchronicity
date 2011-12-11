@@ -38,6 +38,7 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Dec. 11, 2011 - UPD: !Use a VirtualMode preview list, saving up to 12% scanning time, and using a good 60% less memory. Also, loading the preview list is now instantaneous.
 Dec. 02, 2011 - UPD: Detailed view now contains a history of last backups (Ctrl+L)
 Dec. 02, 2011 - NEW: Press Ctrl+H to display a history of your profiles.
 Nov. 27, 2011 - UPD: !Prettier logs : alternating rows, cleaner layout, direct shortcut to latest entry.

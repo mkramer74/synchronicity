@@ -184,7 +184,7 @@ NotInheritable Class ConfigHandler
         SettingsLoaded = True
     End Sub
 
-    Public Sub SaveProgramSettings()
+    Public Sub SaveProgramSettings() 'LATER: Unify the 'mainconfig.ini' and 'profile.sync' formats.
         Dim ConfigStrB As New Text.StringBuilder
         For Each Setting As KeyValuePair(Of String, String) In Settings
             ConfigStrB.AppendFormat("{0}:{1};", Setting.Key, Setting.Value)

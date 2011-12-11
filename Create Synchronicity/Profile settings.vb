@@ -90,23 +90,21 @@ NotInheritable Class ProfileHandler
         Using FileReader As New IO.StreamReader(ProgramConfig.GetConfigPath(ProfileName))
             While Not FileReader.EndOfStream
                 Dim ConfigLine As String = ""
-                Try
-                    ConfigLine = FileReader.ReadLine()
-                    Dim Param() As String = ConfigLine.Split(":".ToCharArray, 2)
-                    If Not (ConfigLine = "" Or Configuration.ContainsKey(Param(0))) Then Configuration.Add(Param(0), Param(1))
-                Catch ex As IndexOutOfRangeException
+
+                ConfigLine = FileReader.ReadLine()
+                Dim Param() As String = ConfigLine.Split(":".ToCharArray, 2)
+                If Param.Length < 2 Then
                     Interaction.ShowMsg(Translation.TranslateFormat("\INVALID_SETTING", ConfigLine))
-                Catch ex As Exception 'Something worse than finding a simple misformatted line has occured
-                    Interaction.ShowMsg(Translation.Translate("\INVALID_CONFIG"))
-                    Configuration.Clear() 'FIXME: Why?
-                    Return False
-                End Try
+                ElseIf Not Configuration.ContainsKey(Param(0)) Then
+                    Configuration.Add(Param(0), Param(1))
+                End If
             End While
         End Using
 
         LoadScheduler()
         LoadSubFoldersList(ProfileSetting.LeftSubFolders, LeftCheckedNodes)
         LoadSubFoldersList(ProfileSetting.RightSubFolders, RightCheckedNodes)
+
         Return True
     End Function
 

@@ -56,8 +56,7 @@ Friend Class SynchronizeForm
         SyncBtn.Enabled = False
         SyncBtn.Visible = Preview
 
-        Status.Failed = False
-        Status.Cancel = False
+        Status = New StatusData
         Status.CurrentStep = StatusData.SyncStep.Scan
         Status.StartTime = Date.Now ' NOTE: This call should be useless; it however seems that when the messagebox.show method is called when a profile is not found, the syncingtimecounter starts ticking. This is not suitable, but until the cause is found there this call remains, for display consistency.
 
@@ -268,7 +267,7 @@ Friend Class SynchronizeForm
         End Select
     End Function
 
-    Private Shared Function FormatTimespan(ByVal T As TimeSpan) As String
+    Friend Shared Function FormatTimespan(ByVal T As TimeSpan) As String
         Dim Hours As Integer = CInt(Math.Truncate(T.TotalHours))
         Dim Blocks As New List(Of String)
         If Hours <> 0 Then Blocks.Add(Hours & " h")
@@ -288,7 +287,7 @@ Friend Class SynchronizeForm
         End If
 
         Dim EstimateString As String = ""
-        'FIXME.
+        'FIXME
         If Status.Speed > (1 << 10) AndAlso Status.CurrentStep = StatusData.SyncStep.SyncLR AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
             Dim RemainingSeconds As Double = 60 * Math.Round(Math.Min(Integer.MaxValue / 2, (Status.BytesScanned / Status.Speed) - Status.TimeElapsed.TotalSeconds) / 60, 0)
             EstimateString = String.Format(" / ~{0}", FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds))))

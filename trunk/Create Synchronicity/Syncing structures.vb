@@ -34,9 +34,9 @@ Structure StatusData
     Dim TimeElapsed As TimeSpan
     Dim Speed As Double
 
-    Dim Cancel As Boolean
-    Dim Failed As Boolean
-    Dim ShowingErrors As Boolean
+    Dim Cancel As Boolean '= False
+    Dim Failed As Boolean '= False
+    Dim ShowingErrors As Boolean '= False
 
     Dim FailureMsg As String
 End Structure

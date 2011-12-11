@@ -510,6 +510,18 @@
         RU5ErkJggg==
 </value>
   </data>
+  <data name="AboutLinkLabel.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
+        HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAA3VAAAN1QE91ljxAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+        aW5rc2NhcGUub3Jnm+48GgAAASJJREFUOE9jiDFN+wXE/0nB////Z4BhBqDG3+unbv5/eM2x/xf2Xf5/
+        7sDF/8d3n/y/fPqq/y2F7f8LI0r/p7pm/c/3LvlfEVQHtgirAbPLFv5f2rj6f3/u1P+VUXX/k90z/geZ
+        h/2PtksYSgb4zWL7TyL+BQ9EUBgEzOb4v+x5xv8Nb4r/7/3Y+f/ouzn/z71d/3/prcL/ZQf1/mftl/hf
+        dFLuf9Ullf8NNzVAlv3GNOBZ2v9Jz+z+z3zl8b/nnvX/hkv6/4uPKf1P2yVKYwNA6QDsBTJcAE+JZBmA
+        nKoGjwGTnzn8n/XK63/vPbv/TZeM/5ccU8EdC8he8J/FDg7E9W+K/u/52P7/8NuZ/0+/WfV/ya0C3OkA
+        2QASUyEoIf0CAD2wbsWuAopTAAAAAElFTkSuQmCC
+</value>
+  </data>
   <metadata name="ApplicationTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>299, 17</value>
   </metadata>

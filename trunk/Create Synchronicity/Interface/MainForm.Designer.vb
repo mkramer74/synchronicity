@@ -428,9 +428,11 @@ Partial Class MainForm
         '
         Me.AboutLinkLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.AboutLinkLabel.BackColor = System.Drawing.Color.White
+        Me.AboutLinkLabel.Image = CType(resources.GetObject("AboutLinkLabel.Image"), System.Drawing.Image)
+        Me.AboutLinkLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.AboutLinkLabel.Location = New System.Drawing.Point(230, 3)
         Me.AboutLinkLabel.Name = "AboutLinkLabel"
-        Me.AboutLinkLabel.Size = New System.Drawing.Size(118, 13)
+        Me.AboutLinkLabel.Size = New System.Drawing.Size(118, 16)
         Me.AboutLinkLabel.TabIndex = 1
         Me.AboutLinkLabel.TabStop = True
         Me.AboutLinkLabel.Text = "\ABOUT_SETTINGS"
@@ -489,8 +491,8 @@ Partial Class MainForm
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(355, 422)
-        Me.Controls.Add(Me.TipsLabel)
         Me.Controls.Add(Me.AboutLinkLabel)
+        Me.Controls.Add(Me.TipsLabel)
         Me.Controls.Add(Me.Donate)
         Me.Controls.Add(Me.Actions)
         Me.Controls.Add(Me.InfoPanel)

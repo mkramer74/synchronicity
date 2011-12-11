@@ -46,6 +46,10 @@ Friend Class MainForm
         'Position the "About" label correctly
         Dim PreviousWidth As Integer = AboutLinkLabel.Width
         AboutLinkLabel.AutoSize = True
+        Dim NewWidth As Integer = AboutLinkLabel.Width + 16 + 4
+        AboutLinkLabel.AutoSize = False
+
+        AboutLinkLabel.Width = NewWidth
         AboutLinkLabel.Location += New Drawing.Size(PreviousWidth - AboutLinkLabel.Width, 0)
     End Sub
 

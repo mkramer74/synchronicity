@@ -144,6 +144,8 @@ Friend NotInheritable Class LanguageHandler
         Dim DefaultLanguageItem As String = Nothing
 
         Dim CurrentCulture As Globalization.CultureInfo = Globalization.CultureInfo.InstalledUICulture
+
+        ProgramConfig.LoadProgramSettings()
         Dim CurProgramLanguage As String = NewFilename(ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.Language, ""))
 
         'Merge fr-CA, fr-FR, and so on to fr, and distinguish zh-Hans and zh-Hant.
@@ -167,8 +169,6 @@ Friend NotInheritable Class LanguageHandler
         Next
 
         LanguagesComboBox.Sorted = True
-
-        ProgramConfig.LoadProgramSettings() 'TODO: Why?
 
         If ProgramLanguageItem IsNot Nothing Then
             LanguagesComboBox.SelectedItem = ProgramLanguageItem

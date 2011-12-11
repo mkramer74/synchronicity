@@ -295,13 +295,11 @@ Friend NotInheritable Class MessageLoop
     End Sub
 
     Private Sub ScheduledProfileCompleted(ByVal ProfileName As String, ByVal Completed As Boolean)
-        If Completed Then ConfigHandler.LogAppEvent("Scheduler: " & ProfileName & " completed successfully.")
-        If Not Profiles.ContainsKey(ProfileName) Then Exit Sub
-
         If Completed Then
-            ScheduledProfiles.Add(New SchedulerEntry(ProfileName, Profiles(ProfileName).Scheduler.NextRun(), False, False))
+            ConfigHandler.LogAppEvent("Scheduler: " & ProfileName & " completed successfully.")
+            If Profiles.ContainsKey(ProfileName) Then ScheduledProfiles.Add(New SchedulerEntry(ProfileName, Profiles(ProfileName).Scheduler.NextRun(), False, False))
         Else
-            ConfigHandler.LogAppEvent("Scheduler: " & ProfileName & " reported an error, will run again in 4 hours.")
+            ConfigHandler.LogAppEvent("Scheduler: " & ProfileName & " reported an error, and will run again in 4 hours.") ' If ProfileName has been removed, ReloadScheduledProfiles will unschedule it.
             ScheduledProfiles.Add(New SchedulerEntry(ProfileName, Date.Now.AddHours(4), True, True))
         End If
     End Sub

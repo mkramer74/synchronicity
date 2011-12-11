@@ -93,8 +93,8 @@ Friend NotInheritable Class LogHandler
             LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family:Consolas, Courier, monospace;font-size:0.8em;margin:auto;width:80%;}table{border-collapse:collapse;margin:1em 0;width:100%;}th, td{border:solid grey;border-width:1px 0;padding-right:2em;}tr:nth-child(odd){background-color:#EEE;}.actions tr td{white-space:nowrap;}.actions tr td:nth-child(5), .errors tr td:nth-child(2){white-space:normal;word-break:break-all;}tr td:last-child{padding-right:0;}</style></head><body>")
         End If
 
-        LogW.WriteLine("<h1>" & LogTitle & "</h1>")
-        LogW.WriteLine(String.Format("<p><a href=""#{0}"">{1}</a></p>", LogId, Translation.Translate("\LATEST")))
+        LogW.WriteLine("<h1>{0}</h1>", LogTitle)
+        LogW.WriteLine("<p><a href=""#{0}"">{1}</a></p>", LogId, Translation.Translate("\LATEST"))
     End Sub
 
     Private Shared Sub CloseHTMLHeaders(ByRef LogW As IO.StreamWriter)
@@ -160,13 +160,15 @@ Friend NotInheritable Class LogHandler
                 LogWriter.WriteLine(LogTitle) 'Must be kept, to detect log boundaries
 
                 PutHTML(LogWriter, "<p>")
-                LogWriter.WriteLine(String.Format("Create Synchronicity v{0}", Application.ProductVersion))
+                LogWriter.WriteLine("Create Synchronicity v{0}", Application.ProductVersion)
                 PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine(String.Format("{0}: {1}", Translation.Translate("\LEFT"), Left))
+                LogWriter.WriteLine("{0}: {1}", Translation.Translate("\LEFT"), Left)
                 PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine(String.Format("{0}: {1}", Translation.Translate("\RIGHT"), Right))
+                LogWriter.WriteLine("{0}: {1}", Translation.Translate("\RIGHT"), Right)
                 PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine(String.Format("{0} {1}/{2}", Translation.Translate("\DONE"), Status.ActionsDone, Status.TotalActionsCount))
+                LogWriter.WriteLine("{0} {1}/{2}", Translation.Translate("\DONE"), Status.ActionsDone, Status.TotalActionsCount)
+                PutHTML(LogWriter, "<br />")
+                LogWriter.WriteLine("{0} {1}", Translation.Translate("\ELAPSED"), TimeSpan.FromMilliseconds(Status.TimeElapsed.TotalMilliseconds - Status.TimeElapsed.Milliseconds).ToString)
                 If Status.Failed And (Status.FailureMsg IsNot Nothing) Then
                     PutHTML(LogWriter, "<br />")
                     LogWriter.WriteLine(Status.FailureMsg)

@@ -213,7 +213,11 @@ Friend Class SynchronizeForm
         Else
             e.Item = SyncingList(e.ItemIndex).ToListViewItem
         End If
-        'TODO: Auto-resizing would be nice, but AutoResizeColumns raises RetrieveVirtualItem, and the TopItem property doesn't work in virtual mode (crashes the debugger). CacheVirtualItems works, but flickers a lot.
+
+        'TODO: Auto-resizing would be nice, but:
+        '      * AutoResizeColumns raises RetrieveVirtualItem, causing a StackOverflowException
+        '      * Checking TopItem to conditionally resize columns doesn't work in virtual mode (it even crashes the debugger).
+        '      * Handling the CacheVirtualItems event works, but does flicker a lot.
     End Sub
 
     Private Sub PreviewList_ColumnClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ColumnClickEventArgs) Handles PreviewList.ColumnClick
@@ -569,7 +573,7 @@ Friend Class SynchronizeForm
                                         IO.Directory.Delete(SourcePath)
                                     Catch ex As Exception
                                         Dim DirInfo As New IO.DirectoryInfo(SourcePath)
-                                        DirInfo.Attributes = IO.FileAttributes.Normal 'TODO: Check
+                                        DirInfo.Attributes = IO.FileAttributes.Directory 'Using "DirInfo.Attributes = IO.FileAttributes.Normal" does just the same, and actually sets DirInfo.Attributes to "IO.FileAttributes.Directory"
                                         DirInfo.Delete()
                                     End Try
                                     Status.DeletedFolders += 1
@@ -663,7 +667,7 @@ Friend Class SynchronizeForm
     End Function
 
     Private Sub RemoveFromSyncingList(ByVal Side As SideOfSource)
-        ValidFiles.Remove(SyncingList(SyncingList.Count - 1).Path) 'FIXME: Check
+        ValidFiles.Remove(SyncingList(SyncingList.Count - 1).Path)
         SyncingList.RemoveAt(SyncingList.Count - 1)
 
         Status.TotalActionsCount -= 1

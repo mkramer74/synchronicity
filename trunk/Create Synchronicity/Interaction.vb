@@ -75,7 +75,10 @@ Friend Module Interaction
             Return DialogResult.OK
         End If
 
-        Return MessageBox.Show(Text, Caption, Buttons, Icon)
+        Dim Result As DialogResult = MessageBox.Show(Text, Caption, Buttons, Icon)
+        If CommandLine.Log Then ConfigHandler.LogAppEvent(String.Format("Interaction: Message [{0}] - [{1}] received answer [{2}].", Caption, Text, Result.ToString))
+
+        Return Result
     End Function
 
     Private CurrentFileToOpen As String = ""

@@ -60,8 +60,8 @@ Friend Class SynchronizeForm
         Status.CurrentStep = StatusData.SyncStep.Scan
         Status.StartTime = Date.Now ' NOTE: This call should be useless; it however seems that when the messagebox.show method is called when a profile is not found, the syncingtimecounter starts ticking. This is not suitable, but until the cause is found there this call remains, for display consistency.
 
-        Log = New LogHandler(ConfigName)
         Handler = New ProfileHandler(ConfigName)
+        Log = New LogHandler(ConfigName, Handler.GetSetting(Of Boolean)(ProfileSetting.ErrorsLog, False))
 
         LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))

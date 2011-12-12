@@ -45,16 +45,19 @@ Friend NotInheritable Class LogHandler
 #End If
 
     Private Disposed As Boolean '= False
+    Private GenerateErrorsLog As Boolean
 
     Private LogId As String 'HTML 'id' to current log
     Private LogDate As Date 'Store current date when launching sync
 
-    Sub New(ByVal _LogName As String)
+    Sub New(ByVal _LogName As String, ByVal _GenerateErrorsLog As Boolean)
         IO.Directory.CreateDirectory(ProgramConfig.LogRootDir)
 
         LogId = "cs_" + DateTime.UtcNow.Ticks.ToString()
         LogDate = Date.Now
+
         LogName = _LogName
+        GenerateErrorsLog = _GenerateErrorsLog
 
         Errors = New List(Of ErrorItem)
         Log = New List(Of LogItem)
@@ -131,7 +134,6 @@ Friend NotInheritable Class LogHandler
 
         Try
             Dim NewLog As Boolean = Not IO.File.Exists(LogPath)
-            Dim GenerateErrorLog As Boolean = ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ErrorLogs, False)
 
             'Load the contents of the previous log, excluding the closing tags
             Dim MaxArchivesCount As Integer = ProgramConfig.GetProgramSetting(Of Integer)(ProgramSetting.MaxLogEntries, 7)
@@ -156,7 +158,7 @@ Friend NotInheritable Class LogHandler
             'This erases log contents.
             Dim ErrorsLogWriter As IO.StreamWriter = Nothing
             Dim LogWriter As New IO.StreamWriter(LogPath, False, Text.Encoding.UTF8)
-            If GenerateErrorLog Then ErrorsLogWriter = New IO.StreamWriter(ErrorsLogPath, False, Text.Encoding.UTF8)
+            If GenerateErrorsLog Then ErrorsLogWriter = New IO.StreamWriter(ErrorsLogPath, False, Text.Encoding.UTF8)
 
             OpenHTMLHeaders(LogWriter)
             For LogId As Integer = 0 To Archives.Count - 1
@@ -201,7 +203,7 @@ Friend NotInheritable Class LogHandler
                     PutHTML(LogWriter, "<table class=""errors"">")
                     For Each Err As ErrorItem In Errors
                         PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, LogWriter)
-                        If GenerateErrorLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, ErrorsLogWriter, True)
+                        If GenerateErrorsLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, ErrorsLogWriter, True)
 #If DEBUG Then
                         If ProgramSetting.Debug Then PutFormatted(New String() {"Stack Trace", Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
 #End If
@@ -218,7 +220,7 @@ Friend NotInheritable Class LogHandler
 
             Finally
                 LogWriter.Close()
-                If GenerateErrorLog Then ErrorsLogWriter.Close()
+                If GenerateErrorsLog Then ErrorsLogWriter.Close()
             End Try
 
         Catch Ex As Exception

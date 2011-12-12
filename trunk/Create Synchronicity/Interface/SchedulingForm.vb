@@ -54,7 +54,7 @@ Friend Class SchedulingForm
 
     Private Sub Save_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Save.Click
         Try
-            ConfigHandler.RegisterBoot()
+            ProgramConfig.RegisterBoot()
 
             If Not Enable.Checked Then
                 Handler.Scheduler.Frequency = ScheduleInfo.Freq.Never

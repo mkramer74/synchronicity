@@ -28,7 +28,7 @@ Friend Module Interaction
 
     Public Sub ShowBalloonTip(ByVal Msg As String, Optional ByVal File As String = "")
         If CommandLine.Silent Or Not StatusIcon.Visible Then
-            ConfigHandler.LogAppEvent(String.Format("Interaction: Balloon tip discarded: [{0}].", Msg))
+            ProgramConfig.LogAppEvent(String.Format("Interaction: Balloon tip discarded: [{0}].", Msg))
             Exit Sub
         End If
 
@@ -71,12 +71,12 @@ Friend Module Interaction
 
     Public Function ShowMsg(ByVal Text As String, Optional ByVal Caption As String = "", Optional ByVal Buttons As MessageBoxButtons = MessageBoxButtons.OK, Optional ByVal Icon As MessageBoxIcon = MessageBoxIcon.None) As DialogResult
         If CommandLine.Silent Then
-            ConfigHandler.LogAppEvent(String.Format("Interaction: Message Box discarded with default answer: [{0}] - [{1}].", Caption, Text))
+            ProgramConfig.LogAppEvent(String.Format("Interaction: Message Box discarded with default answer: [{0}] - [{1}].", Caption, Text))
             Return DialogResult.OK
         End If
 
         Dim Result As DialogResult = MessageBox.Show(Text, Caption, Buttons, Icon)
-        If CommandLine.Log Then ConfigHandler.LogAppEvent(String.Format("Interaction: Message [{0}] - [{1}] received answer [{2}].", Caption, Text, Result.ToString))
+        If CommandLine.Log Then ProgramConfig.LogAppEvent(String.Format("Interaction: Message [{0}] - [{1}] received answer [{2}].", Caption, Text, Result.ToString))
 
         Return Result
     End Function

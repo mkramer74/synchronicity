@@ -188,6 +188,7 @@
     </Compile>
     <Compile Include="Syncing structures.vb" />
     <Compile Include="Updates.vb" />
+    <Compile Include="Utilities.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Interface\AboutForm.resx">

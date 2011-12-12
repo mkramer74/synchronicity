@@ -43,6 +43,8 @@ Friend Module ProgramSetting
     Public Const Debug As Boolean = False
 #End If
 
+    Public Const AppLogThreshold As Integer = 1 << 23 '8 MB
+
     Public Const RegistryBootVal As String = "Create Synchronicity - Scheduler"
     Public Const RegistryBootKey As String = "Software\Microsoft\Windows\CurrentVersion\Run"
     Public Const RegistryRootedBootKey As String = "HKEY_CURRENT_USER\" & RegistryBootKey
@@ -58,6 +60,7 @@ NotInheritable Class ConfigHandler
     Public CompressionDll As String
     Public LocalNamesFile As String
     Public MainConfigFile As String
+    Public AppLogFile As String
     Public StatsFile As String
 
     Public CanGoOn As Boolean = True 'To check whether a synchronization is already running (in scheduler mode only, queuing uses callbacks).
@@ -75,12 +78,15 @@ NotInheritable Class ConfigHandler
         LocalNamesFile = LanguageRootDir & ProgramSetting.DirSep & "local-names.txt"
         MainConfigFile = ConfigRootDir & ProgramSetting.DirSep & ProgramSetting.SettingsFileName
         CompressionDll = Application.StartupPath & ProgramSetting.DirSep & ProgramSetting.DllName
+        AppLogFile = GetUserFilesRootDir() & ProgramSetting.AppLogName
 
         Try
             Icon = Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath)
         Catch Ex As ArgumentException
             Icon = Drawing.Icon.FromHandle((New Drawing.Bitmap(32, 32)).GetHicon)
         End Try
+
+        TrimAppLog() 'Prevents app log from getting too large.
     End Sub
 
     Public Shared Function GetSingleton() As ConfigHandler
@@ -202,25 +208,36 @@ NotInheritable Class ConfigHandler
     End Function
 
     <Diagnostics.Conditional("Debug")>
-    Public Shared Sub LogDebugEvent(ByVal EventData As String)
+    Public Sub LogDebugEvent(ByVal EventData As String)
 #If DEBUG Then
         LogAppEvent(EventData)
 #End If
     End Sub
 
-    Public Shared Sub LogAppEvent(ByVal EventData As String)
+    Private Sub TrimAppLog()
+        If IO.File.Exists(AppLogFile) AndAlso Utilities.GetSize(AppLogFile) > ProgramSetting.AppLogThreshold Then
+            Dim AppLogBackup As String = AppLogFile & ".old"
+
+            If IO.File.Exists(AppLogBackup) Then IO.File.Delete(AppLogBackup)
+            IO.File.Move(AppLogFile, AppLogBackup)
+
+            LogAppEvent("Moved " & AppLogFile & " to " & AppLogBackup)
+        End If
+    End Sub
+
+    Public Sub LogAppEvent(ByVal EventData As String)
         If ProgramSetting.Debug Or CommandLine.Silent Or CommandLine.Log Then
             Static UniqueID As String = Guid.NewGuid().ToString
 
-            Using AppLog As New IO.StreamWriter(Singleton.GetUserFilesRootDir() & ProgramSetting.AppLogName, True)
+            Using AppLog As New IO.StreamWriter(AppLogFile, True)
                 AppLog.WriteLine(String.Format("[{0}][{1}] {2}", UniqueID, Date.Now.ToString(), EventData.Replace(Environment.NewLine, " // ")))
             End Using
         End If
     End Sub
 
-    Public Shared Sub RegisterBoot()
+    Public Sub RegisterBoot()
         If Microsoft.Win32.Registry.GetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Nothing) Is Nothing Then
-            ConfigHandler.LogAppEvent("Registering program in startup list")
+            LogAppEvent("Registering program in startup list")
             Microsoft.Win32.Registry.SetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Application.ExecutablePath & " /scheduler")
         End If
     End Sub

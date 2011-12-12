@@ -815,8 +815,8 @@ Friend Class SynchronizeForm
                 Catch Ex As IO.IOException
                     Dim TempDest, DestBack As String
                     Do
-                        TempDest = DestFile & IO.Path.GetRandomFileName()
-                        DestBack = DestFile & IO.Path.GetRandomFileName()
+                        TempDest = DestFile & "-" & IO.Path.GetRandomFileName()
+                        DestBack = DestFile & "-" & IO.Path.GetRandomFileName()
                     Loop While IO.File.Exists(TempDest) Or IO.File.Exists(DestBack)
                     IO.File.Copy(SourceFile, TempDest, False)
                     IO.File.Move(DestFile, DestBack)

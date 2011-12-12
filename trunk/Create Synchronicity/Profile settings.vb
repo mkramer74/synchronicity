@@ -60,6 +60,10 @@ NotInheritable Class ProfileHandler
     Public IsNewProfile As Boolean
     Public Scheduler As New ScheduleInfo()
 
+    Public ConfigPath As String
+    Public LogPath As String
+    Public ErrorsLogPath As String
+
     Public Configuration As New Dictionary(Of String, String)
     Public LeftCheckedNodes As New Dictionary(Of String, Boolean)
     Public RightCheckedNodes As New Dictionary(Of String, Boolean)
@@ -71,8 +75,11 @@ NotInheritable Class ProfileHandler
         ProfileName = Name
         IsNewProfile = Not LoadConfigFile()
 
-        'Never use GetSetting(Of SyncMethod). It searches the config file for a string containing an int (eg "0"), but when failing it calls SetSettings which saves a string containing an enum label (eg. "LRIncremental")
+        ConfigPath = ProgramConfig.GetConfigPath(Name)
+        LogPath = ProgramConfig.GetLogPath(Name)
+        ErrorsLogPath = ProgramConfig.GetErrorsLogPath(Name)
 
+        'Never use GetSetting(Of SyncMethod). It searches the config file for a string containing an int (eg "0"), but when failing it calls SetSettings which saves a string containing an enum label (eg. "LRIncremental")
         If GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) <> ProfileSetting.SyncMethod.LRMirror Then
             'Disable Mirror-Specific settings.
             SetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)
@@ -84,10 +91,10 @@ NotInheritable Class ProfileHandler
     End Sub
 
     Function LoadConfigFile() As Boolean
-        If Not IO.File.Exists(ProgramConfig.GetConfigPath(ProfileName)) Then Return False
+        If Not IO.File.Exists(ConfigPath) Then Return False
 
         Configuration.Clear()
-        Using FileReader As New IO.StreamReader(ProgramConfig.GetConfigPath(ProfileName))
+        Using FileReader As New IO.StreamReader(ConfigPath)
             While Not FileReader.EndOfStream
                 Dim ConfigLine As String = ""
 
@@ -110,7 +117,7 @@ NotInheritable Class ProfileHandler
 
     Function SaveConfigFile() As Boolean
         Try
-            Using FileWriter As New IO.StreamWriter(ProgramConfig.GetConfigPath(ProfileName))
+            Using FileWriter As New IO.StreamWriter(ConfigPath)
                 For Each Setting As KeyValuePair(Of String, String) In Configuration
                     FileWriter.WriteLine(Setting.Key & ":" & Setting.Value)
                 Next
@@ -208,11 +215,13 @@ NotInheritable Class ProfileHandler
 
     Function Rename(ByVal NewName As String) As Boolean
         'Don't exit if there's a case change.
-        If (Not String.Equals(ProfileName, NewName, StringComparison.OrdinalIgnoreCase)) And (IO.File.Exists(ProgramConfig.GetLogPath(NewName)) Or IO.File.Exists(ProgramConfig.GetConfigPath(NewName))) Then Return False
+        If (Not String.Equals(ProfileName, NewName, StringComparison.OrdinalIgnoreCase)) And (IO.File.Exists(ProgramConfig.GetLogPath(NewName)) Or IO.File.Exists(ProgramConfig.GetErrorsLogPath(NewName)) Or IO.File.Exists(ProgramConfig.GetConfigPath(NewName))) Then Return False
 
         Try
-            If IO.File.Exists(ProgramConfig.GetLogPath(ProfileName)) Then IO.File.Move(ProgramConfig.GetLogPath(ProfileName), ProgramConfig.GetLogPath(NewName))
-            IO.File.Move(ProgramConfig.GetConfigPath(ProfileName), ProgramConfig.GetConfigPath(NewName))
+            If IO.File.Exists(ErrorsLogPath) Then IO.File.Move(ErrorsLogPath, ProgramConfig.GetErrorsLogPath(NewName))
+            If IO.File.Exists(LogPath) Then IO.File.Move(LogPath, ProgramConfig.GetLogPath(NewName))
+            IO.File.Move(ConfigPath, ProgramConfig.GetConfigPath(NewName))
+
             ProfileName = NewName 'Not really useful in the current situation : profiles are reloaded just after renaming anyway.
         Catch
             Return False
@@ -221,12 +230,13 @@ NotInheritable Class ProfileHandler
     End Function
 
     Sub DeleteConfigFile()
-        IO.File.Delete(ProgramConfig.GetConfigPath(ProfileName))
-        DeleteLogFile()
+        IO.File.Delete(ConfigPath)
+        DeleteLogFiles()
     End Sub
 
-    Sub DeleteLogFile()
-        IO.File.Delete(ProgramConfig.GetLogPath(ProfileName))
+    Sub DeleteLogFiles()
+        IO.File.Delete(LogPath)
+        IO.File.Delete(ErrorsLogPath)
     End Sub
 
     Sub SetSetting(Of T)(ByVal SettingName As String, ByVal Value As T)

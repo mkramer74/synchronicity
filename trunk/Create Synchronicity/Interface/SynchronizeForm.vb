@@ -136,7 +136,7 @@ Friend Class SynchronizeForm
     Private Sub SynchronizeForm_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyDown
         If e.Control Then
             If e.KeyCode = Keys.L AndAlso Status.CurrentStep = StatusData.SyncStep.Done Then
-                Interaction.StartProcess(ProgramConfig.GetLogPath(Handler.ProfileName))
+                Interaction.StartProcess(Handler.LogPath)
             ElseIf e.KeyCode = Keys.D And PreviewList.SelectedIndices.Count <> 0 Then
                 Dim DiffProgram As String = ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.DiffProgram, "")
                 Dim DiffArguments As String = ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.DiffArguments, "")
@@ -254,19 +254,6 @@ Friend Class SynchronizeForm
         Return True
     End Function
 
-    Private Shared Function FormatSize(ByVal Size As Double) As String
-        Select Case Size
-            Case Is >= (1 << 30)
-                Return Math.Round(Size / (1 << 30), 2).ToString & " GB"
-            Case Is >= (1 << 20)
-                Return Math.Round(Size / (1 << 20), 2).ToString & " MB"
-            Case Is >= (1 << 10)
-                Return Math.Round(Size / (1 << 10), 2).ToString & " kB"
-            Case Else
-                Return Math.Round(Size, 2).ToString & " B"
-        End Select
-    End Function
-
     Private Sub UpdateStatuses()
         Status.TimeElapsed = (DateTime.Now - Status.StartTime) + New TimeSpan(1000000) ' ie +0.1s
 
@@ -274,7 +261,7 @@ Friend Class SynchronizeForm
             Speed.Text = Math.Round(Status.FilesScanned / Status.TimeElapsed.TotalSeconds).ToString & " files/s"
         Else
             Status.Speed = Status.BytesCopied / Status.TimeElapsed.TotalSeconds
-            Speed.Text = FormatSize(Status.Speed) & "/s"
+            Speed.Text = Utilities.FormatSize(Status.Speed) & "/s"
         End If
 
         Dim EstimateString As String = ""
@@ -288,7 +275,7 @@ Friend Class SynchronizeForm
 
         Done.Text = Status.ActionsDone & "/" & Status.TotalActionsCount
         FilesDeleted.Text = Status.DeletedFiles & "/" & Status.FilesToDelete
-        FilesCreated.Text = Status.CreatedFiles & "/" & Status.FilesToCreate & " (" & FormatSize(Status.BytesCopied) & ")"
+        FilesCreated.Text = Status.CreatedFiles & "/" & Status.FilesToCreate & " (" & Utilities.FormatSize(Status.BytesCopied) & ")"
         FoldersDeleted.Text = Status.DeletedFolders & "/" & Status.FoldersToDelete
         FoldersCreated.Text = Status.CreatedFolders & "/" & Status.FoldersToCreate
 
@@ -387,12 +374,12 @@ Friend Class SynchronizeForm
                             System.Threading.Thread.Sleep(5000) 'Wait a little before failing
                             Interaction.ShowBalloonTip(Status.FailureMsg)
                         Else
-                            Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), ProgramConfig.GetLogPath(Handler.ProfileName))
+                            Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
                         End If
                     End If
                 Else
                     'LATER: Add ballon to say the sync was cancelled.
-                    If Quiet And Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), ProgramConfig.GetLogPath(Handler.ProfileName))
+                    If Quiet And Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
                 End If
 
                 ' Set last run only if the profile hasn't failed, and has synced completely.

@@ -118,7 +118,7 @@ NotInheritable Class ProfileHandler
 
             Return True
         Catch Ex As Exception
-            ConfigHandler.LogAppEvent("Unable to save config file for " & ProfileName & Environment.NewLine & Ex.ToString)
+            ProgramConfig.LogAppEvent("Unable to save config file for " & ProfileName & Environment.NewLine & Ex.ToString)
             Return False
         End Try
     End Function
@@ -139,7 +139,7 @@ NotInheritable Class ProfileHandler
                 NeedsWakeup = False
             Catch Ex As Exception
                 Interaction.ShowMsg(Translation.Translate("\WAKEUP_FAILED"))
-                ConfigHandler.LogAppEvent(Ex.ToString)
+                ProgramConfig.LogAppEvent(Ex.ToString)
                 IsValid = False
             End Try
         End If

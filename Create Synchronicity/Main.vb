@@ -57,13 +57,13 @@ Friend NotInheritable Class MessageLoop
         CommandLine.ReadArgs(New List(Of String)(Environment.GetCommandLineArgs()))
 
         ' Start logging
-        ConfigHandler.LogAppEvent("Program started: " & Application.StartupPath)
-        ConfigHandler.LogAppEvent(String.Format("Profiles folder: {0}.", ProgramConfig.ConfigRootDir))
+        ProgramConfig.LogAppEvent("Program started: " & Application.StartupPath)
+        ProgramConfig.LogAppEvent(String.Format("Profiles folder: {0}.", ProgramConfig.ConfigRootDir))
         Interaction.ShowDebug(Translation.Translate("\DEBUG_WARNING"), Translation.Translate("\DEBUG_MODE"))
 
         ' Check if multiple instances are allowed.
         If CommandLine.RunAs = CommandLine.RunMode.Scheduler AndAlso SchedulerAlreadyRunning() Then
-            ConfigHandler.LogAppEvent("Scheduler already running; exiting.")
+            ProgramConfig.LogAppEvent("Scheduler already running; exiting.")
             ExitNeeded = True : Exit Sub
         Else
             AddHandler Me.ThreadExit, AddressOf MessageLoop_ThreadExit
@@ -129,7 +129,7 @@ Friend NotInheritable Class MessageLoop
 
         'Calling ReleaseMutex would be the same, since Blocker necessary holds the mutex at this point (otherwise the app would have closed already).
         If CommandLine.RunAs = CommandLine.RunMode.Scheduler Then Blocker.Close()
-        ConfigHandler.LogAppEvent("Program exited")
+        ProgramConfig.LogAppEvent("Program exited")
 
 #If Debug And 0 Then
         SynchronizeForm.Check_NTFSToFATTime()
@@ -203,12 +203,12 @@ Friend NotInheritable Class MessageLoop
 #Region "Scheduling"
     Private Function SchedulerAlreadyRunning() As Boolean
         Dim MutexName As String = "[[Create Synchronicity scheduler]] " & Application.ExecutablePath.Replace(ProgramSetting.DirSep, "!"c).ToLower(Interaction.InvariantCulture)
-        ConfigHandler.LogDebugEvent(String.Format("Registering mutex: ""{0}""", MutexName))
+        ProgramConfig.LogDebugEvent(String.Format("Registering mutex: ""{0}""", MutexName))
 
         Try
             Blocker = New Threading.Mutex(False, MutexName)
         Catch Ex As Threading.AbandonedMutexException
-            ConfigHandler.LogDebugEvent("Abandoned mutex detected")
+            ProgramConfig.LogDebugEvent("Abandoned mutex detected")
             Return False
         End Try
 
@@ -219,17 +219,17 @@ Friend NotInheritable Class MessageLoop
         Dim NeedToRunAtBootTime As Boolean = False
         For Each Profile As ProfileHandler In Profiles.Values
             NeedToRunAtBootTime = NeedToRunAtBootTime Or (Profile.Scheduler.Frequency <> ScheduleInfo.Freq.Never)
-            If Profile.Scheduler.Frequency <> ScheduleInfo.Freq.Never Then ConfigHandler.LogAppEvent(String.Format("Profile {0} requires the scheduler to run.", Profile.ProfileName))
+            If Profile.Scheduler.Frequency <> ScheduleInfo.Freq.Never Then ProgramConfig.LogAppEvent(String.Format("Profile {0} requires the scheduler to run.", Profile.ProfileName))
         Next
 
         Try
             If NeedToRunAtBootTime Then
-                ConfigHandler.RegisterBoot()
-                ConfigHandler.LogAppEvent("Registered program in startup list, trying to start scheduler")
+                ProgramConfig.RegisterBoot()
+                ProgramConfig.LogAppEvent("Registered program in startup list, trying to start scheduler")
                 If CommandLine.RunAs = CommandLine.RunMode.Normal Then Diagnostics.Process.Start(Application.ExecutablePath, "/scheduler /noupdates" & If(CommandLine.Log, " /log", ""))
             Else
                 If Microsoft.Win32.Registry.GetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Nothing) IsNot Nothing Then
-                    ConfigHandler.LogAppEvent("Unregistering program from startup list")
+                    ProgramConfig.LogAppEvent("Unregistering program from startup list")
                     Microsoft.Win32.Registry.CurrentUser.OpenSubKey(ProgramSetting.RegistryBootKey, True).DeleteValue(ProgramSetting.RegistryBootVal)
                 End If
             End If
@@ -250,7 +250,7 @@ Friend NotInheritable Class MessageLoop
         If ProfilesQueue Is Nothing Then
             ProfilesQueue = New Queue(Of String)
 
-            ConfigHandler.LogAppEvent("Profiles queue: Queue created.")
+            ProgramConfig.LogAppEvent("Profiles queue: Queue created.")
             Dim RequestedProfiles As New List(Of String)
 
             If (CommandLine.RunAll) Then
@@ -273,7 +273,7 @@ Friend NotInheritable Class MessageLoop
             For Each Profile As String In RequestedProfiles
                 If Profiles.ContainsKey(Profile) Then
                     If Profiles(Profile).ValidateConfigFile() Then
-                        ConfigHandler.LogAppEvent("Profiles queue: Registered profile " & Profile)
+                        ProgramConfig.LogAppEvent("Profiles queue: Registered profile " & Profile)
                         ProfilesQueue.Enqueue(Profile)
                     Else
                         Interaction.ShowMsg(Translation.Translate("\INVALID_CONFIG"), Translation.Translate("\INVALID_CMD"), , MessageBoxIcon.Error)
@@ -285,7 +285,7 @@ Friend NotInheritable Class MessageLoop
         End If
 
         If ProfilesQueue.Count = 0 Then
-            ConfigHandler.LogAppEvent("Profiles queue: Synced all profiles.")
+            ProgramConfig.LogAppEvent("Profiles queue: Synced all profiles.")
             Application.Exit()
         Else
             Dim SyncForm As New SynchronizeForm(ProfilesQueue.Dequeue(), CommandLine.ShowPreview, CommandLine.Quiet, False)
@@ -296,10 +296,10 @@ Friend NotInheritable Class MessageLoop
 
     Private Sub ScheduledProfileCompleted(ByVal ProfileName As String, ByVal Completed As Boolean)
         If Completed Then
-            ConfigHandler.LogAppEvent("Scheduler: " & ProfileName & " completed successfully.")
+            ProgramConfig.LogAppEvent("Scheduler: " & ProfileName & " completed successfully.")
             If Profiles.ContainsKey(ProfileName) Then ScheduledProfiles.Add(New SchedulerEntry(ProfileName, Profiles(ProfileName).Scheduler.NextRun(), False, False))
         Else
-            ConfigHandler.LogAppEvent("Scheduler: " & ProfileName & " reported an error, and will run again in 4 hours.") ' If ProfileName has been removed, ReloadScheduledProfiles will unschedule it.
+            ProgramConfig.LogAppEvent("Scheduler: " & ProfileName & " reported an error, and will run again in 4 hours.") ' If ProfileName has been removed, ReloadScheduledProfiles will unschedule it.
             ScheduledProfiles.Add(New SchedulerEntry(ProfileName, Date.Now.AddHours(4), True, True))
         End If
     End Sub
@@ -309,7 +309,7 @@ Friend NotInheritable Class MessageLoop
 
         ReloadScheduledProfiles()
         If ScheduledProfiles.Count = 0 Then
-            ConfigHandler.LogAppEvent("Scheduler: No profiles left to run, exiting.")
+            ProgramConfig.LogAppEvent("Scheduler: No profiles left to run, exiting.")
             Application.Exit()
             Exit Sub
         Else
@@ -318,7 +318,7 @@ Friend NotInheritable Class MessageLoop
             Interaction.StatusIcon.Text = If(Status.Length >= 64, Status.Substring(0, 63), Status)
 
             If Date.Compare(NextInQueue.NextRun, Date.Now) <= 0 Then
-                ConfigHandler.LogAppEvent("Scheduler: Launching " & NextInQueue.Name)
+                ProgramConfig.LogAppEvent("Scheduler: Launching " & NextInQueue.Name)
 
                 Dim SyncForm As New SynchronizeForm(NextInQueue.Name, False, True, NextInQueue.CatchUp)
                 AddHandler SyncForm.SyncFinished, AddressOf ScheduledProfileCompleted
@@ -356,7 +356,7 @@ Friend NotInheritable Class MessageLoop
                 Dim LastRun As Date = Handler.GetLastRun()
                 'LATER: Customizable time span?
                 If Handler.GetSetting(Of Boolean)(ProfileSetting.CatchUpSync, False) And LastRun <> ScheduleInfo.DATE_NEVER And (NewEntry.NextRun - LastRun) > (Handler.Scheduler.GetInterval() + OneDay) Then
-                    ConfigHandler.LogAppEvent("Scheduler: Profile " & Name & " was last executed on " & LastRun.ToString & ", marked for catching up.")
+                    ProgramConfig.LogAppEvent("Scheduler: Profile " & Name & " was last executed on " & LastRun.ToString & ", marked for catching up.")
                     NewEntry.NextRun = ScheduleInfo.DATE_CATCHUP
                     NewEntry.CatchUp = True
                 End If
@@ -373,11 +373,11 @@ Friend NotInheritable Class MessageLoop
 
                         ScheduledProfiles.RemoveAt(ProfileIndex)
                         ScheduledProfiles.Add(NewEntry)
-                        ConfigHandler.LogAppEvent("Scheduler: Re-registered profile for delayed run on " & NewEntry.NextRun.ToString & ": " & Name)
+                        ProgramConfig.LogAppEvent("Scheduler: Re-registered profile for delayed run on " & NewEntry.NextRun.ToString & ": " & Name)
                     End If
                 Else
                     ScheduledProfiles.Add(NewEntry)
-                    ConfigHandler.LogAppEvent("Scheduler: Registered profile for delayed run on " & NewEntry.NextRun.ToString & ": " & Name)
+                    ProgramConfig.LogAppEvent("Scheduler: Registered profile for delayed run on " & NewEntry.NextRun.ToString & ": " & Name)
                 End If
             End If
         Next

@@ -267,15 +267,6 @@ Friend Class SynchronizeForm
         End Select
     End Function
 
-    Friend Shared Function FormatTimespan(ByVal T As TimeSpan) As String
-        Dim Hours As Integer = CInt(Math.Truncate(T.TotalHours))
-        Dim Blocks As New List(Of String)
-        If Hours <> 0 Then Blocks.Add(Hours & " h")
-        If T.Minutes <> 0 Then Blocks.Add(T.Minutes.ToString & " m")
-        If T.Seconds <> 0 Then Blocks.Add(T.Seconds.ToString & " s")
-        Return String.Join(", ", Blocks.ToArray())
-    End Function
-
     Private Sub UpdateStatuses()
         Status.TimeElapsed = (DateTime.Now - Status.StartTime) + New TimeSpan(1000000) ' ie +0.1s
 
@@ -290,10 +281,10 @@ Friend Class SynchronizeForm
         'FIXME
         If Status.Speed > (1 << 10) AndAlso Status.CurrentStep = StatusData.SyncStep.SyncLR AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
             Dim RemainingSeconds As Double = 60 * Math.Round(Math.Min(Integer.MaxValue / 2, (Status.BytesScanned / Status.Speed) - Status.TimeElapsed.TotalSeconds) / 60, 0)
-            EstimateString = String.Format(" / ~{0}", FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds))))
+            EstimateString = String.Format(" / ~{0}", Utilities.FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds))))
         End If
 
-        ElapsedTime.Text = FormatTimespan(Status.TimeElapsed) & EstimateString
+        ElapsedTime.Text = Utilities.FormatTimespan(Status.TimeElapsed) & EstimateString
 
         Done.Text = Status.ActionsDone & "/" & Status.TotalActionsCount
         FilesDeleted.Text = Status.DeletedFiles & "/" & Status.FilesToDelete
@@ -417,7 +408,7 @@ Friend Class SynchronizeForm
                             Diagnostics.Process.Start(PostSyncAction, RightRootPath)
                         Catch Ex As Exception
                             Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
-                            ConfigHandler.LogAppEvent(Ex.ToString)
+                            ProgramConfig.LogAppEvent(Ex.ToString)
                         End Try
                     End If
                 End If
@@ -725,7 +716,7 @@ Friend Class SynchronizeForm
                         Log.LogInfo(String.Format("SearchForChanges: [Excluded file] ""{0}""", SourceFile))
                     End If
 
-                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesScanned += GetSize(SourceFile) 'Degrades performance.
+                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesScanned += Utilities.GetSize(SourceFile) 'Degrades performance.
                 Catch Ex As Exception
                     Log.HandleError(Ex, SourceFile)
                 End Try
@@ -864,7 +855,7 @@ Friend Class SynchronizeForm
         Log.LogInfo("CopyFile: Attributes set to " & IO.File.GetAttributes(DestFile))
 
         Status.CreatedFiles += 1
-        If Not Compression Then Status.BytesCopied += GetSize(SourceFile)
+        If Not Compression Then Status.BytesCopied += Utilities.GetSize(SourceFile)
         If Handler.GetSetting(Of Boolean)(ProfileSetting.Checksum, False) AndAlso Md5(SourceFile) <> Md5(DestFile) Then Throw New System.Security.Cryptography.CryptographicException("MD5 validation: failed.")
     End Sub
 #End Region
@@ -904,7 +895,7 @@ Friend Class SynchronizeForm
     End Function
 
     Private Function GetCompressionExt() As String
-        Return Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "") 'AndAlso GetSize(File) > ConfigOptions.CompressionThreshold
+        Return Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "") 'AndAlso Utilities.GetSize(File) > ConfigOptions.CompressionThreshold
     End Function
 
     Private Function AttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean
@@ -938,7 +929,7 @@ Friend Class SynchronizeForm
 
         'User-enabled checks
         If Handler.GetSetting(Of Boolean)(ProfileSetting.Checksum, False) AndAlso Md5(AbsSource) <> Md5(AbsDest) Then Return True
-        If Handler.GetSetting(Of Boolean)(ProfileSetting.CheckFileSize, False) AndAlso GetSize(AbsSource) <> GetSize(AbsDest) Then Return True
+        If Handler.GetSetting(Of Boolean)(ProfileSetting.CheckFileSize, False) AndAlso Utilities.GetSize(AbsSource) <> Utilities.GetSize(AbsDest) Then Return True
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.StrictDateComparison, True) Then
             If SourceFATTime = DestFATTime Then Return False
@@ -972,10 +963,6 @@ Friend Class SynchronizeForm
 
     Private Shared Function GetExtension(ByVal File As String) As String
         Return File.Substring(File.LastIndexOf("."c) + 1) 'Not used when dealing with a folder.
-    End Function
-
-    Private Shared Function GetSize(ByVal File As String) As Long
-        Return (New System.IO.FileInfo(File)).Length 'Faster than My.Computer.FileSystem.GetFileInfo().Length (See FileLen_Speed_Test.vb)
     End Function
 
     Private Shared Function LoadCompressionDll() As Compressor

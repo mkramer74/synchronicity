@@ -74,11 +74,12 @@ NotInheritable Class ProfileHandler
 
     Public Sub New(ByVal Name As String)
         ProfileName = Name
-        IsNewProfile = Not LoadConfigFile()
 
         ConfigPath = ProgramConfig.GetConfigPath(Name)
         LogPath = ProgramConfig.GetLogPath(Name)
         ErrorsLogPath = ProgramConfig.GetErrorsLogPath(Name)
+
+        IsNewProfile = Not LoadConfigFile()
 
         'Never use GetSetting(Of SyncMethod). It searches the config file for a string containing an int (eg "0"), but when failing it calls SetSettings which saves a string containing an enum label (eg. "LRIncremental")
         If GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) <> ProfileSetting.SyncMethod.LRMirror Then

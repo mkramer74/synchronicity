@@ -34,7 +34,7 @@ Friend Module Interaction
 
         CurrentFileToOpen = File
         StatusIcon.BalloonTipText = Msg
-        StatusIcon.ShowBalloonTip(2000)
+        StatusIcon.ShowBalloonTip(2000) 'TODO: Don't discard balloons: instead, hide the icon after showing the balloon.
     End Sub
 
     Public Sub ShowToolTip(ByVal Ctrl As Control)

@@ -382,6 +382,8 @@ Friend Class SynchronizeForm
                     If Quiet And Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
                 End If
 
+                Log.SaveAndDispose(LeftRootPath, RightRootPath, Status)
+
                 ' Set last run only if the profile hasn't failed, and has synced completely.
                 ' Checking for Status.Cancel allows to resync if eg. computer was stopped during sync.
                 If Not (Status.Failed Or Status.Cancel) Then
@@ -399,8 +401,6 @@ Friend Class SynchronizeForm
                         End Try
                     End If
                 End If
-
-                Log.SaveAndDispose(LeftRootPath, RightRootPath, Status)
 
                 If (Quiet And Not Me.Visible) Or CommandLine.NoStop Then
                     Me.Close()

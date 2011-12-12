@@ -19,7 +19,8 @@ Friend Module ProgramSetting
     Public Const DiffProgram As String = "Diff program"
     Public Const DiffArguments As String = "Diff arguments"
     Public Const TextLogs As String = "Text logs"
-    Public Const Autocomplete As String = "Autocomplete"
+    Public Const Autocomplete As String = "Autocomplete" 'TODO: Document
+    Public Const ErrorLogs As String = "Error logs"
 
     'Program files
     Public Const ConfigFolderName As String = "config"
@@ -94,12 +95,17 @@ NotInheritable Class ConfigHandler
         Return Singleton
     End Function
 
+    ' Useful for renaming logs, or in cases where a ProfileHandler isn't available.
     Public Function GetConfigPath(ByVal Name As String) As String
         Return ConfigRootDir & ProgramSetting.DirSep & Name & ".sync"
     End Function
 
     Public Function GetLogPath(ByVal Name As String) As String
-        Return LogRootDir & ProgramSetting.DirSep & Name & ".log" & If(ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False), "", ".html")
+        Return LogRootDir & ProgramSetting.DirSep & Name & ".log" & If(ProgramSetting.Debug Or GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False), "", ".html")
+    End Function
+
+    Public Function GetErrorsLogPath(ByVal Name As String) As String
+        Return LogRootDir & ProgramSetting.DirSep & Name & ".errors.log"
     End Function
 
     Public Function GetUserFilesRootDir() As String 'Return the place were config files are stored

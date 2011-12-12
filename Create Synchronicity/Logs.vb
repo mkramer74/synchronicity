@@ -36,8 +36,10 @@ End Structure
 
 Friend NotInheritable Class LogHandler
     Dim LogName As String
+
     Public Errors As List(Of ErrorItem)
     Public Log As List(Of LogItem)
+
 #If DEBUG Then
     Public DebugInfo As List(Of String)
 #End If
@@ -45,16 +47,15 @@ Friend NotInheritable Class LogHandler
     Private Disposed As Boolean '= False
 
     Private LogId As String 'HTML 'id' to current log
-    Private LogTitle As String 'Store current date when launching sync
+    Private LogDate As Date 'Store current date when launching sync
 
     Sub New(ByVal _LogName As String)
         IO.Directory.CreateDirectory(ProgramConfig.LogRootDir)
 
-        'Disposed
         LogId = "cs_" + DateTime.UtcNow.Ticks.ToString()
-        LogTitle = String.Format("<h2 id=""{0}"">{1}</h2>", LogId, Date.Now.ToString("g"))
-
+        LogDate = Date.Now
         LogName = _LogName
+
         Errors = New List(Of ErrorItem)
         Log = New List(Of LogItem)
 
@@ -86,7 +87,7 @@ Friend NotInheritable Class LogHandler
 #End If
     End Sub
 
-    Private Sub OpenHTMLHeaders(ByRef LogW As IO.StreamWriter)
+    Private Sub OpenHTMLHeaders(ByVal LogW As IO.StreamWriter)
         Dim LogTitle As String = Translation.TranslateFormat("\LOG_TITLE", LogName)
 
         If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then
@@ -97,7 +98,7 @@ Friend NotInheritable Class LogHandler
         LogW.WriteLine("<p><a href=""#{0}"">{1}</a></p>", LogId, Translation.Translate("\LATEST"))
     End Sub
 
-    Private Shared Sub CloseHTMLHeaders(ByRef LogW As IO.StreamWriter)
+    Private Shared Sub CloseHTMLHeaders(ByVal LogW As IO.StreamWriter)
         If ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False) Then
             LogW.WriteLine()
         Else
@@ -105,8 +106,8 @@ Friend NotInheritable Class LogHandler
         End If
     End Sub
 
-    Private Shared Sub PutFormatted(ByVal Contents As String(), ByRef LogW As IO.StreamWriter)
-        If ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False) Then
+    Private Shared Sub PutFormatted(ByVal Contents As String(), ByVal LogW As IO.StreamWriter, Optional ByVal TextOnly As Boolean = False)
+        If ProgramSetting.Debug Or TextOnly Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False) Then
             LogW.WriteLine(String.Join("	", Contents))
         Else
             LogW.WriteLine("<tr>")
@@ -125,8 +126,12 @@ Friend NotInheritable Class LogHandler
         If Disposed Then Exit Sub
         Disposed = True
 
+        Dim LogPath As String = ProgramConfig.GetLogPath(LogName)
+        Dim ErrorsLogPath As String = ProgramConfig.GetErrorsLogPath(LogName)
+
         Try
-            Dim NewLog As Boolean = Not IO.File.Exists(ProgramConfig.GetLogPath(LogName))
+            Dim NewLog As Boolean = Not IO.File.Exists(LogPath)
+            Dim GenerateErrorLog As Boolean = ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ErrorLogs, False)
 
             'Load the contents of the previous log, excluding the closing tags
             Dim MaxArchivesCount As Integer = ProgramConfig.GetProgramSetting(Of Integer)(ProgramSetting.MaxLogEntries, 7)
@@ -135,8 +140,8 @@ Friend NotInheritable Class LogHandler
             Dim TitleLine As New Text.RegularExpressions.Regex("<h2.*>")
             Dim StrippedLines As New Text.RegularExpressions.Regex("<h1>|<a.*>|</body>|</html>")
 
-            If Not NewLog And Not Debug Then
-                Using LogReader As New IO.StreamReader(ProgramConfig.GetLogPath(LogName))
+            If Not NewLog And Not ProgramSetting.Debug Then
+                Using LogReader As New IO.StreamReader(LogPath)
                     While Not LogReader.EndOfStream
                         Dim Line As String = LogReader.ReadLine()
                         If TitleLine.IsMatch(Line) Then
@@ -149,7 +154,10 @@ Friend NotInheritable Class LogHandler
             End If
 
             'This erases log contents.
-            Dim LogWriter As New IO.StreamWriter(ProgramConfig.GetLogPath(LogName), False, Text.Encoding.UTF8)
+            Dim ErrorsLogWriter As IO.StreamWriter = Nothing
+            Dim LogWriter As New IO.StreamWriter(LogPath, False, Text.Encoding.UTF8)
+            If GenerateErrorLog Then ErrorsLogWriter = New IO.StreamWriter(ErrorsLogPath, False, Text.Encoding.UTF8)
+
             OpenHTMLHeaders(LogWriter)
             For LogId As Integer = 0 To Archives.Count - 1
                 LogWriter.Write(Archives(LogId).ToString)
@@ -157,7 +165,7 @@ Friend NotInheritable Class LogHandler
 
             Try
                 'Log format: <h2>, then two <table>s (info, errors)
-                LogWriter.WriteLine(LogTitle) 'Must be kept, to detect log boundaries
+                LogWriter.WriteLine("<h2 id=""{0}"">{1}</h2>", LogId, LogDate.ToString("g")) 'Must be kept, to detect log boundaries
 
                 PutHTML(LogWriter, "<p>")
                 LogWriter.WriteLine("Create Synchronicity v{0}", Application.ProductVersion)
@@ -192,7 +200,11 @@ Friend NotInheritable Class LogHandler
                 If Errors.Count > 0 Then
                     PutHTML(LogWriter, "<table class=""errors"">")
                     For Each Err As ErrorItem In Errors
-                        PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message, Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
+                        PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, LogWriter)
+                        If GenerateErrorLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, ErrorsLogWriter, True)
+#If DEBUG Then
+                        If ProgramSetting.Debug Then PutFormatted(New String() {"Stack Trace", Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
+#End If
                     Next
                     PutHTML(LogWriter, "</table>")
                 End If
@@ -203,8 +215,10 @@ Friend NotInheritable Class LogHandler
                 Exit Sub
             Catch Ex As Exception
                 Interaction.ShowMsg(Translation.Translate("\LOGFILE_WRITE_ERROR") & Environment.NewLine & Ex.Message & Environment.NewLine & Environment.NewLine & Ex.ToString)
+
             Finally
                 LogWriter.Close()
+                If GenerateErrorLog Then ErrorsLogWriter.Close()
             End Try
 
         Catch Ex As Exception

@@ -171,7 +171,7 @@ Friend Class MainForm
     End Sub
 
     Private Sub ActionsMenu_Opening(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles ActionsMenu.Opening
-        Dim FileSize As Integer = If(IO.File.Exists(ProgramConfig.GetLogPath(CurrentProfile)), CInt((New System.IO.FileInfo(ProgramConfig.GetLogPath(CurrentProfile))).Length / 1000), 0)
+        Dim FileSize As Integer = If(IO.File.Exists(Profiles(CurrentProfile()).LogPath), CInt(Utilities.GetSize(Profiles(CurrentProfile()).LogPath) / 1000), 0)
         ClearLogMenuItem.Text = String.Format(ClearLogMenuItem.Tag.ToString, FileSize)
     End Sub
 
@@ -212,12 +212,12 @@ Friend Class MainForm
     End Sub
 
     Private Sub ViewLogMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ViewLogMenuItem.Click
-        If Not IO.File.Exists(ProgramConfig.GetLogPath(CurrentProfile)) Then Exit Sub
-        Interaction.StartProcess(ProgramConfig.GetLogPath(CurrentProfile))
+        If Not IO.File.Exists(Profiles(CurrentProfile).LogPath) Then Exit Sub
+        Interaction.StartProcess(Profiles(CurrentProfile).LogPath)
     End Sub
 
     Private Sub ClearLogMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ClearLogMenuItem.Click
-        Profiles(CurrentProfile).DeleteLogFile()
+        Profiles(CurrentProfile).DeleteLogFiles()
     End Sub
 
     Private Sub ScheduleMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ScheduleMenuItem.Click

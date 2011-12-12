@@ -38,7 +38,7 @@ Friend Module ProfileSetting
     Public Const DiscardAfter As String = "Discard after"
     Public Const PreviewOnly As String = "Preview only"
     Public Const SyncFolderAttributes As String = "Sync folder attributes"
-    Public Const ErrorsLog As String = "Track problems separately"
+    Public Const ErrorsLog As String = "Track errors separately"
     '</>
 
     'Disabled: would require keeping a list of modified files to work, since once a source file is deleted in the source, there's no way to tell when it had been last modified, and hence no way to calculate the appropriate deletion date.

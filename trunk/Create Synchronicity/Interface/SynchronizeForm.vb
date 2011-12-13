@@ -391,7 +391,7 @@ Friend Class SynchronizeForm
                     Dim PostSyncAction As String = Handler.GetSetting(Of String)(ProfileSetting.PostSyncAction)
                     If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction IsNot Nothing Then
                         Try
-                            Interaction.ShowBalloonTip(Translation.Translate("\POST_SYNC"))
+                            Interaction.ShowBalloonTip(String.Format(Translation.Translate("\POST_SYNC"), PostSyncAction))
                             Diagnostics.Process.Start(PostSyncAction, RightRootPath)
                         Catch Ex As Exception
                             Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))

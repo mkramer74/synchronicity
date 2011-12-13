@@ -8,33 +8,32 @@
 
 Friend Module Interaction
     Friend InvariantCulture As Globalization.CultureInfo = Globalization.CultureInfo.InvariantCulture
-    Friend StatusIcon As NotifyIcon = New NotifyIcon() With {.BalloonTipTitle = "Create Synchronicity", .BalloonTipIcon = ToolTipIcon.Info}
+    Friend WithEvents StatusIcon As NotifyIcon = New NotifyIcon() With {.BalloonTipTitle = "Create Synchronicity", .BalloonTipIcon = ToolTipIcon.Info}
+
+    Private StatusIconVisible As Boolean
+    Private BalloonTipTarget As String = Nothing
     Private SharedToolTip As ToolTip = New ToolTip() With {.UseFading = False, .UseAnimation = False, .ToolTipIcon = ToolTipIcon.Info}
 
     Public Sub LoadStatusIcon()
-        Static Loaded As Boolean = False
-
-        If Not Loaded Then
-            Loaded = True
-            AddHandler StatusIcon.BalloonTipClicked, AddressOf Interaction.BallonClick
-            Dim Assembly As System.Reflection.Assembly = System.Reflection.Assembly.GetExecutingAssembly()
-            StatusIcon.Icon = New Drawing.Icon(Assembly.GetManifestResourceStream("CS.icon-16x16.ico"))
-        End If
+        StatusIcon.Icon = New Drawing.Icon(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CS.icon-16x16.ico"))
     End Sub
 
     Public Sub ToggleStatusIcon(ByVal Status As Boolean)
         StatusIcon.Visible = Status And (Not CommandLine.Silent)
+        StatusIconVisible = StatusIcon.Visible
     End Sub
 
-    Public Sub ShowBalloonTip(ByVal Msg As String, Optional ByVal File As String = "")
-        If CommandLine.Silent Or Not StatusIcon.Visible Then
-            ProgramConfig.LogAppEvent(String.Format("Interaction: Balloon tip discarded: [{0}].", Msg))
+    Public Sub ShowBalloonTip(ByVal Msg As String, Optional ByVal File As String = Nothing)
+        If CommandLine.Silent Then
+            ProgramConfig.LogAppEvent(String.Format("Interaction: Silent: Balloon tip discarded: [{0}].", Msg))
             Exit Sub
         End If
 
-        CurrentFileToOpen = File
+        BalloonTipTarget = File
         StatusIcon.BalloonTipText = Msg
-        StatusIcon.ShowBalloonTip(2000) 'TODO: Don't discard balloons: instead, hide the icon after showing the balloon.
+
+        StatusIcon.Visible = True
+        StatusIcon.ShowBalloonTip(10000)
     End Sub
 
     Public Sub ShowToolTip(ByVal Ctrl As Control)
@@ -71,7 +70,7 @@ Friend Module Interaction
 
     Public Function ShowMsg(ByVal Text As String, Optional ByVal Caption As String = "", Optional ByVal Buttons As MessageBoxButtons = MessageBoxButtons.OK, Optional ByVal Icon As MessageBoxIcon = MessageBoxIcon.None) As DialogResult
         If CommandLine.Silent Then
-            ProgramConfig.LogAppEvent(String.Format("Interaction: Message Box discarded with default answer: [{0}] - [{1}].", Caption, Text))
+            ProgramConfig.LogAppEvent(String.Format("Interaction: Silent: Message Box discarded with default answer: [{0}] - [{1}].", Caption, Text))
             Return DialogResult.OK
         End If
 
@@ -81,9 +80,13 @@ Friend Module Interaction
         Return Result
     End Function
 
-    Private CurrentFileToOpen As String = ""
-    Private Sub BallonClick(ByVal sender As Object, ByVal e As System.EventArgs)
-        If Not CurrentFileToOpen = "" Then StartProcess(CurrentFileToOpen)
+    Private Sub BallonClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles StatusIcon.BalloonTipClicked
+        If BalloonTipTarget IsNot Nothing Then StartProcess(BalloonTipTarget)
+    End Sub
+
+    Private Sub StatusIcon_BalloonTipClosed(sender As Object, e As System.EventArgs) Handles StatusIcon.BalloonTipClosed
+        StatusIcon.Visible = StatusIconVisible
+        'BalloonTipTarget = Nothing ' Useless: will be reset by next call to ShowBalloonTip
     End Sub
 
     Public Sub StartProcess(ByVal Address As String, Optional ByVal Args As String = "")

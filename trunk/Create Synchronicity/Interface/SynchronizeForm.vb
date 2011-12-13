@@ -253,20 +253,25 @@ Friend Class SynchronizeForm
     End Function
 
     Private Sub UpdateStatuses()
+        Static CanDelete As Boolean = Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = SyncMethod.LRMirror
+
         Status.TimeElapsed = (DateTime.Now - Status.StartTime) + New TimeSpan(1000000) ' ie +0.1s
+
+        Dim Copying As Boolean = Status.CurrentStep = StatusData.SyncStep.LR Or (Not CanDelete And Status.CurrentStep = StatusData.SyncStep.RL)
 
         If Status.CurrentStep = StatusData.SyncStep.Scan Then
             Speed.Text = Math.Round(Status.FilesScanned / Status.TimeElapsed.TotalSeconds).ToString & " files/s"
-        Else
+        ElseIf CanDelete And Status.CurrentStep = StatusData.SyncStep.RL Then
+            Speed.Text = Math.Round(Status.DeletedFiles / Status.TimeElapsed.TotalSeconds).ToString & " files/s"
+        ElseIf Copying Then
             Status.Speed = Status.BytesCopied / Status.TimeElapsed.TotalSeconds
             Speed.Text = Utilities.FormatSize(Status.Speed) & "/s"
         End If
 
         Dim EstimateString As String = ""
-        'FIXME
-        If Status.Speed > (1 << 10) AndAlso Status.CurrentStep = StatusData.SyncStep.SyncLR AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
-            Dim RemainingSeconds As Double = 60 * Math.Round(Math.Min(Integer.MaxValue / 2, (Status.BytesScanned / Status.Speed) - Status.TimeElapsed.TotalSeconds) / 60, 0)
-            EstimateString = String.Format(" / ~{0}", Utilities.FormatTimespan(New TimeSpan(0, 0, CInt(RemainingSeconds))))
+        If Copying AndAlso Status.Speed > (1 << 10) AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
+            Dim TotalTime As Integer = CInt(Math.Min(Integer.MaxValue, Status.BytesToCopy / Status.Speed))
+            EstimateString = String.Format(" / ~{0}", Utilities.FormatTimespan(New TimeSpan(0, 0, TotalTime)))
         End If
 
         ElapsedTime.Text = Utilities.FormatTimespan(Status.TimeElapsed) & EstimateString
@@ -298,9 +303,9 @@ Friend Class SynchronizeForm
         Select Case Id
             Case StatusData.SyncStep.Scan
                 StatusText = Translation.TranslateFormat("\STEP_1_STATUS", StatusText)
-            Case StatusData.SyncStep.SyncLR
+            Case StatusData.SyncStep.LR
                 StatusText = Translation.TranslateFormat("\STEP_2_STATUS", Step2ProgressBar.Value, Step2ProgressBar.Maximum, StatusText)
-            Case StatusData.SyncStep.SyncRL
+            Case StatusData.SyncStep.RL
                 StatusText = Translation.TranslateFormat("\STEP_3_STATUS", Step3ProgressBar.Value, Step3ProgressBar.Maximum, StatusText)
         End Select
 
@@ -314,7 +319,7 @@ Friend Class SynchronizeForm
         Select Case Id
             Case StatusData.SyncStep.Scan
                 Return Step1ProgressBar
-            Case StatusData.SyncStep.SyncLR
+            Case StatusData.SyncStep.LR
                 Return Step2ProgressBar
             Case Else
                 Return Step3ProgressBar
@@ -344,18 +349,20 @@ Friend Class SynchronizeForm
         Select Case StepId
             Case StatusData.SyncStep.Scan
                 SyncingTimer.Stop()
-                Status.CurrentStep = StatusData.SyncStep.SyncLR
+                Status.CurrentStep = StatusData.SyncStep.LR
                 If Preview Then
                     ShowPreviewList()
                     StopBtn.Text = StopBtn.Tag.ToString.Split(";"c)(1)
                 End If
 
-            Case StatusData.SyncStep.SyncLR
-                Status.CurrentStep = StatusData.SyncStep.SyncRL
+            Case StatusData.SyncStep.LR
+                Status.CurrentStep = StatusData.SyncStep.RL
 
-            Case StatusData.SyncStep.SyncRL
+            Case StatusData.SyncStep.RL
                 SyncingTimer.Stop()
                 Status.CurrentStep = StatusData.SyncStep.Done
+
+                UpdateStatuses() 'Last update, to remove forecasts.
 
                 If Status.Failed Then
                     Interaction.ShowBalloonTip(Status.FailureMsg)
@@ -436,7 +443,7 @@ Friend Class SynchronizeForm
         Status.Cancel = Status.Cancel Or (Status.CurrentStep <> StatusData.SyncStep.Done)
         FullSyncThread.Abort()
         ScanThread.Abort() : SyncThread.Abort()
-        StepCompleted(StatusData.SyncStep.Scan) : StepCompleted(StatusData.SyncStep.SyncLR) : StepCompleted(StatusData.SyncStep.SyncRL) 'This call will sleep for 5s after displaying its failure message if the backup failed.
+        StepCompleted(StatusData.SyncStep.Scan) : StepCompleted(StatusData.SyncStep.LR) : StepCompleted(StatusData.SyncStep.RL) 'This call will sleep for 5s after displaying its failure message if the backup failed.
     End Sub
 #End Region
 
@@ -493,13 +500,13 @@ Friend Class SynchronizeForm
         SyncingList.Sort(Sorter)
 
         Me.Invoke(New Action(AddressOf LaunchTimer))
-        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncLR, Status.LeftActionsCount})
-        Do_Task(SideOfSource.Left, SyncingList, StatusData.SyncStep.SyncLR)
-        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.SyncLR)
+        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.LR, Status.LeftActionsCount})
+        Do_Task(SideOfSource.Left, SyncingList, StatusData.SyncStep.LR)
+        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.LR)
 
-        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.SyncRL, Status.RightActionsCount})
-        Do_Task(SideOfSource.Right, SyncingList, StatusData.SyncStep.SyncRL)
-        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.SyncRL)
+        Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.RL, Status.RightActionsCount})
+        Do_Task(SideOfSource.Right, SyncingList, StatusData.SyncStep.RL)
+        Me.Invoke(StepCompletedCallback, StatusData.SyncStep.RL)
     End Sub
 
     '"Source" is "current side", with the corresponding side stored in "Side"
@@ -689,6 +696,8 @@ Friend Class SynchronizeForm
                         If IsNewFile OrElse SourceIsMoreRecent(SourceFile, DestinationFile) Then
                             AddToSyncingList(RelativeFilePath, TypeOfItem.File, Context.Source, TypeOfAction.Copy, Not IsNewFile, Suffix)
                             Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3}).", If(IsNewFile, "[New File]", "[Updated file]"), SourceFile, DestinationFile, RelativeFilePath))
+
+                            If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesToCopy += Utilities.GetSize(SourceFile) 'Degrades performance.
                         Else
                             'Adds an entry to not delete this when cleaning up the other side.
                             AddValidFile(RelativeFilePath & Suffix)
@@ -698,7 +707,6 @@ Friend Class SynchronizeForm
                         Log.LogInfo(String.Format("SearchForChanges: [Excluded file] ""{0}""", SourceFile))
                     End If
 
-                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesScanned += Utilities.GetSize(SourceFile) 'Degrades performance.
                 Catch Ex As Exception
                     Log.HandleError(Ex, SourceFile)
                 End Try

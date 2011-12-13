@@ -272,14 +272,12 @@ Friend NotInheritable Class MessageLoop
 
             For Each Profile As String In RequestedProfiles
                 If Profiles.ContainsKey(Profile) Then
-                    If Profiles(Profile).ValidateConfigFile() Then
+                    If Profiles(Profile).ValidateConfigFile() Then 'Displays a message if there is a problem.
                         ProgramConfig.LogAppEvent("Profiles queue: Registered profile " & Profile)
                         ProfilesQueue.Enqueue(Profile)
-                    Else
-                        Interaction.ShowMsg(Translation.Translate("\INVALID_CONFIG"), Translation.Translate("\INVALID_CMD"), , MessageBoxIcon.Error)
                     End If
                 Else
-                    Interaction.ShowMsg(Translation.Translate("\INVALID_PROFILE"), Translation.Translate("\INVALID_CMD"), , MessageBoxIcon.Error)
+                    Interaction.ShowMsg(Translation.TranslateFormat("\INVALID_PROFILE", Profile), Profile, , MessageBoxIcon.Error)
                 End If
             Next
         End If
@@ -288,7 +286,7 @@ Friend NotInheritable Class MessageLoop
             ProgramConfig.LogAppEvent("Profiles queue: Synced all profiles.")
             Application.Exit()
         Else
-            Dim SyncForm As New SynchronizeForm(ProfilesQueue.Dequeue(), CommandLine.ShowPreview, CommandLine.Quiet, False)
+            Dim SyncForm As New SynchronizeForm(ProfilesQueue.Dequeue(), CommandLine.ShowPreview, False)
             AddHandler SyncForm.SyncFinished, Sub(Name As String, Completed As Boolean) MainFormInstance.ApplicationTimer.Start() 'Wait for 5 seconds before moving on.
             SyncForm.StartSynchronization(False)
         End If
@@ -320,7 +318,7 @@ Friend NotInheritable Class MessageLoop
             If Date.Compare(NextInQueue.NextRun, Date.Now) <= 0 Then
                 ProgramConfig.LogAppEvent("Scheduler: Launching " & NextInQueue.Name)
 
-                Dim SyncForm As New SynchronizeForm(NextInQueue.Name, False, True, NextInQueue.CatchUp)
+                Dim SyncForm As New SynchronizeForm(NextInQueue.Name, False, NextInQueue.CatchUp)
                 AddHandler SyncForm.SyncFinished, AddressOf ScheduledProfileCompleted
                 ScheduledProfiles.RemoveAt(0)
                 SyncForm.StartSynchronization(False)

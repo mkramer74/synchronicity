@@ -22,7 +22,6 @@ Friend Class SynchronizeForm
     Private StatusLabel As String = ""
     Private Lock As New Object()
 
-    Private Quiet As Boolean 'This Quiet parameter is not a duplicate ; it is used when eg the scheduler needs to tell the form to keep quiet, although the "quiet" command-line flag wasn't used.
     Private Catchup As Boolean 'Indicates whether this operation was started due to catchup rules.
     Private Preview As Boolean 'Should show a preview.
 
@@ -45,12 +44,11 @@ Friend Class SynchronizeForm
     'Without:                    41'', 42'', 26'', 29''
 
 #Region " Events "
-    Public Sub New(ByVal ConfigName As String, ByVal DisplayPreview As Boolean, ByVal _Quiet As Boolean, ByVal _Catchup As Boolean)
+    Public Sub New(ByVal ConfigName As String, ByVal DisplayPreview As Boolean, ByVal _Catchup As Boolean)
         ' This call is required by the Windows Form Designer.
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-        Quiet = _Quiet
         Catchup = _Catchup
         Preview = DisplayPreview
         SyncBtn.Enabled = False
@@ -99,7 +97,7 @@ Friend Class SynchronizeForm
         Log.LogInfo("Done.")
 #End If
 
-        If Quiet Then
+        If CommandLine.Quiet Then
             Me.Visible = False
 
             Interaction.StatusIcon.ContextMenuStrip = Nothing
@@ -118,7 +116,7 @@ Friend Class SynchronizeForm
         End If
 
         Status.FailureMsg = ""
-        Dim IsValid As Boolean = Handler.ValidateConfigFile(False, True, Quiet, Status.FailureMsg)
+        Dim IsValid As Boolean = Handler.ValidateConfigFile(False, True, Status.FailureMsg)
         Status.Failed = Not IsValid
 
         If IsValid Then
@@ -185,7 +183,7 @@ Friend Class SynchronizeForm
     End Sub
 
     Private Sub SynchronizeForm_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Resize
-        If Me.WindowState = FormWindowState.Minimized And Quiet Then Me.Visible = False
+        If Me.WindowState = FormWindowState.Minimized And CommandLine.Quiet Then Me.Visible = False
     End Sub
 
     Private Sub SyncingTimeCounter_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SyncingTimer.Tick
@@ -360,7 +358,6 @@ Friend Class SynchronizeForm
                 Status.CurrentStep = StatusData.SyncStep.Done
 
                 If Status.Failed Then
-                    System.Threading.Thread.Sleep(5000) 'Wait a little before failing (so that the user has time to acknowledge each if several failures occur)
                     Interaction.ShowBalloonTip(Status.FailureMsg)
                 ElseIf Log.Errors.Count > 0 Then
                     PreviewList.Visible = True
@@ -400,7 +397,7 @@ Friend Class SynchronizeForm
                     End If
                 End If
 
-                If (Quiet And Not Me.Visible) Or CommandLine.NoStop Then
+                If (CommandLine.Quiet And Not Me.Visible) Or CommandLine.NoStop Then
                     Me.Close()
                 Else
                     StopBtn.Text = StopBtn.Tag.ToString.Split(";"c)(1)

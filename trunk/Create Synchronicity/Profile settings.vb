@@ -133,7 +133,7 @@ NotInheritable Class ProfileHandler
     End Function
 
     ' `ReturnString` is used to pass locally generated error messages to caller.
-    Function ValidateConfigFile(Optional ByVal WarnUnrootedPaths As Boolean = False, Optional ByVal TryCreateDest As Boolean = False, Optional ByVal Silent As Boolean = False, Optional ByRef FailureMsg As String = Nothing) As Boolean
+    Function ValidateConfigFile(Optional ByVal WarnUnrootedPaths As Boolean = False, Optional ByVal TryCreateDest As Boolean = False, Optional ByRef FailureMsg As String = Nothing) As Boolean
         Dim IsValid As Boolean = True
         Dim InvalidListing As New List(Of String)
 
@@ -159,9 +159,9 @@ NotInheritable Class ProfileHandler
         End If
 
         'TryCreateDest <=> When this function returns, the folder should exist.
-        '_MayCreateDest <=> Creating the destination folder is allowed for this folder.
-        Dim _MayCreateDest As Boolean = GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False)
-        If _MayCreateDest And TryCreateDest Then
+        'MayCreateDest <=> Creating the destination folder is allowed for this folder.
+        Dim MayCreateDest As Boolean = GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False)
+        If MayCreateDest And TryCreateDest Then
             Try
                 IO.Directory.CreateDirectory(Dest)
             Catch Ex As Exception
@@ -169,7 +169,7 @@ NotInheritable Class ProfileHandler
             End Try
         End If
 
-        If (Not IO.Directory.Exists(Dest)) And (TryCreateDest Or (Not _MayCreateDest)) Then
+        If (Not IO.Directory.Exists(Dest)) And (TryCreateDest Or (Not MayCreateDest)) Then
             InvalidListing.Add(Translation.Translate("\INVALID_DEST"))
             IsValid = False
         End If
@@ -197,8 +197,8 @@ NotInheritable Class ProfileHandler
             Dim ErrorsList As String = String.Join(Environment.NewLine, InvalidListing.ToArray)
             Dim ErrMsg As String = String.Format("{0} - {1}{2}{3}", ProfileName, Translation.Translate("\INVALID_CONFIG"), Environment.NewLine, ErrorsList)
 
-            If Not FailureMsg Is Nothing Then FailureMsg = ErrMsg
-            If Not Silent Then Interaction.ShowMsg(ErrMsg, Translation.Translate("\INVALID_CONFIG"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            If Not FailureMsg Is Nothing Then FailureMsg = ErrMsg '(FailureMsg is passed ByRef)
+            If Not CommandLine.Quiet Then Interaction.ShowMsg(ErrMsg, Translation.Translate("\INVALID_CONFIG"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Return False
         Else
             If WarnUnrootedPaths Then

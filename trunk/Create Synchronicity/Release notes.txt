@@ -38,6 +38,7 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Dec. 13, 2011 - UPD: Enable tray notifications in all cases.
 Dec. 12, 2011 - NEW: Hidden setting: Log all synchronization errors to a separate profile-name.errors.log file (#3448527).
 Dec. 11, 2011 - UPD: !Use a VirtualMode preview list, saving up to 12% scanning time, and using a good 60% less memory. Also, loading the preview list is now instantaneous.
 Dec. 02, 2011 - UPD: Detailed view now contains a history of last backups (Ctrl+L)

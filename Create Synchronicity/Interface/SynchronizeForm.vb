@@ -489,7 +489,7 @@ Friend Class SynchronizeForm
         Dim SetMaxCallback As New SetIntCall(AddressOf SetMax)
 
         If Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False) Then
-            Log.HandleError(New InvalidOperationException(), "This is a preview-only profile") 'FIXME: Translate (or remove)
+            Log.HandleError(New InvalidOperationException("This is a preview-only profile")) 'FIXME: Translate (or remove)
             Me.Close()
             Exit Sub
         End If

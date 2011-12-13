@@ -10,7 +10,9 @@ Friend Module Interaction
     Friend InvariantCulture As Globalization.CultureInfo = Globalization.CultureInfo.InvariantCulture
     Friend WithEvents StatusIcon As NotifyIcon = New NotifyIcon() With {.BalloonTipTitle = "Create Synchronicity", .BalloonTipIcon = ToolTipIcon.Info}
 
+    Dim BalloonQueueSize As Integer
     Private StatusIconVisible As Boolean
+
     Private BalloonTipTarget As String = Nothing
     Private SharedToolTip As ToolTip = New ToolTip() With {.UseFading = False, .UseAnimation = False, .ToolTipIcon = ToolTipIcon.Info}
 
@@ -32,8 +34,9 @@ Friend Module Interaction
         BalloonTipTarget = File
         StatusIcon.BalloonTipText = Msg
 
+        BalloonQueueSize += 1 'Prevents StatusIcon_BalloonTipClosed from hiding the icon if a balloon is closed because another one is being shown.
         StatusIcon.Visible = True
-        StatusIcon.ShowBalloonTip(10000)
+        StatusIcon.ShowBalloonTip(15000)
     End Sub
 
     Public Sub ShowToolTip(ByVal Ctrl As Control)
@@ -85,7 +88,8 @@ Friend Module Interaction
     End Sub
 
     Private Sub StatusIcon_BalloonTipClosed(sender As Object, e As System.EventArgs) Handles StatusIcon.BalloonTipClosed
-        StatusIcon.Visible = StatusIconVisible
+        BalloonQueueSize -= 1
+        If BalloonQueueSize = 0 Then StatusIcon.Visible = StatusIconVisible
         'BalloonTipTarget = Nothing ' Useless: will be reset by next call to ShowBalloonTip
     End Sub
 

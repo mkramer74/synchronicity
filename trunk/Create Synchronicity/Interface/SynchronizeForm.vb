@@ -359,7 +359,10 @@ Friend Class SynchronizeForm
                 SyncingTimer.Stop()
                 Status.CurrentStep = StatusData.SyncStep.Done
 
-                If Log.Errors.Count > 0 Or Status.Failed Then
+                If Status.Failed Then
+                    System.Threading.Thread.Sleep(5000) 'Wait a little before failing (so that the user has time to acknowledge each if several failures occur)
+                    Interaction.ShowBalloonTip(Status.FailureMsg)
+                ElseIf Log.Errors.Count > 0 Then
                     PreviewList.Visible = True
                     Status.ShowingErrors = True
                     PreviewList.VirtualListSize = Log.Errors.Count
@@ -369,15 +372,12 @@ Friend Class SynchronizeForm
                     PreviewList.Columns.Add(Translation.Translate("\PATH"))
                     PreviewList.Columns.Add(Translation.Translate("\ERROR_DETAIL"))
 
-                    If Status.Failed Then
-                        System.Threading.Thread.Sleep(5000) 'Wait a little before failing
-                        Interaction.ShowBalloonTip(Status.FailureMsg)
-                    ElseIf Not Status.Cancel Then 'LATER: Show something even if the sync was canceled
+                    If Not Status.Cancel Then 'LATER: Show something even if the sync was canceled
                         Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
                     End If
-                ElseIf Not Status.Cancel Then
+                Else
                     'LATER: Add ballon to say the sync was cancelled.
-                    Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
+                    If Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
                 End If
 
                 Log.SaveAndDispose(LeftRootPath, RightRootPath, Status)

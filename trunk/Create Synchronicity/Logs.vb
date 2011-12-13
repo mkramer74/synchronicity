@@ -8,14 +8,10 @@
 
 Structure ErrorItem
     Dim Ex As Exception
-    Dim Details As String
-
-    Sub New(ByVal _Ex As Exception, ByVal _Details As String)
-        Ex = _Ex : Details = _Details
-    End Sub
+    Dim Path As String
 
     Function ToListViewItem() As ListViewItem
-        Return New ListViewItem(New String() {Ex.Source, Details, Ex.Message}, 8) 'TODO: Display something better than error source.
+        Return New ListViewItem(New String() {Ex.Source, Path, Ex.Message}, 8) 'TODO: Display something better than error source.
     End Function
 End Structure
 
@@ -67,9 +63,9 @@ Friend NotInheritable Class LogHandler
 #End If
     End Sub
 
-    Sub HandleError(ByVal Ex As Exception, Optional ByVal Details As String = "")
+    Sub HandleError(ByVal Ex As Exception, Optional ByVal Path As String = "")
         If Ex Is Nothing OrElse TypeOf Ex Is Threading.ThreadAbortException Then Exit Sub
-        Errors.Add(New ErrorItem(Ex, Details))
+        Errors.Add(New ErrorItem With{.Ex = Ex, .Path = Path))
     End Sub
 
     Sub LogAction(ByVal Item As SyncingItem, ByVal Side As SideOfSource, ByVal Success As Boolean)

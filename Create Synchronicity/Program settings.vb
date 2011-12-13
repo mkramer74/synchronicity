@@ -292,8 +292,6 @@ Structure CommandLine
             CommandLine.NoStop = ArgsList.Contains("/nostop")
             CommandLine.RunAll = ArgsList.Contains("/all")
 
-            CommandLine.Quiet = CommandLine.Quiet Or CommandLine.Silent
-
             Dim RunArgIndex As Integer = ArgsList.IndexOf("/run")
             If (Not CommandLine.RunAll) AndAlso RunArgIndex <> -1 AndAlso RunArgIndex + 1 < ArgsList.Count Then
                 CommandLine.TasksToRun = ArgsList(RunArgIndex + 1)
@@ -309,12 +307,14 @@ Structure CommandLine
 
         If CommandLine.RunAll Or CommandLine.TasksToRun <> "" Then
             CommandLine.RunAs = CommandLine.RunMode.Queue
+        ElseIf ArgsList.Contains("/scheduler") Then
+            CommandLine.RunAs = CommandLine.RunMode.Scheduler
 #If DEBUG Then
         ElseIf CommandLine.ScanPath <> "" Then
             CommandLine.RunAs = CommandLine.RunMode.Scanner
 #End If
-        ElseIf ArgsList.Contains("/scheduler") Then
-            CommandLine.RunAs = CommandLine.RunMode.Scheduler
         End If
+
+        CommandLine.Quiet = CommandLine.Quiet Or CommandLine.RunAs = RunMode.Scheduler Or CommandLine.Silent
     End Sub
 End Structure

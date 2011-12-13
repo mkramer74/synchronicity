@@ -4,7 +4,7 @@
         Dim Blocks As New List(Of String)
         If Hours <> 0 Then Blocks.Add(Hours & " h")
         If T.Minutes <> 0 Then Blocks.Add(T.Minutes.ToString & " m")
-        If T.Seconds <> 0 Then Blocks.Add(T.Seconds.ToString & " s")
+        If T.Seconds <> 0 Or Blocks.Count = 0 Then Blocks.Add(T.Seconds.ToString & " s")
         Return String.Join(", ", Blocks.ToArray())
     End Function
 

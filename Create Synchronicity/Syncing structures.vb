@@ -8,28 +8,35 @@
 
 Structure StatusData
     Enum SyncStep
-        Done = 0
-        Scan = 1
-        SyncLR = 2
-        SyncRL = 3
+        Done
+        Scan
+        LR
+        RL
     End Enum
 
     Dim StartTime As Date
+
     Dim BytesCopied As Long
-    Dim BytesScanned As Long
+    Dim BytesToCopy As Long
+
     Dim FilesScanned As Long
-    Dim ActionsDone As Long
+
+
     Dim CreatedFiles As Long
     Dim CreatedFolders As Long
     Dim FilesToCreate As Long
     Dim FoldersToCreate As Long
+
     Dim DeletedFiles As Long
     Dim DeletedFolders As Long
     Dim FilesToDelete As Long
     Dim FoldersToDelete As Long
+
+    Dim ActionsDone As Long
     Dim TotalActionsCount As Long
     Dim LeftActionsCount As Integer 'Used to set a ProgressBar's maximum
     Dim RightActionsCount As Integer
+
     Dim CurrentStep As SyncStep
     Dim TimeElapsed As TimeSpan
     Dim Speed As Double

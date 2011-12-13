@@ -360,7 +360,6 @@ Friend Class SynchronizeForm
                 Status.CurrentStep = StatusData.SyncStep.Done
 
                 If Status.Failed Then
-                    System.Threading.Thread.Sleep(5000) 'Wait a little before failing (so that the user has time to acknowledge each if several failures occur)
                     Interaction.ShowBalloonTip(Status.FailureMsg)
                 ElseIf Log.Errors.Count > 0 Then
                     PreviewList.Visible = True
@@ -439,7 +438,7 @@ Friend Class SynchronizeForm
         Status.Cancel = Status.Cancel Or (Status.CurrentStep <> StatusData.SyncStep.Done)
         FullSyncThread.Abort()
         ScanThread.Abort() : SyncThread.Abort()
-        StepCompleted(StatusData.SyncStep.Scan) : StepCompleted(StatusData.SyncStep.SyncLR) : StepCompleted(StatusData.SyncStep.SyncRL) 'This call will sleep for 5s after displaying its failure message if the backup failed.
+        StepCompleted(StatusData.SyncStep.Scan) : StepCompleted(StatusData.SyncStep.SyncLR) : StepCompleted(StatusData.SyncStep.SyncRL)
     End Sub
 #End Region
 

@@ -10,10 +10,9 @@ Friend Module Interaction
     Friend InvariantCulture As Globalization.CultureInfo = Globalization.CultureInfo.InvariantCulture
     Friend WithEvents StatusIcon As NotifyIcon = New NotifyIcon() With {.BalloonTipTitle = "Create Synchronicity", .BalloonTipIcon = ToolTipIcon.Info}
 
-    Dim BalloonQueueSize As Integer
     Private StatusIconVisible As Boolean
-
-    Private BalloonTipTarget As String = Nothing
+    Private BalloonTarget As String = Nothing
+    Private BalloonQueue As New Queue(Of KeyValuePair(Of String, String))
     Private SharedToolTip As ToolTip = New ToolTip() With {.UseFading = False, .UseAnimation = False, .ToolTipIcon = ToolTipIcon.Info}
 
     Public Sub LoadStatusIcon()
@@ -25,18 +24,17 @@ Friend Module Interaction
         StatusIconVisible = StatusIcon.Visible
     End Sub
 
-    Public Sub ShowBalloonTip(ByVal Msg As String, Optional ByVal File As String = Nothing)
+    Public Sub ShowBalloonTip(ByVal Msg As String, Optional ByVal Target As String = Nothing)
         If CommandLine.Silent Then
             ProgramConfig.LogAppEvent(String.Format("Interaction: Silent: Balloon tip discarded: [{0}].", Msg))
             Exit Sub
         End If
 
-        BalloonTipTarget = File
-        StatusIcon.BalloonTipText = Msg
+        Dim WasEmpty As Boolean = BalloonQueue.Count = 0
+        BalloonQueue.Enqueue(New KeyValuePair(Of String, String)(Msg, Target))
 
-        BalloonQueueSize += 1 'Prevents StatusIcon_BalloonTipClosed from hiding the icon if a balloon is closed because another one is being shown.
-        StatusIcon.Visible = True
-        StatusIcon.ShowBalloonTip(15000)
+
+        If WasEmpty Then ShowNextBalloon()
     End Sub
 
     Public Sub ShowToolTip(ByVal Ctrl As Control)
@@ -84,13 +82,25 @@ Friend Module Interaction
     End Function
 
     Private Sub BallonClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles StatusIcon.BalloonTipClicked
-        If BalloonTipTarget IsNot Nothing Then StartProcess(BalloonTipTarget)
+        If BalloonTarget IsNot Nothing Then StartProcess(BalloonTarget)
     End Sub
 
+    Private Sub ShowNextBalloon()
+        If BalloonQueue.Count = 0 Then Exit Sub
+
+        Dim Msg As KeyValuePair(Of String, String) = BalloonQueue.Peek
+
+        BalloonTarget = Msg.Value
+        StatusIcon.BalloonTipText = Msg.Key
+
+        StatusIcon.Visible = True
+        StatusIcon.ShowBalloonTip(15000)
+    End Sub
     Private Sub StatusIcon_BalloonTipClosed(sender As Object, e As System.EventArgs) Handles StatusIcon.BalloonTipClosed
-        BalloonQueueSize -= 1
-        If BalloonQueueSize = 0 Then StatusIcon.Visible = StatusIconVisible
-        'BalloonTipTarget = Nothing ' Useless: will be reset by next call to ShowBalloonTip
+        BalloonQueue.Dequeue()
+        If BalloonQueue.Count = 0 Then StatusIcon.Visible = StatusIconVisible
+
+        ShowNextBalloon()
     End Sub
 
     Public Sub StartProcess(ByVal Address As String, Optional ByVal Args As String = "")

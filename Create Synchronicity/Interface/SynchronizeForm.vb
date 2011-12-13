@@ -369,17 +369,15 @@ Friend Class SynchronizeForm
                     PreviewList.Columns.Add(Translation.Translate("\PATH"))
                     PreviewList.Columns.Add(Translation.Translate("\ERROR_DETAIL"))
 
-                    If Quiet Then 'Later: Show ballon tip every time? In that case, modify New to enable status icon.
-                        If Status.Failed Then
-                            System.Threading.Thread.Sleep(5000) 'Wait a little before failing
-                            Interaction.ShowBalloonTip(Status.FailureMsg)
-                        Else
-                            Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
-                        End If
+                    If Status.Failed Then
+                        System.Threading.Thread.Sleep(5000) 'Wait a little before failing
+                        Interaction.ShowBalloonTip(Status.FailureMsg)
+                    ElseIf Not Status.Cancel Then 'LATER: Show something even if the sync was canceled
+                        Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
                     End If
-                Else
+                ElseIf Not Status.Cancel Then
                     'LATER: Add ballon to say the sync was cancelled.
-                    If Quiet And Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
+                    Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
                 End If
 
                 Log.SaveAndDispose(LeftRootPath, RightRootPath, Status)

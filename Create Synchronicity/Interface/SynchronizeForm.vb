@@ -390,18 +390,7 @@ Friend Class SynchronizeForm
                 ' Checking for Status.Cancel allows to resync if eg. computer was stopped during sync.
                 If Not (Status.Failed Or Status.Cancel) Then
                     Handler.SetLastRun()
-
-                    ' Search for a post-sync action, requiring that Expert mode be enabled.
-                    Dim PostSyncAction As String = Handler.GetSetting(Of String)(ProfileSetting.PostSyncAction)
-                    If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction IsNot Nothing Then
-                        Try
-                            Interaction.ShowBalloonTip(String.Format(Translation.Translate("\POST_SYNC"), PostSyncAction))
-                            Diagnostics.Process.Start(PostSyncAction, RightRootPath)
-                        Catch Ex As Exception
-                            Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
-                            ProgramConfig.LogAppEvent(Ex.ToString)
-                        End Try
-                    End If
+                    RunPostSync()
                 End If
 
                 If (CommandLine.Quiet And Not Me.Visible) Or CommandLine.NoStop Then
@@ -433,6 +422,21 @@ Friend Class SynchronizeForm
         If Not Status.Cancel Then SyncBtn.Enabled = True
     End Sub
 
+    Sub RunPostSync()
+        ' Search for a post-sync action, requiring that Expert mode be enabled.
+        Dim PostSyncAction As String = Handler.GetSetting(Of String)(ProfileSetting.PostSyncAction)
+
+        If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction IsNot Nothing Then
+            Try
+                Interaction.ShowBalloonTip(String.Format(Translation.Translate("\POST_SYNC"), PostSyncAction))
+                Diagnostics.Process.Start(PostSyncAction, String.Format("""{0}"" ""{1}"" ""{2}"" ""{3}"" ""{4}""", Handler.ProfileName, Not (Status.Cancel Or Status.Failed), LeftRootPath, RightRootPath, Handler.ErrorsLogPath))
+            Catch Ex As Exception
+                Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
+                ProgramConfig.LogAppEvent(Ex.ToString)
+            End Try
+        End If
+    End Sub
+
     Private Sub LaunchTimer()
         Status.BytesCopied = 0
         Status.StartTime = DateTime.Now
@@ -447,7 +451,7 @@ Friend Class SynchronizeForm
     End Sub
 #End Region
 
-#Region " Syncing code "
+#Region " Scanning / IO "
     Private Sub FullSync()
         Scan()
         Sync()
@@ -458,7 +462,7 @@ Friend Class SynchronizeForm
         Dim StepCompletedCallback As New StepCompletedCall(AddressOf StepCompleted)
 
         'Pass 1: Create actions L->R for files/folder copy, and mark dest files that should be kept
-        'Pass 2: Create actions R->L for files/folder copy/deletion, based on what was marked as ValidFile, aka based on what should be kept.
+        'Pass 2: Create actions R->L for files/folder copy/deletion, based on what was marked as Valid.
 
         SyncingList.Clear()
 
@@ -995,7 +999,7 @@ Friend Class SynchronizeForm
     End Function
 #End Region
 
-#Region "Tests"
+#Region " Tests "
 #If DEBUG Then
     Structure DatePair
         Dim Ntfs, FAT As Date

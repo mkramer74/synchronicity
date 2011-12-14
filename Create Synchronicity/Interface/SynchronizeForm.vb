@@ -369,12 +369,17 @@ Friend Class SynchronizeForm
                 ElseIf Log.Errors.Count > 0 Then
                     PreviewList.Visible = True
                     Status.ShowingErrors = True
+
+                    PreviewList.VirtualMode = True 'In case it hadn't been enabled (ie. if there was no preview)
                     PreviewList.VirtualListSize = Log.Errors.Count
 
                     PreviewList.Columns.Clear()
                     PreviewList.Columns.Add(Translation.Translate("\ERROR"))
-                    PreviewList.Columns.Add(Translation.Translate("\PATH"))
                     PreviewList.Columns.Add(Translation.Translate("\ERROR_DETAIL"))
+                    PreviewList.Columns.Add(Translation.Translate("\PATH"))
+
+                    PreviewList.Refresh()
+                    PreviewList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
 
                     If Not Status.Cancel Then 'LATER: Show something even if the sync was canceled
                         Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)

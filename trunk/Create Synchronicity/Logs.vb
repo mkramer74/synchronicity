@@ -86,23 +86,27 @@ Friend NotInheritable Class LogHandler
 #End If
     End Sub
 
-    Private Sub OpenHTMLHeaders(ByVal LogW As IO.StreamWriter)
-        Dim LogTitle As String = Translation.TranslateFormat("\LOG_TITLE", LogName)
+    Private Shared Function Html() As Boolean
+        Return Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False))
+    End Function
 
-        If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then
-            LogW.WriteLine("<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family:Consolas, Courier, monospace;font-size:0.8em;margin:auto;width:80%;}table{border-collapse:collapse;margin:1em 0;width:100%;}th, td{border:solid grey;border-width:1px 0;padding-right:2em;}tr:nth-child(odd){background-color:#EEE;}.actions tr td{white-space:nowrap;}.actions tr td:nth-child(5), .errors tr td:nth-child(2){white-space:normal;word-break:break-all;}tr td:last-child{padding-right:0;}</style></head><body>")
+    Private Shared Sub WriteSummary(ByVal LogW As IO.StreamWriter, ByVal Left As String, ByVal Right As String, ByVal Status As StatusData, ByVal IncludeHtml As Boolean)
+        IncludeHtml = IncludeHtml And Html()
+
+        If IncludeHtml Then LogW.WriteLine("<p>")
+
+        Dim LineSeparator As String = If(IncludeHtml, "<br />", "")
+        LogW.WriteLine("Create Synchronicity v{0}{1}", Application.ProductVersion, LineSeparator)
+        LogW.WriteLine("{0}: {1}{2}", Translation.Translate("\LEFT"), Left, LineSeparator)
+        LogW.WriteLine("{0}: {1}{2}", Translation.Translate("\RIGHT"), Right, LineSeparator)
+        LogW.WriteLine("{0} {1}/{2}" & LineSeparator, Translation.Translate("\DONE"), Status.ActionsDone, Status.TotalActionsCount)
+        LogW.WriteLine("{0} {1}{2}", Translation.Translate("\ELAPSED"), TimeSpan.FromMilliseconds(Status.TimeElapsed.TotalMilliseconds - Status.TimeElapsed.Milliseconds).ToString, LineSeparator)
+
+        If Status.Failed And (Status.FailureMsg IsNot Nothing) Then
+            LogW.WriteLine(Status.FailureMsg)
         End If
 
-        LogW.WriteLine("<h1>{0}</h1>", LogTitle)
-        LogW.WriteLine("<p><a href=""#{0}"">{1}</a></p>", LogId, Translation.Translate("\LATEST"))
-    End Sub
-
-    Private Shared Sub CloseHTMLHeaders(ByVal LogW As IO.StreamWriter)
-        If ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False) Then
-            LogW.WriteLine()
-        Else
-            LogW.WriteLine("</body></html>")
-        End If
+        If IncludeHtml Then LogW.WriteLine("</p>")
     End Sub
 
     Private Shared Sub PutFormatted(ByVal Contents As String(), ByVal LogW As IO.StreamWriter, Optional ByVal TextOnly As Boolean = False)
@@ -117,8 +121,8 @@ Friend NotInheritable Class LogHandler
         End If
     End Sub
 
-    Private Shared Sub PutHTML(ByVal LogWriter As IO.StreamWriter, ByVal Line As String)
-        If Not (ProgramSetting.Debug Or ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.TextLogs, False)) Then LogWriter.WriteLine(Line)
+    Private Shared Sub PutHtml(ByVal LogW As IO.StreamWriter, ByVal Text As String)
+        If Html() Then LogW.WriteLine(Text)
     End Sub
 
     Sub SaveAndDispose(ByVal Left As String, ByVal Right As String, ByVal Status As StatusData)
@@ -156,7 +160,13 @@ Friend NotInheritable Class LogHandler
             Dim LogWriter As New IO.StreamWriter(LogPath, False, Text.Encoding.UTF8)
             If GenerateErrorsLog Then ErrorsLogWriter = New IO.StreamWriter(ErrorsLogPath, False, Text.Encoding.UTF8)
 
-            OpenHTMLHeaders(LogWriter)
+            Dim LogTitle As String = Translation.TranslateFormat("\LOG_TITLE", LogName)
+
+            PutHtml(LogWriter, "<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.1//EN"" ""http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd""><html xmlns=""http://www.w3.org/1999/xhtml""><head><title>" & LogTitle & "</title><meta http-equiv=""Content-Type"" content=""text/html;charset=utf-8"" /><style type=""text/css"">body{font-family:Consolas, Courier, monospace;font-size:0.8em;margin:auto;width:80%;}table{border-collapse:collapse;margin:1em 0;width:100%;}th, td{border:solid grey;border-width:1px 0;padding-right:2em;}tr:nth-child(odd){background-color:#EEE;}.actions tr td{white-space:nowrap;}.actions tr td:nth-child(5), .errors tr td:nth-child(2){white-space:normal;word-break:break-all;}tr td:last-child{padding-right:0;}</style></head><body>")
+
+            LogWriter.WriteLine("<h1>{0}</h1>", LogTitle)
+            LogWriter.WriteLine("<p><a href=""#{0}"">{1}</a></p>", LogId, Translation.Translate("\LATEST"))
+
             For LogId As Integer = 0 To Archives.Count - 1
                 LogWriter.Write(Archives(LogId).ToString)
             Next
@@ -165,21 +175,8 @@ Friend NotInheritable Class LogHandler
                 'Log format: <h2>, then two <table>s (info, errors)
                 LogWriter.WriteLine("<h2 id=""{0}"">{1}</h2>", LogId, LogDate.ToString("g")) 'Must be kept, to detect log boundaries
 
-                PutHTML(LogWriter, "<p>")
-                LogWriter.WriteLine("Create Synchronicity v{0}", Application.ProductVersion)
-                PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine("{0}: {1}", Translation.Translate("\LEFT"), Left)
-                PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine("{0}: {1}", Translation.Translate("\RIGHT"), Right)
-                PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine("{0} {1}/{2}", Translation.Translate("\DONE"), Status.ActionsDone, Status.TotalActionsCount)
-                PutHTML(LogWriter, "<br />")
-                LogWriter.WriteLine("{0} {1}", Translation.Translate("\ELAPSED"), TimeSpan.FromMilliseconds(Status.TimeElapsed.TotalMilliseconds - Status.TimeElapsed.Milliseconds).ToString)
-                If Status.Failed And (Status.FailureMsg IsNot Nothing) Then
-                    PutHTML(LogWriter, "<br />")
-                    LogWriter.WriteLine(Status.FailureMsg)
-                End If
-                PutHTML(LogWriter, "</p>")
+                WriteSummary(LogWriter, Left, Right, Status, True)
+                If GenerateErrorsLog Then WriteSummary(ErrorsLogWriter, Left, Right, Status, False)
 
 #If DEBUG Then
                 For Each Info As String In DebugInfo
@@ -188,15 +185,15 @@ Friend NotInheritable Class LogHandler
 #End If
 
                 If Log.Count > 0 Then
-                    PutHTML(LogWriter, "<table class=""actions"">")
+                    PutHtml(LogWriter, "<table class=""actions"">")
                     For Each Record As LogItem In Log
                         PutFormatted(New String() {Record.GetHeader(), Record.Item.FormatType(), Record.Item.FormatAction(), Record.Item.FormatDirection(), Record.Item.Path}, LogWriter)
                     Next
-                    PutHTML(LogWriter, "</table>")
+                    PutHtml(LogWriter, "</table>")
                 End If
 
                 If Errors.Count > 0 Then
-                    PutHTML(LogWriter, "<table class=""errors"">")
+                    PutHtml(LogWriter, "<table class=""errors"">")
                     For Each Err As ErrorItem In Errors
                         PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, LogWriter)
                         If GenerateErrorsLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, ErrorsLogWriter, True)
@@ -204,10 +201,10 @@ Friend NotInheritable Class LogHandler
                         If ProgramSetting.Debug Then PutFormatted(New String() {"Stack Trace", Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
 #End If
                     Next
-                    PutHTML(LogWriter, "</table>")
+                    PutHtml(LogWriter, "</table>")
                 End If
 
-                CloseHTMLHeaders(LogWriter)
+                PutHtml(LogWriter, "</body></html>")
 
             Catch Ex As Threading.ThreadAbortException
                 Exit Sub

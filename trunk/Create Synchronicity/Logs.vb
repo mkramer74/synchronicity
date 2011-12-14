@@ -11,7 +11,7 @@ Structure ErrorItem
     Dim Path As String
 
     Function ToListViewItem() As ListViewItem
-        Return New ListViewItem(New String() {Ex.Source, Path, Ex.Message}, 8) 'TODO: Display something better than error source.
+        Return New ListViewItem(New String() {Ex.Source, Ex.Message, Path}, 8) 'TODO: Display something better than error source.
     End Function
 End Structure
 
@@ -196,7 +196,7 @@ Friend NotInheritable Class LogHandler
                     PutHtml(LogWriter, "<table class=""errors"">")
                     For Each Err As ErrorItem In Errors
                         PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, LogWriter)
-                        If GenerateErrorsLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, ErrorsLogWriter, True)
+                        If GenerateErrorsLog Then PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, ErrorsLogWriter, True)
 #If DEBUG Then
                         If ProgramSetting.Debug Then PutFormatted(New String() {"Stack Trace", Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
 #End If

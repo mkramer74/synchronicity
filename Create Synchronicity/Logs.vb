@@ -65,7 +65,7 @@ Friend NotInheritable Class LogHandler
 
     Sub HandleError(ByVal Ex As Exception, Optional ByVal Path As String = "")
         If Ex Is Nothing OrElse TypeOf Ex Is Threading.ThreadAbortException Then Exit Sub
-        Errors.Add(New ErrorItem With{.Ex = Ex, .Path = Path))
+        Errors.Add(New ErrorItem With {.Ex = Ex, .Path = Path})
     End Sub
 
     Sub LogAction(ByVal Item As SyncingItem, ByVal Side As SideOfSource, ByVal Success As Boolean)
@@ -198,8 +198,8 @@ Friend NotInheritable Class LogHandler
                 If Errors.Count > 0 Then
                     PutHTML(LogWriter, "<table class=""errors"">")
                     For Each Err As ErrorItem In Errors
-                        PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, LogWriter)
-                        If GenerateErrorsLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Details, Err.Ex.Message}, ErrorsLogWriter, True)
+                        PutFormatted(New String() {Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, LogWriter)
+                        If GenerateErrorsLog Then PutFormatted(New String() {LogName, Translation.Translate("\ERROR"), Err.Path, Err.Ex.Message}, ErrorsLogWriter, True)
 #If DEBUG Then
                         If ProgramSetting.Debug Then PutFormatted(New String() {"Stack Trace", Err.Ex.StackTrace.Replace(Environment.NewLine, "\n")}, LogWriter)
 #End If

@@ -19,65 +19,75 @@ mkdir "%BUILD%"
 @rem Visual Studio doesn't let you define a common font, but some users do not have Verdana. Always build using a common font for all forms, and make sure that it's supported.
 echo (**) Changing "Verdana" to Main.LargeFont in interface files.
 (
-echo.
-echo -----
-for /R "Create Synchronicity\Interface" %%f IN (*.vb) do (
-copy "%%f" "%%f.bak"
-sed -i "s/Me.Font = .*/Me.Font = Main.LargeFont/" "%%f"
-)
+	echo.
+	echo -----
+	
+	for /R "Create Synchronicity\Interface" %%f IN (*.vb) do (
+		copy "%%f" "%%f.bak"
+		sed -i "s/Me.Font = .*/Me.Font = Main.LargeFont/" "%%f"
+	)
 ) >> %LOG%
 
 echo (**) Updating revision number
 (
-echo.
-echo -----
-cd "%ROOT%\Create Synchronicity"
-subwcrev.exe "%ROOT%" Revision.template.vb Revision.vb
-cd "%ROOT%"
+	echo.
+	echo -----
+	
+	cd "%ROOT%\Create Synchronicity"
+	subwcrev.exe "%ROOT%" Revision.template.vb Revision.vb
+	cd "%ROOT%"
+	
+	echo.
+	echo -----
 ) >> %LOG%
 
 echo (**) Building program (release)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out "%LOG%"
+	"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out %LOG%
 
 echo (**) Building program (debug)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out "%LOG%"
+	"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
 
 echo (**) Building program (Linux)
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Linux /Out "%LOG%"
+	"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Linux /Out %LOG%
 
 echo (**) Building installer
 (
-echo.
-echo -----
-"C:\Program Files (x86)\NSIS\makensis.exe" "%ROOT%\Create Synchronicity\setup_script.nsi"
-echo.
-echo -----
-move %FILENAME%_Setup.exe "%BUILD%\%FILENAME%_Setup-%TAG%.exe"
+	echo.
+	echo -----
+	
+	"C:\Program Files (x86)\NSIS\makensis.exe" "%ROOT%\Create Synchronicity\setup_script.nsi"
+		
+	echo.
+	echo -----
+	
+	move %FILENAME%_Setup.exe "%BUILD%\%FILENAME%_Setup-%TAG%.exe"
 ) >> %LOG%
 
 echo (**) Building zip files
 (
-echo.
-echo -----
-cd "%BIN%\Release"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
-cd "%ROOT%"
+	echo.
+	echo -----
+	
+	cd "%BIN%\Release"
+	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
+	cd "%ROOT%"
 
-cd "%BIN%\Debug"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-DEBUG.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
-cd "%ROOT%"
+	cd "%BIN%\Debug"
+	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-DEBUG.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
+	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
+	cd "%ROOT%"
 
-cd "%BIN%\Linux"
-"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run.sh" "COPYING" "languages\*"
-cd "%ROOT%"
+	cd "%BIN%\Linux"
+	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run.sh" "COPYING" "languages\*"
+	cd "%ROOT%"
 ) >> %LOG%
 
 echo (**) Changing font name back from Main.LargeFont to "Verdana" in interface files.
 (
-echo.
-echo -----
-for /R "Create Synchronicity\Interface" %%f IN (*.vb) do move /Y "%%f.bak" "%%f"
+	echo.
+	echo -----
+	
+	for /R "Create Synchronicity\Interface" %%f IN (*.vb) do move /Y "%%f.bak" "%%f"
 ) >> %LOG%
 
 @goto end

@@ -434,7 +434,7 @@ Friend Class SynchronizeForm
         If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction IsNot Nothing Then
             Try
                 Interaction.ShowBalloonTip(String.Format(Translation.Translate("\POST_SYNC"), PostSyncAction))
-                Diagnostics.Process.Start(PostSyncAction, String.Format("""{0}"" ""{1}"" ""{2}"" ""{3}"" ""{4}""", Handler.ProfileName, Not (Status.Cancel Or Status.Failed), LeftRootPath, RightRootPath, Handler.ErrorsLogPath))
+                Diagnostics.Process.Start(PostSyncAction, String.Format("""{0}"" ""{1}"" ""{2}"" ""{3}"" ""{4}"" ""{5}""", Handler.ProfileName, Not (Status.Cancel Or Status.Failed), Log.Errors.Count, LeftRootPath, RightRootPath, Handler.ErrorsLogPath))
             Catch Ex As Exception
                 Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
                 ProgramConfig.LogAppEvent(Ex.ToString)

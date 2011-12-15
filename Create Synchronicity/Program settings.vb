@@ -20,6 +20,7 @@ Friend Module ProgramSetting
     Public Const DiffArguments As String = "Diff arguments"
     Public Const TextLogs As String = "Text logs"
     Public Const Autocomplete As String = "Autocomplete" 'TODO: Document
+    Public Const Forecast As String = "Forecast"
 
     'Program files
     Public Const ConfigFolderName As String = "config"

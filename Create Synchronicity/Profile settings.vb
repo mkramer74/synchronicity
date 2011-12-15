@@ -31,7 +31,6 @@ Friend Module ProfileSetting
 
     'Next settings are hidden, not automatically appended to config files.
     Public Const ExcludedFolders As String = "Excluded folder patterns"
-    Public Const Forecast As String = "Forecast"
     Public Const WakeupAction As String = "Wakeup action"
     Public Const PostSyncAction As String = "Post-sync action"
     Public Const ExcludeHidden As String = "Exclude hidden entries"
@@ -87,6 +86,9 @@ NotInheritable Class ProfileHandler
             SetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)
             SetSetting(Of Integer)(ProfileSetting.DiscardAfter, 0)
         End If
+
+        'Post-sync actions require a separate errors log
+        If GetSetting(Of String)(ProfileSetting.PostSyncAction) IsNot Nothing Then SetSetting(Of Boolean)(ProfileSetting.ErrorsLog, True)
 
         'Sanity checks: if no folders were included on the right due to automatic destination creation, select all folders
         If GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False) And GetSetting(Of String)(ProfileSetting.RightSubFolders) Is Nothing Then SetSetting(Of String)(ProfileSetting.RightSubFolders, "*")

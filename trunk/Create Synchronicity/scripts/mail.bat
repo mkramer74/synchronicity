@@ -17,6 +17,8 @@ echo This program implements the common post-sync script interface defined in
 echo Create Synchronicity's manual. It serves as an interface between Create
 echo Synchronicity and a smtp client such as blat.exe, the current default.
 echo.
+echo The output of blat is sent to "mail\log.txt".
+echo.
 echo To use this script, you need to do two things (total estimated time: ^< 5mn)
 echo 1. Open your installation folder, and locate the *mail.bat* file, in the 
 echo    "scripts" folder. It contains a "SMTP Configuration" section, which you 
@@ -88,7 +90,7 @@ if "%password%" neq "" (
 	set pwd=
 )
 
-"%mail%" "%body%" -f "%sender%" -server "%server%:%port%" %usr% %pwd% -to "%recipient%" -subject "%subject%" > "%log%"
+"%mail%" "%body%" -charset "utf-8" -server "%server%:%port%" %usr% %pwd% -f "%sender%" -to "%recipient%" -subject "%subject%" > "%log%"
 
 :end
 

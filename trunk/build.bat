@@ -1,22 +1,36 @@
 @echo OFF
-@if "%1" == "/?" goto help
+
+if "%1" == "/?" goto help
+goto start
+
+:help
+echo This file is part of Create Synchronicity.
+echo Create Synchronicity is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+echo Create Synchronicity is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+echo You should have received a copy of the GNU General Public License along with Create Synchronicity.  If not, see http://www.gnu.org/licenses/.
+echo Created by:   Clément Pit--Claudel.
+echo Web site:     http://synchronicity.sourceforge.net.
+echo.
+echo Usage: build.bat v5.0 or build.bat r2873.
+echo This script builds all versions of Create Synchronicity.
+echo Requires 7-zip installed in "C:\Program Files\7-Zip\7z.exe".
+goto end
 
 :start
-@set TAG=%1
-@set ROOT=%CD%
-@set BUILD=%ROOT%\build
-@set BIN=%ROOT%\Create Synchronicity\bin
+set TAG=%1
+set ROOT=%CD%
+set BUILD=%ROOT%\build
+set BIN=%ROOT%\Create Synchronicity\bin
 
-@set NAME=Create Synchronicity
-@set FILENAME=Create_Synchronicity
-@set LOG="%BUILD%\buildlog-%TAG%.txt"
+set NAME=Create Synchronicity
+set FILENAME=Create_Synchronicity
+set LOG="%BUILD%\buildlog-%TAG%.txt"
 
 mkdir "%BUILD%"
 
 (echo Packaging log for %TAG% & date /t & time /t & echo.) > %LOG%
 
-
-@rem Visual Studio doesn't let you define a common font, but some users do not have Verdana. Always build using a common font for all forms, and make sure that it's supported.
+rem Visual Studio doesn't let you define a common font, but some users do not have Verdana. Always build using a common font for all forms, and make sure that it's supported.
 echo (**) Changing "Verdana" to Main.LargeFont in interface files.
 (
 	echo.
@@ -90,17 +104,4 @@ echo (**) Changing font name back from Main.LargeFont to "Verdana" in interface 
 	for /R "Create Synchronicity\Interface" %%f IN (*.vb) do move /Y "%%f.bak" "%%f"
 ) >> %LOG%
 
-@goto end
-
-:help
-@echo This file is part of Create Synchronicity.
-@echo Create Synchronicity is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-@echo Create Synchronicity is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-@echo You should have received a copy of the GNU General Public License along with Create Synchronicity.  If not, see http://www.gnu.org/licenses/.
-@echo Created by:   Clément Pit--Claudel.
-@echo Web site:     http://synchronicity.sourceforge.net.
-@echo.
-@echo Usage: build.bat v5.0 or build.bat r2873.
-@echo This script builds all versions of Create Synchronicity.
-@echo Requires 7-zip installed in "C:\Program Files\7-Zip\7z.exe".
 :end

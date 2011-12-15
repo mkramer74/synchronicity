@@ -866,7 +866,6 @@ Friend Class SynchronizeForm
     Private Function IsIncludedInSync(ByVal FullPath As String) As Boolean
         If IsExcludedSinceHidden(FullPath) OrElse IsTooOld(FullPath) Then Return False
 
-        ' Check the filename
         Try
             Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Restrictions)
                 Case 1

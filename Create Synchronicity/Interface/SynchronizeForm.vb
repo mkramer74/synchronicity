@@ -381,22 +381,15 @@ Friend Class SynchronizeForm
                     PreviewList.Refresh()
                     PreviewList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
 
-                    If Not Status.Cancel Then 'LATER: Show something even if the sync was canceled
-                        Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
-                    End If
+                    If Not Status.Cancel Then  Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
                 Else
-                    'LATER: Add ballon to say the sync was cancelled.
                     If Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
                 End If
 
                 Log.SaveAndDispose(LeftRootPath, RightRootPath, Status)
+                If Not (Status.Failed Or Status.Cancel) Then Handler.SetLastRun() 'Required to implement catching up
 
-                ' Set last run only if the profile hasn't failed, and has synced completely.
-                ' Checking for Status.Cancel allows to resync if eg. computer was stopped during sync.
-                If Not (Status.Failed Or Status.Cancel) Then
-                    Handler.SetLastRun()
-                    RunPostSync()
-                End If
+                RunPostSync()
 
                 If (CommandLine.Quiet And Not Me.Visible) Or CommandLine.NoStop Then
                     Me.Close()
@@ -876,7 +869,6 @@ Friend Class SynchronizeForm
         ' Check the filename
         Try
             Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Restrictions)
-                'LATER: Add an option to allow for simultaneous inclusion and exclusion (useful because of regex patterns)
                 Case 1
                     Return MatchesPattern(GetFileOrFolderName(FullPath), IncludedPatterns)
                 Case 2
@@ -1021,7 +1013,7 @@ Friend Class SynchronizeForm
         Check_HardwareFATTimes()
     End Sub
 
-    'LATER: This could be a useful function for NAS drives known to round NTFS timestamps, but currently only DLink does, and they do it incorrectly (there's a bug in their drivers)
+    'Note: This could be a useful function for NAS drives known to round NTFS timestamps, but currently only DLink does, and they do it incorrectly (there's a bug in their drivers)
     Private Shared Function RoundToSecond(ByVal NTFSTime As Date) As Date
         Return (New Date(NTFSTime.Year, NTFSTime.Month, NTFSTime.Day, NTFSTime.Hour, NTFSTime.Minute, NTFSTime.Second).AddSeconds(If(NTFSTime.Millisecond > 500, 1, 0)))
     End Function

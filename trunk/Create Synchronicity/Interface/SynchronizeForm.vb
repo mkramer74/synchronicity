@@ -426,11 +426,13 @@ Friend Class SynchronizeForm
 
         If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) AndAlso PostSyncAction IsNot Nothing Then
             Try
+                Environment.CurrentDirectory = Application.StartupPath
                 Interaction.ShowBalloonTip(String.Format(Translation.Translate("\POST_SYNC"), PostSyncAction))
                 Diagnostics.Process.Start(PostSyncAction, String.Format("""{0}"" ""{1}"" ""{2}"" ""{3}"" ""{4}"" ""{5}""", Handler.ProfileName, Not (Status.Cancel Or Status.Failed), Log.Errors.Count, LeftRootPath, RightRootPath, Handler.ErrorsLogPath))
             Catch Ex As Exception
-                Interaction.ShowBalloonTip(Translation.Translate("\POSTSYNC_FAILED"))
-                ProgramConfig.LogAppEvent(Ex.ToString)
+                Dim Err As String = Translation.Translate("\POSTSYNC_FAILED") & Environment.NewLine & Ex.Message
+                Interaction.ShowBalloonTip(Err)
+                ProgramConfig.LogAppEvent(Err)
             End Try
         End If
     End Sub

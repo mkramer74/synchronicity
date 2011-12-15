@@ -523,10 +523,10 @@ Friend Class SettingsForm
         ToTextBox.Text = Cleanup(ToTextBox.Text)
     End Sub
 
-    Private Shared Function GetString(ByRef Table As Dictionary(Of String, Boolean)) As String 'LATER: Refactor
+    Private Shared Function GetString(ByRef Table As Dictionary(Of String, Boolean)) As String
         Dim ListString As New System.Text.StringBuilder
         For Each Node As String In Table.Keys
-            ListString.Append(Node).Append(";") 'Must end with a ";"
+            ListString.Append(Node).Append(";") 'Must end with a ';', since '' means that no directories were selected, while ';' means that the root directory was selected, with no subfolders included. See LoadSubFoldersList()
         Next
         Return ListString.ToString
     End Function

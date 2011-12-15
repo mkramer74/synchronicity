@@ -244,7 +244,7 @@ NotInheritable Class ProfileHandler
     End Sub
 
     Sub SetSetting(Of T)(ByVal SettingName As String, ByVal Value As T)
-        Configuration(SettingName) = Value.ToString 'LATER: There might be a problem here, when serializing dates (locale-dependent problems).
+        Configuration(SettingName) = Value.ToString 'Dates are serialized in a locale-dependent way.
     End Sub
 
     Sub CopySetting(Of T)(ByVal Key As String, ByRef Value As T, ByVal Load As Boolean)
@@ -284,7 +284,9 @@ NotInheritable Class ProfileHandler
     Sub LoadSubFoldersList(ByVal ConfigLine As String, ByRef Subfolders As Dictionary(Of String, Boolean))
         Subfolders.Clear()
         Dim ConfigCheckedFoldersList As New List(Of String)(If(Configuration.ContainsKey(ConfigLine), Configuration(ConfigLine), "").Split(";"c))
-        ConfigCheckedFoldersList.RemoveAt(ConfigCheckedFoldersList.Count - 1) 'Removes the last, empty element 'WARNING: All lists should end with a comma then.
+        ConfigCheckedFoldersList.RemoveAt(ConfigCheckedFoldersList.Count - 1) 'Removes the last, empty element
+        ' Warning: The trailing comma can't be removed when generating the configuration string.
+        ' Using StringSplitOptions.RemoveEmptyEntries would make no difference between ';' (root folder selected, no subfolders) and '' (nothing selected at all)
 
         For Each Dir As String In ConfigCheckedFoldersList
             If Not Subfolders.ContainsKey(Dir) Then

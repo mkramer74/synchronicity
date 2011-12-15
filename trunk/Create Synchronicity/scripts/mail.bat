@@ -60,7 +60,8 @@ rem =  You're done!  =
 rem ==================
 
 set basepath=%~dp0
-set mail=%basepath%mail\blat.exe
+set blat=%basepath%mail\blat.exe
+set sendemail=%basepath%mail\sendEmail.exe
 set log=%basepath%mail\log.txt
 
 set profilename=%~1
@@ -90,7 +91,9 @@ if "%password%" neq "" (
 	set pwd=
 )
 
-"%mail%" "%body%" -charset "utf-8" -server "%server%:%port%" %usr% %pwd% -f "%sender%" -to "%recipient%" -subject "%subject%" > "%log%"
+"%blat%" "%body%" -charset "utf-8" -8bitmime -server "%server%:%port%" %usr% %pwd% -f "%sender%" -to "%recipient%" -subject "%subject%" > "%log%"
+rem echo. >> "%log%
+rem "%sendemail%" -f "%sender%" -t "%recipient%" -u "%subject%" -s "%server%:%port%" -o message-file="%body%" -o message-charset="utf-8" >> "%log%"
 
 :end
 

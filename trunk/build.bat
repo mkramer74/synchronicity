@@ -89,6 +89,7 @@ echo (**) Building zip files
 	cd "%BIN%\Debug"
 	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-DEBUG.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
 	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
+	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Scripts.zip" "scripts\*"
 	cd "%ROOT%"
 
 	cd "%BIN%\Linux"

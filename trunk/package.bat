@@ -30,6 +30,7 @@ echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/
 echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-DEBUG.zip/download"
 echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Linux.zip/download"
 echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Extensions.zip/download"
+echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Scripts.zip/download"
 ) > build\current-build.txt
 
 echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge.net
@@ -38,7 +39,7 @@ echo.
 echo -----
 echo Uploading files via SCP.
 "C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\current-build.txt" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/code"
-"C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\Create_Synchronicity-r%REV%.zip" "%BUILD%\Create_Synchronicity-r%REV%-DEBUG.zip" "%BUILD%\Create_Synchronicity_Setup-r%REV%.exe" "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "%BUILD%\Create_Synchronicity-r%REV%-Extensions.zip" "createsoftware,synchronicity@frs.sourceforge.net:/home/pfs/project/s/sy/synchronicity/Create Synchronicity/Unreleased (SVN Builds)"
+"C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\Create_Synchronicity-r%REV%.zip" "%BUILD%\Create_Synchronicity-r%REV%-DEBUG.zip" "%BUILD%\Create_Synchronicity_Setup-r%REV%.exe" "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "%BUILD%\Create_Synchronicity-r%REV%-Extensions.zip" "%BUILD%\Create_Synchronicity-r%REV%-Scripts.zip" "createsoftware,synchronicity@frs.sourceforge.net:/home/pfs/project/s/sy/synchronicity/Create Synchronicity/Unreleased (SVN Builds)"
 ) >> %LOG%
 
 echo (*) Building manual and uploading it to web.sourceforge.net.

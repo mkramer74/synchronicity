@@ -269,7 +269,7 @@ Friend Class SynchronizeForm
         End If
 
         Dim EstimateString As String = ""
-        If Copying AndAlso Status.Speed > (1 << 10) AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then
+        If Copying AndAlso Status.Speed > (1 << 10) AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.Forecast, False) Then
             Dim TotalTime As Integer = CInt(Math.Min(Integer.MaxValue, Status.BytesToCopy / Status.Speed))
             EstimateString = String.Format(" / ~{0}", Utilities.FormatTimespan(New TimeSpan(0, 0, TotalTime)))
         End If
@@ -706,7 +706,7 @@ Friend Class SynchronizeForm
                             AddToSyncingList(RelativeFilePath, TypeOfItem.File, Context.Source, TypeOfAction.Copy, Not IsNewFile, Suffix)
                             Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3}).", If(IsNewFile, "[New File]", "[Updated file]"), SourceFile, DestinationFile, RelativeFilePath))
 
-                            If ProgramConfig.GetProgramSetting(Of Boolean)(ProfileSetting.Forecast, False) Then Status.BytesToCopy += Utilities.GetSize(SourceFile) 'Degrades performance.
+                            If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.Forecast, False) Then Status.BytesToCopy += Utilities.GetSize(SourceFile) 'Degrades performance.
                         Else
                             'Adds an entry to not delete this when cleaning up the other side.
                             AddValidFile(RelativeFilePath & Suffix)

@@ -38,21 +38,22 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Dec. 14, 2011 - UPD: Improve hook scripts support.
 Dec. 13, 2011 - UPD: Rework duration estimates, and display deletion speed while cleaning up.
 Dec. 13, 2011 - UPD: Enable tray notifications in all cases.
-Dec. 12, 2011 - NEW: Hidden setting: Log all synchronization errors to a separate profile-name.errors.log file (#3448527).
+Dec. 12, 2011 - NEW: (Hidden setting) Log all synchronization errors to a separate profile-name.errors.log file (#3448527).
 Dec. 11, 2011 - UPD: !Use a VirtualMode preview list, saving up to 12% scanning time, and using a good 60% less memory. Also, loading the preview list is now instantaneous.
 Dec. 02, 2011 - UPD: Detailed view now contains a history of last backups (Ctrl+L)
 Dec. 02, 2011 - NEW: Press Ctrl+H to display a history of your profiles.
 Nov. 27, 2011 - UPD: !Prettier logs : alternating rows, cleaner layout, direct shortcut to latest entry.
-Nov. 07, 2011 - NEW: Hidden setting: Preview-only profiles (#3089839).
+Nov. 07, 2011 - NEW: (Hidden setting) Preview-only profiles (#3089839).
 Nov. 04, 2011 - FIX: Subtle, non-critical corner-case bug: "Strict Mirror" sometimes remained on although syncing incrementally.
 Nov. 04, 2011 - UPD: Sync all profiles in a group from the command line.
 Nov. 01, 2011 - NEW: !100'000 downloads!
-Oct. 27, 2011 - NEW: Hidden setting: forget (discard) files older than a custom number of days.
+Oct. 27, 2011 - NEW: (Hidden setting) Forget (discard) files older than a custom number of days.
 Oct. 25, 2011 - NEW: !Create profile groups to keep your profiles organized.
 Oct. 25, 2011 - UPD: Restrict the "propagate updates" to expert mode.
-Sep. 29, 2011 - NEW: Hidden setting: Exclude hidden files.
+Sep. 29, 2011 - NEW: (Hidden setting) Exclude hidden files.
 Sep. 23, 2011 - NEW: !Japanese translation, by Masahiko Kuroiwa. ありがと!
 Jul. 11, 2011 - NEW: (Hidden setting) Post-sync actions.
 Jul. 11, 2011 - NEW: !Turkish translation, by muska. Sağ olun!

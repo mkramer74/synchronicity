@@ -19,11 +19,6 @@ Structure LogItem
     Dim Item As SyncingItem
     Dim Side As SideOfSource
     Dim Success As Boolean
-    'Dim ErrorId As Integer
-
-    Sub New(ByVal _Item As SyncingItem, ByVal _Side As SideOfSource, ByVal _Success As Boolean) ', Optional ByVal _ErrorId As Integer = -1)
-        Item = _Item : Side = _Side : Success = _Success ' : ErrorId = _ErrorId
-    End Sub
 
     Function GetHeader() As String
         Return If(Success, Translation.Translate("\SUCCEDED"), Translation.Translate("\FAILED"))
@@ -69,7 +64,7 @@ Friend NotInheritable Class LogHandler
     End Sub
 
     Sub LogAction(ByVal Item As SyncingItem, ByVal Side As SideOfSource, ByVal Success As Boolean)
-        Log.Add(New LogItem(Item, Side, Success))
+        Log.Add(New LogItem With {.Item = Item, .Side = Side, .Success = Success})
     End Sub
 
     <Diagnostics.Conditional("Debug")>

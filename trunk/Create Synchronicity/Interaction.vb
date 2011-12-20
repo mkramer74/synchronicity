@@ -31,6 +31,8 @@ Friend Module Interaction
             Exit Sub
         End If
 
+        If Msg = "" Then Exit Sub
+
         BalloonTipTarget = File
         StatusIcon.BalloonTipText = Msg
 

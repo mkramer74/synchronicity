@@ -33,8 +33,8 @@ Structure StatusData
     Dim FoldersToDelete As Long
 
     Dim ActionsDone As Long
-    Dim TotalActionsCount As Long
-    Dim LeftActionsCount As Integer 'Used to set a ProgressBar's maximum
+    Dim TotalActionsCount As Long ' == SyncingList.Count
+    Dim LeftActionsCount As Integer ' Used to set a ProgressBar's maximum => Integer
     Dim RightActionsCount As Integer
 
     Dim CurrentStep As SyncStep

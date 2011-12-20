@@ -112,11 +112,14 @@ Friend Class SynchronizeForm
                 Interaction.ShowBalloonTip(Translation.TranslateFormat("\RUNNING_TASK", Handler.ProfileName))
             End If
         Else
-            If Not CalledShowModal Then Me.Visible = True 'Me.Show?
+            If Not CalledShowModal Then Me.Visible = True
         End If
 
         Status.FailureMsg = ""
+
         Dim IsValid As Boolean = Handler.ValidateConfigFile(False, True, Status.FailureMsg)
+        If Handler.GetSetting(Of Boolean)(PreviewOnly, False) And (Not Preview) Then IsValid = False
+
         Status.Failed = Not IsValid
 
         If IsValid Then
@@ -415,9 +418,9 @@ Friend Class SynchronizeForm
 
         PreviewList.VirtualMode = True
         PreviewList.Visible = True
-        PreviewList.VirtualListSize = SyncingList.Count 'TODO: TotalActionsCount == SyncingList.Count : get rid of the former.
+        PreviewList.VirtualListSize = SyncingList.Count
 
-        If Not Status.Cancel Then SyncBtn.Enabled = True
+        If Not (Status.Cancel Or Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False)) Then SyncBtn.Enabled = True
     End Sub
 
     Sub RunPostSync()
@@ -491,12 +494,6 @@ Friend Class SynchronizeForm
     Private Sub Sync()
         Dim StepCompletedCallback As New StepCompletedCall(AddressOf StepCompleted)
         Dim SetMaxCallback As New SetIntCall(AddressOf SetMax)
-
-        If Handler.GetSetting(Of Boolean)(ProfileSetting.PreviewOnly, False) Then
-            Log.HandleError(New InvalidOperationException("This is a preview-only profile")) 'FIXME: Translate (or remove)
-            Me.Close()
-            Exit Sub
-        End If
 
         'Restore original order before syncing.
         Sorter.SortColumn = -1 ' Sorts according to initial index.
@@ -649,7 +646,7 @@ Friend Class SynchronizeForm
         Return ValidFiles.ContainsKey(File.ToLower(Interaction.InvariantCulture))
     End Function
 
-    Private Sub RemoveFromSyncingList(ByVal Side As SideOfSource)
+    Private Sub PopSyncingList(ByVal Side As SideOfSource)
         ValidFiles.Remove(SyncingList(SyncingList.Count - 1).Path)
         SyncingList.RemoveAt(SyncingList.Count - 1)
 
@@ -737,7 +734,7 @@ Friend Class SynchronizeForm
                 If ShouldUpdateFolder Then
                     'Don't copy this folder over (not present yet)
                     Status.FoldersToCreate -= 1
-                    RemoveFromSyncingList(Context.Source)
+                    PopSyncingList(Context.Source)
                 Else
                     'TODO: Check this part. The call wasn't an else block before.
                     RemoveValidFile(Folder)

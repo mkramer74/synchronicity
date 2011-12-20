@@ -106,14 +106,16 @@ Friend Class MainForm
 
     Private Sub Actions_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Actions.KeyDown
         If Actions.SelectedItems.Count = 0 Then Exit Sub
+
         If e.KeyCode = Keys.Enter Then
             If Actions.SelectedIndices(0) = 0 Then
                 Actions.LabelEdit = True
                 Actions.SelectedItems(0).BeginEdit()
             Else
-                ActionsMenu.Show(Actions, New Drawing.Point(Actions.SelectedItems(0).Bounds.Location.X, Actions.SelectedItems(0).Bounds.Location.Y + Actions.SelectedItems(0).Bounds.Height))
+                Dim Bounds As Drawing.Rectangle = Actions.SelectedItems(0).Bounds
+                ActionsMenu.Show(Actions, New Drawing.Point(Bounds.Left, Bounds.Top + Bounds.Height))
             End If
-        ElseIf e.KeyCode = Keys.F2 And Not Actions.SelectedIndices(0) = 0 Then
+        ElseIf e.KeyCode = Keys.F2 And Actions.SelectedIndices(0) <> 0 Then
             Actions.LabelEdit = True
             Actions.SelectedItems(0).BeginEdit()
         End If
@@ -145,7 +147,7 @@ Friend Class MainForm
             If Not Profiles(Actions.Items(e.Item).Text).Rename(e.Label) Then e.CancelEdit = True
         End If
 
-        ' Tracker #3357854: Reloading deletes the item being edited, and the edit is committed on the first item of the list.
+        ' Tracker #3357854: Reloading immediately deletes the item being edited, and the edit is committed on the first item of the list.
         Me.BeginInvoke(New Action(AddressOf ReloadProfilesList))
     End Sub
 

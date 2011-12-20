@@ -736,7 +736,6 @@ Friend Class SynchronizeForm
                     Status.FoldersToCreate -= 1
                     PopSyncingList(Context.Source)
                 Else
-                    'TODO: Check this part. The call wasn't an else block before.
                     RemoveValidFile(Folder)
                 End If
 

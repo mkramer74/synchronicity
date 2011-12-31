@@ -140,11 +140,12 @@ Friend Class SynchronizeForm
                 Interaction.StartProcess(Handler.LogPath)
             ElseIf e.KeyCode = Keys.D And PreviewList.SelectedIndices.Count <> 0 Then
                 Dim DiffProgram As String = ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.DiffProgram, "")
-                Dim DiffArguments As String = ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.DiffArguments, "")
+
                 Dim NewFile As String = "", OldFile As String = ""
                 If Not SetPathFromSelectedItem(NewFile, OldFile) Then Exit Sub
+
                 Try
-                    If DiffProgram <> "" AndAlso IO.File.Exists(OldFile) AndAlso IO.File.Exists(NewFile) Then Interaction.StartProcess(DiffProgram.Trim, DiffArguments.Replace("%o", OldFile).Replace("%n", NewFile))
+                    If DiffProgram <> "" AndAlso IO.File.Exists(OldFile) AndAlso IO.File.Exists(NewFile) Then Interaction.StartProcess(DiffProgram, """" & OldFile & """ """ & NewFile & """")
                 Catch Ex As Exception
                     Interaction.ShowMsg("Error loading diff: " & Ex.ToString)
                 End Try

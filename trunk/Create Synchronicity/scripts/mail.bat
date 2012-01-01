@@ -76,6 +76,7 @@ if "%password%" neq "" (
 	set pwd=
 )
 
+echo Create Synchronicity: sending logs from %sender% to %recipient%.
 "%blat%" "%body%" -charset "utf-8" -8bitmime -server "%server%:%port%" %usr% %pwd% -f "%sender%" -to "%recipient%" -subject "%subject%" > "%log%"
 rem echo. >> "%log%
 rem "%sendemail%" -f "%sender%" -t "%recipient%" -u "%subject%" -s "%server%:%port%" -o message-file="%body%" -o message-charset="utf-8" >> "%log%"

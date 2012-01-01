@@ -1,6 +1,16 @@
 @echo off
+:setup
+set basepath=%~dp0
+set blat=%basepath%mail\blat.exe
+set sendemail=%basepath%mail\sendEmail.exe
+set log=%basepath%mail\log.txt
+set credentials=%basepath%mail\credentials.bat
+
+:arguments
 if "%1" == "/?" goto help
 if "%1" == ""   goto help
+if not exists "%credentials%" goto help
+
 goto start
 
 :help
@@ -20,9 +30,9 @@ echo.
 echo The output of blat is sent to "mail\log.txt".
 echo.
 echo To use this script, you need to do two things (total estimated time: ^< 5mn)
-echo 1. Open your installation folder, and locate the *mail.bat* file, in the 
-echo    "scripts" folder. It contains a "SMTP Configuration" section, which you 
-echo    should edit to reflect your own SMTP settings.
+echo 1. Open your installation folder, and locate the *credentials.bat* file, in
+echo    the "scripts\mail" folder. It contains an "SMTP configuration" section,
+echo    which you should edit to reflect your own SMTP settings.
 echo 2. Launch Create Synchronicity, and press Ctrl+O. You are taken to your
 echo    configuration folder. Open the .sync file corresponding to the profile 
 echo    which you wish to send logs for, and add the following line to it:
@@ -35,34 +45,7 @@ pause
 goto end
 
 :start
-
-rem ========================
-rem =  SMTP Configuration  =
-rem ========================
-rem 
-rem Customize the following values to match your personal configuration.
-rem If you leave username or password empty, Create Synchronicity will try to
-rem connect to your SMTP server without authentication.
-rem
-rem Do not add whitespace after the '=' signs.
-rem
-
-set username=
-set password=
-set server=
-set port=25
-
-set sender=
-set recipient=
-
-rem ==================
-rem =  You're done!  =
-rem ==================
-
-set basepath=%~dp0
-set blat=%basepath%mail\blat.exe
-set sendemail=%basepath%mail\sendEmail.exe
-set log=%basepath%mail\log.txt
+call "%credentials%"
 
 set profilename=%~1
 set success=%~2
@@ -94,6 +77,7 @@ if "%password%" neq "" (
 "%blat%" "%body%" -charset "utf-8" -8bitmime -server "%server%:%port%" %usr% %pwd% -f "%sender%" -to "%recipient%" -subject "%subject%" > "%log%"
 rem echo. >> "%log%
 rem "%sendemail%" -f "%sender%" -t "%recipient%" -u "%subject%" -s "%server%:%port%" -o message-file="%body%" -o message-charset="utf-8" >> "%log%"
+goto end
 
 :end
 

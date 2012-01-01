@@ -38,6 +38,8 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Dec. 31, 2011 - UPD: Change the way arguments are passed to diff programs (see the updated manual)
+Dec. 15, 2011 - NEW: !Send logs by e-mail (see scripts/mail.bat /? for more info).
 Dec. 14, 2011 - UPD: Improve hook scripts support.
 Dec. 13, 2011 - UPD: Rework duration estimates, and display deletion speed while cleaning up.
 Dec. 13, 2011 - UPD: Enable tray notifications in all cases.

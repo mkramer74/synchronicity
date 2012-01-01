@@ -30,14 +30,16 @@ echo.
 echo The output of blat is sent to "mail\log.txt".
 echo.
 echo To use this script, you need to do two things (total estimated time: ^< 5mn)
-echo 1. Open your installation folder, and locate the *credentials.bat* file, in
-echo    the "scripts\mail" folder. It contains an "SMTP configuration" section,
-echo    which you should edit to reflect your own SMTP settings.
-echo 2. Launch Create Synchronicity, and press Ctrl+O. You are taken to your
+echo 1. Open your installation folder, and locate the *credentials-template.bat*
+echo    file, in the "scripts\mail" folder. It contains an "SMTP configuration"
+echo    section, which you should edit to reflect your own SMTP settings.
+echo 2. Rename *credentials-template.bat* to *credentials.bat*. This is to
+echo    prevent future updates from overwriting your configuration file.
+echo 3. Launch Create Synchronicity, and press Ctrl+O. You are taken to your
 echo    configuration folder. Open the .sync file corresponding to the profile 
 echo    which you wish to send logs for, and add the following line to it:
 echo        Post-sync action:scripts\mail.bat
-echo 3. Enjoy!
+echo 4. Enjoy!
 echo.
 echo.
 pause

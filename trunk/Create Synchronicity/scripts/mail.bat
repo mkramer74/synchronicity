@@ -38,7 +38,7 @@ echo    prevent future updates from overwriting your configuration file.
 echo 3. Launch Create Synchronicity, and press Ctrl+O. You are taken to your
 echo    configuration folder. Open the .sync file corresponding to the profile 
 echo    which you wish to send logs for, and add the following line to it:
-echo        Post-sync action:scripts\mail.bat
+echo    Post-sync action:scripts\mail.bat
 echo 4. Enjoy!
 echo.
 echo.

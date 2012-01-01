@@ -9,7 +9,7 @@ set credentials=%basepath%mail\credentials.bat
 :arguments
 if "%1" == "/?" goto help
 if "%1" == ""   goto help
-if not exists "%credentials%" goto help
+if not exist "%credentials%" goto help
 
 goto start
 
@@ -28,6 +28,7 @@ echo Create Synchronicity's manual. It serves as an interface between Create
 echo Synchronicity and a smtp client such as blat.exe, the current default.
 echo.
 echo The output of blat is sent to "mail\log.txt".
+echo Your credentials file is "%credentials%"
 echo.
 echo To use this script, you need to do two things (total estimated time: ^< 5mn)
 echo 1. Open your installation folder, and locate the *credentials-template.bat*

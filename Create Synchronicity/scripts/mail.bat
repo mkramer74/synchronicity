@@ -72,7 +72,7 @@ if "%username%" neq "" (
 )
 
 if "%password%" neq "" (
-	set pwd=-pw %password%
+	set pwd=-pw "%password%"
 ) else (
 	set pwd=
 )

@@ -32,6 +32,7 @@ Friend Class SynchronizeForm
     Private ScanThread As Threading.Thread
     Private SyncThread As Threading.Thread
 
+    Private AutoInclude As Boolean
     Private LeftRootPath, RightRootPath As String 'Translated path to left and right folders
 
     Private Delegate Sub StepCompletedCall(ByVal Id As StatusData.SyncStep)
@@ -61,6 +62,7 @@ Friend Class SynchronizeForm
         Handler = New ProfileHandler(ConfigName)
         Log = New LogHandler(ConfigName, Handler.GetSetting(Of Boolean)(ProfileSetting.ErrorsLog, False))
 
+        AutoInclude = Handler.GetSetting(Of Boolean)(ProfileSetting.AutoIncludeNewFolders, False)
         LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
 
@@ -720,10 +722,12 @@ Friend Class SynchronizeForm
             'Error with entering the folder || Thread aborted.
         End Try
 
-        If Recursive Then
+        If Recursive Or AutoInclude Then
             Try
                 For Each SubFolder As String In IO.Directory.GetDirectories(SourceFolder)
-                    SearchForChanges(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
+                    If Recursive OrElse (AutoInclude AndAlso IO.Directory.GetCreationTimeUtc(SubFolder) > Handler.MDate) Then
+                        SearchForChanges(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
+                    End If
                 Next
             Catch Ex As Exception
                 Log.HandleSilentError(Ex)
@@ -779,10 +783,12 @@ Friend Class SynchronizeForm
             Log.HandleSilentError(Ex)
         End Try
 
-        If Recursive Then
+        If Recursive Or AutoInclude Then
             Try
                 For Each SubFolder As String In IO.Directory.GetDirectories(SourceFolder)
-                    SearchForCrap(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
+                    If Recursive OrElse (AutoInclude AndAlso IO.Directory.GetCreationTimeUtc(SubFolder) > Handler.MDate) Then
+                        SearchForCrap(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
+                    End If
                 Next
             Catch Ex As Exception
                 Log.HandleSilentError(Ex)

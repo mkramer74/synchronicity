@@ -489,6 +489,7 @@ Friend Class SettingsForm
 
             SwitchControls()
         Else
+            Handler.SetSetting(Of Date)(ProfileSetting.LastModified, Date.UtcNow) 'File.LastWriteTime is updated when saving last run.
             Handler.SetSetting(Of Integer)(ProfileSetting.Method, CInt(Method)) 'SetSetting(Of ProfileSetting.SyncMethod) would save a string, unparsable by GetSetting(Of ProfileSetting.SyncMethod)
             Handler.SetSetting(Of Integer)(ProfileSetting.Restrictions, Restrictions)
 

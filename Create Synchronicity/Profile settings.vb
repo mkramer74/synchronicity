@@ -123,7 +123,6 @@ NotInheritable Class ProfileHandler
 
     Function SaveConfigFile() As Boolean
         Try
-            SetSetting(Of Date)(ProfileSetting.LastModified, Date.UtcNow) 'File.LastWriteTime is updated when saving last run.
             Using FileWriter As New IO.StreamWriter(ConfigPath)
                 For Each Setting As KeyValuePair(Of String, String) In Configuration
                     FileWriter.WriteLine(Setting.Key & ":" & Setting.Value)

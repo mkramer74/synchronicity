@@ -28,7 +28,6 @@ Friend Module ProfileSetting
     Public Const CheckFileSize As String = "Check file size"
     Public Const FuzzyDstCompensation As String = "Fuzzy DST compensation"
     Public Const Checksum As String = "Checksum"
-    Public Const AutoIncludeNewFolders As String = "Auto-include new folders"
 
     'Next settings are hidden, not automatically appended to config files.
     Public Const ExcludedFolders As String = "Excluded folder patterns"
@@ -39,6 +38,8 @@ Friend Module ProfileSetting
     Public Const PreviewOnly As String = "Preview only"
     Public Const SyncFolderAttributes As String = "Sync folder attributes"
     Public Const ErrorsLog As String = "Track errors separately"
+    Public Const AutoIncludeNewFolders As String = "Auto-include new folders"
+    Public Const LastModified As String = "Last modified"
     '</>
 
     'Disabled: would require keeping a list of modified files to work, since once a source file is deleted in the source, there's no way to tell when it had been last modified, and hence no way to calculate the appropriate deletion date.
@@ -65,7 +66,6 @@ NotInheritable Class ProfileHandler
     Public LogPath As String
     Public ErrorsLogPath As String
 
-    Public ReadOnly MDate As Date
     Public Configuration As New Dictionary(Of String, String)
     Public LeftCheckedNodes As New Dictionary(Of String, Boolean)
     Public RightCheckedNodes As New Dictionary(Of String, Boolean)
@@ -81,7 +81,6 @@ NotInheritable Class ProfileHandler
         ErrorsLogPath = ProgramConfig.GetErrorsLogPath(Name)
 
         IsNewProfile = Not LoadConfigFile()
-        MDate = IO.File.GetLastWriteTimeUtc(ConfigPath)
 
         'Never use GetSetting(Of SyncMethod). It searches the config file for a string containing an int (eg "0"), but when failing it calls SetSettings which saves a string containing an enum label (eg. "LRIncremental")
         If GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) <> ProfileSetting.SyncMethod.LRMirror Then
@@ -124,7 +123,7 @@ NotInheritable Class ProfileHandler
 
     Function SaveConfigFile() As Boolean
         Try
-            'SetSetting(Of Date)(ProfileSetting.LastModified, Date.UtcNow) 'Useless: "last modified" is updated by the OS when saving 
+            SetSetting(Of Date)(ProfileSetting.LastModified, Date.UtcNow) 'File.LastWriteTime is updated when saving last run.
             Using FileWriter As New IO.StreamWriter(ConfigPath)
                 For Each Setting As KeyValuePair(Of String, String) In Configuration
                     FileWriter.WriteLine(Setting.Key & ":" & Setting.Value)

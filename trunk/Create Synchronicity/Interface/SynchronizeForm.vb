@@ -32,7 +32,7 @@ Friend Class SynchronizeForm
     Private ScanThread As Threading.Thread
     Private SyncThread As Threading.Thread
 
-    Private AutoInclude As Boolean
+    Private AutoInclude As Boolean, MDate As Date
     Private LeftRootPath, RightRootPath As String 'Translated path to left and right folders
 
     Private Delegate Sub StepCompletedCall(ByVal Id As StatusData.SyncStep)
@@ -62,6 +62,7 @@ Friend Class SynchronizeForm
         Handler = New ProfileHandler(ConfigName)
         Log = New LogHandler(ConfigName, Handler.GetSetting(Of Boolean)(ProfileSetting.ErrorsLog, False))
 
+        MDate = Handler.GetSetting(Of Date)(ProfileSetting.LastModified, IO.File.GetLastWriteTimeUtc(Handler.ConfigPath))
         AutoInclude = Handler.GetSetting(Of Boolean)(ProfileSetting.AutoIncludeNewFolders, False)
         LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
@@ -387,7 +388,7 @@ Friend Class SynchronizeForm
                     PreviewList.Refresh()
                     PreviewList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
 
-                    If Not Status.Cancel Then  Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
+                    If Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_W_ERRORS", Handler.ProfileName), Handler.LogPath)
                 Else
                     If Not Status.Cancel Then Interaction.ShowBalloonTip(Translation.TranslateFormat("\SYNCED_OK", Handler.ProfileName), Handler.LogPath)
                 End If
@@ -725,7 +726,7 @@ Friend Class SynchronizeForm
         If Recursive Or AutoInclude Then
             Try
                 For Each SubFolder As String In IO.Directory.GetDirectories(SourceFolder)
-                    If Recursive OrElse (AutoInclude AndAlso IO.Directory.GetCreationTimeUtc(SubFolder) > Handler.MDate) Then
+                    If Recursive OrElse (AutoInclude AndAlso IO.Directory.GetCreationTimeUtc(SubFolder) > MDate) Then
                         SearchForChanges(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
                     End If
                 Next
@@ -786,7 +787,7 @@ Friend Class SynchronizeForm
         If Recursive Or AutoInclude Then
             Try
                 For Each SubFolder As String In IO.Directory.GetDirectories(SourceFolder)
-                    If Recursive OrElse (AutoInclude AndAlso IO.Directory.GetCreationTimeUtc(SubFolder) > Handler.MDate) Then
+                    If Recursive OrElse (AutoInclude AndAlso IO.Directory.GetCreationTimeUtc(SubFolder) > MDate) Then
                         SearchForCrap(SubFolder.Substring(Context.SourceRootPath.Length), True, Context)
                     End If
                 Next

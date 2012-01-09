@@ -1,4 +1,4 @@
-﻿# Create Synchronicity Portuguese Language file
+# Create Synchronicity Portuguese Language file
 # Translation by André Modesto (careca777), Pedro Silva
 # Tag outdated strings with "->". For example, write "->ID=Translation" if the string ID needs to be retranslated from English.
 #
@@ -159,8 +159,8 @@ MD5=Assegurar a integridade do backup (MD5 checksum)
 GROUP=Agrupar
 COMPARE_SIZE=Comparar o tamanho de ficheiro
 MORE=Mais (Apenas utilizadores experientes)
-->NO_PROFILES=
-->WAKEUP_FAILED=
-->POSTSYNC_FAILED=
-->LATEST=
-->POST_SYNC=
+NO_PROFILES=Não tem perfis. Clique "{0}" para criar um.
+POST_SYNC=Iniciar acção pós-sincronização: "{0}"
+WAKEUP_FAILED=Incapaz de executar o script de arranque
+POSTSYNC_FAILED=Incapaz de executar o script de pós-sincronização
+LATEST=Ir para o mais recente/último

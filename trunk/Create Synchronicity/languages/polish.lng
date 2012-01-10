@@ -1,4 +1,4 @@
-﻿# Create Synchronicity Polish language file
+# Create Synchronicity Polish language file
 # Translation by matczar (http://matczar.net)
 # Tag outdated strings with "->". For example, write "->ID=Translation" if the string ID needs to be retranslated from English.
 #
@@ -78,8 +78,6 @@ PROFILES=Profile
 PROPAGATE=Kopiuj zmienione pliki
 PROPAGATE_TAG=Zaznaczone - kopiuje zmienione pliki. Odznaczone - tylko nowe lub usunięte pliką będą synchronizowane.
 REPLICATE_EMPTY=Utwórz puste katalogi
-RESTART=Proszę zrestartować Create Synchronicity, aby wybrany język został załadowany.
-RESTART_NEEDED=Wymagany restart programu
 RIGHT_SIDE=Strona prawa:
 RIGHT_UNROOTED=Ten profil używa relatywnej ścieżki dla katalogu docelowego. Czy ścieżka, {0}, jest poprawna?
 RL=Prawa → Lewa
@@ -154,7 +152,6 @@ CATCHUP_MISSED_BACKUPS=Wykryj pominięte zadania synchronizacji
 CATCHUP_MISSED_BACKUPS_TAG=Wskaż postępowanie gdy komputer był wyłączony w ustalonym czasie synchronizacji;Zaznaczone - wykryj i synchronizuj tak szybko jak to możliwe; Odznaczone - czekaj do następnego terminu synchronizacji.
 CATCHING_UP=Create Synchronicity wykrył "{0}" ({1}).
 LAST_SYNC=ostatnie uruchomienie {0} dni, {1} godz. temu ({2})
-FOLDER_MISSING=Katalog "{0}" nie istnieje. Czy chcesz go utworzyć?
 FOLDER_FAILED=Nie można utworzyć katalogu "{0}" ({1}).
 CREATE_DEST=Dynamicznie utwórz katalog docelowy
 UPDATE=Aktualizacja
@@ -162,8 +159,8 @@ MD5=Sprawdź poprawność kopii (suma MD5)
 GROUP=Grupa
 COMPARE_SIZE=Porównaj rozmiar pliku
 MORE=Więcej (opcje zaawansowane)
-->NO_PROFILES=
-->WAKEUP_FAILED=
-->POSTSYNC_FAILED=
-->LATEST=
-->POST_SYNC=
+NO_PROFILES=Nie masz żadnych profili. Kliknij "{0}" aby utworzyć nowy.
+POST_SYNC=Uruchamianie akcji po synchronizacji: "{0}"
+WAKEUP_FAILED=Nie można uruchomić skryptu budzenia
+POSTSYNC_FAILED=Nie można uruchomić skryptu po synchronizacji
+LATEST=Idź do ostatniego

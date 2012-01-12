@@ -924,6 +924,9 @@ Friend Class SynchronizeForm
             If Math.Abs(HoursDiff) = 1 Then DestFATTime = DestFATTime.AddHours(HoursDiff)
         End If
 
+        'StrictMirror is disabled in constructor if Method != LRMirror
+        If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False
+
         'User-enabled checks
         If Handler.GetSetting(Of Boolean)(ProfileSetting.Checksum, False) AndAlso Md5(AbsSource) <> Md5(AbsDest) Then Return True
         If Handler.GetSetting(Of Boolean)(ProfileSetting.CheckFileSize, False) AndAlso Utilities.GetSize(AbsSource) <> Utilities.GetSize(AbsDest) Then Return True
@@ -934,9 +937,6 @@ Friend Class SynchronizeForm
             If Math.Abs((SourceFATTime - DestFATTime).TotalSeconds) <= 4 Then Return False 'Note: NTFSToFATTime introduces additional fuzziness (justifies the <= ('=')).
         End If
         Log.LogInfo("SourceIsMoreRecent: Filetimes differ")
-
-        'StrictMirror is disabled in constructor if Method != LRMirror
-        If SourceFATTime < DestFATTime AndAlso (Not Handler.GetSetting(Of Boolean)(ProfileSetting.StrictMirror, False)) Then Return False
 
         Return True
     End Function

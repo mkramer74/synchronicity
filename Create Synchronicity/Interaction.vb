@@ -29,6 +29,8 @@ Friend Module Interaction
         If CommandLine.Silent Then
             ProgramConfig.LogAppEvent(String.Format("Interaction: Silent: Balloon tip discarded: [{0}].", Msg))
             Exit Sub
+        Else
+            ProgramConfig.LogAppEvent(String.Format("Interaction: Balloon tip shown: [{0}].", Msg))
         End If
 
         If Msg = "" Then Exit Sub

@@ -879,7 +879,7 @@ Friend Class SynchronizeForm
                 Case 2
                     Return Not MatchesPattern(GetFileOrFolderName(FullPath), ExcludedPatterns)
             End Select
-        Catch Ex As Exception
+        Catch Ex As Exception 'TODO: When?
             Log.HandleSilentError(Ex)
         End Try
 

@@ -2,7 +2,7 @@ amharic:4
 bulgarian:10
 chinese (simplified):9
 chinese (traditional):4
-czech:14
+czech:0
 danish:0
 dutch:4
 english:0
@@ -12,14 +12,14 @@ german:0
 greek:4
 hebrew:29
 hungarian:4
-indonesian:4
+indonesian:0
 italian:5
 japanese:4
 korean:9
-polish:5
+polish:0
 portuguese:0
 russian:14
-slovene:4
+slovene:0
 spanish:0
 swedish:4
 turkish:4

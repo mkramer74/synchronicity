@@ -14,7 +14,7 @@
 @REM Inherits other variables from build.bat
 
 echo (*) Building r%REV%
-call build.bat "r%REV%" SVN-CHECKSUMS
+call build.bat "r%REV%" "SVN-CHECKSUMS"
 
 echo (*) Creating current-build.txt
 (

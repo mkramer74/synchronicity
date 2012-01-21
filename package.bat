@@ -45,7 +45,7 @@ echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge
 	cd %ROOT%
 ) >> %LOG%
 
-echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge.net
+echo (*) Uploading SVN-CHECKSUMS to web.sourceforge.net
 (
 	echo.
 	echo -----
@@ -60,6 +60,8 @@ echo (*) Building manual and uploading it to web.sourceforge.net.
 (
 	echo.
 	echo -----
+	echo Building manual.
+	
 	call manual.bat
 ) >> %LOG%
 

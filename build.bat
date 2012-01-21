@@ -1,6 +1,8 @@
 @echo OFF
 
 if "%1" == "/?" goto help
+if "%1" == "" goto help
+if "%2" == "" goto help
 goto start
 
 :help
@@ -11,13 +13,15 @@ echo You should have received a copy of the GNU General Public License along wit
 echo Created by:   Clément Pit--Claudel.
 echo Web site:     http://synchronicity.sourceforge.net.
 echo.
-echo Usage: build.bat v5.0 or build.bat r2873.
+echo Usage: build.bat v5.0 CHECKSUMS or build.bat r2873 SVN-CHECKSUMS.
 echo This script builds all versions of Create Synchronicity.
-echo Requires 7-zip installed in "C:\Program Files\7-Zip\7z.exe".
+echo Requires 7z and devenv and md5sum installed in your path.
 goto end
 
 :start
 set TAG=%1
+set CHECKSUMS=%2
+
 set ROOT=%CD%
 set BUILD=%ROOT%\build
 set BIN=%ROOT%\Create Synchronicity\bin
@@ -56,13 +60,13 @@ echo (**) Updating revision number
 ) >> %LOG%
 
 echo (**) Building program (release)
-	"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out %LOG%
+	devenv "%ROOT%\Create Synchronicity.sln" /Rebuild Release /Out %LOG%
 
 echo (**) Building program (debug)
-	"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
+	devenv "%ROOT%\Create Synchronicity.sln" /Rebuild Debug /Out %LOG%
 
 echo (**) Building program (Linux)
-	"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" "%ROOT%\Create Synchronicity.sln" /Rebuild Linux /Out %LOG%
+	devenv "%ROOT%\Create Synchronicity.sln" /Rebuild Linux /Out %LOG%
 
 echo (**) Building installer
 (
@@ -83,18 +87,29 @@ echo (**) Building zip files
 	echo -----
 	
 	cd "%BIN%\Release"
-	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
-	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
-	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Scripts.zip" "scripts\*"
+	7z a "%BUILD%\%FILENAME%-%TAG%.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
+	7z a "%BUILD%\%FILENAME%-%TAG%-Extensions.zip" "compress.dll" "ICSharpCode.SharpZipLib.dll"
+	7z a "%BUILD%\%FILENAME%-%TAG%-Scripts.zip" "scripts\*"
 	cd "%ROOT%"
 
 	cd "%BIN%\Debug"
-	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-DEBUG.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
+	7z a "%BUILD%\%FILENAME%-%TAG%-DEBUG.zip" "%NAME%.exe" "Release notes.txt" "COPYING" "languages\*"
 	cd "%ROOT%"
 
 	cd "%BIN%\Linux"
-	"C:\Program Files\7-Zip\7z.exe" a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run.sh" "COPYING" "languages\*"
+	7z a "%BUILD%\%FILENAME%-%TAG%-Linux.zip" "%NAME%.exe" "Release notes.txt" "run.sh" "COPYING" "languages\*"
 	cd "%ROOT%"
+) >> %LOG%
+
+echo (*) Computing checksums
+(
+	echo.
+	echo -----
+	echo Updating %CHECKSUMS%
+	
+	cd %BUILD%
+	md5sum "%FILENAME%-%TAG%.zip" "%FILENAME%-%TAG%-DEBUG.zip" "%FILENAME%_Setup-%TAG%.exe" "%FILENAME%-%TAG%-Linux.zip" "%FILENAME%-%TAG%-Extensions.zip" "%FILENAME%-%TAG%-Scripts.zip" >> %CHECKSUMS%
+	cd %ROOT%
 ) >> %LOG%
 
 echo (**) Changing font name back from Main.LargeFont to "Verdana" in interface files.

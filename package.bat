@@ -14,39 +14,53 @@
 @REM Inherits other variables from build.bat
 
 echo (*) Building r%REV%
-call build.bat "r%REV%"
+call build.bat "r%REV%" SVN-CHECKSUMS
 
 echo (*) Creating current-build.txt
 (
-echo.
-echo -----
+	echo.
+	echo -----
 ) >> %LOG%
 
 (
-echo Current build: r%REV% & date /t & time /t
-echo.
-echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%.zip/download"
-echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity_Setup-r%REV%.exe/download"
-echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-DEBUG.zip/download"
-echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Linux.zip/download"
-echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Extensions.zip/download"
-echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Scripts.zip/download"
-) > build\current-build.txt
+	echo Current build: r%REV% & date /t & time /t
+	echo.
+	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%.zip/download"
+	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity_Setup-r%REV%.exe/download"
+	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-DEBUG.zip/download"
+	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Linux.zip/download"
+	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Extensions.zip/download"
+	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Scripts.zip/download"
+) > %BUILD%\current-build.txt
 
 echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge.net
 (
-echo.
-echo -----
-echo Uploading files via SCP.
-"C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\current-build.txt" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/code"
-"C:\Program Files (x86)\PuTTY\pscp.exe" "%BUILD%\Create_Synchronicity-r%REV%.zip" "%BUILD%\Create_Synchronicity-r%REV%-DEBUG.zip" "%BUILD%\Create_Synchronicity_Setup-r%REV%.exe" "%BUILD%\Create_Synchronicity-r%REV%-Linux.zip" "%BUILD%\Create_Synchronicity-r%REV%-Extensions.zip" "%BUILD%\Create_Synchronicity-r%REV%-Scripts.zip" "createsoftware,synchronicity@frs.sourceforge.net:/home/pfs/project/s/sy/synchronicity/Create Synchronicity/Unreleased (SVN Builds)"
+	echo.
+	echo -----
+	echo Uploading files via SCP.
+	
+	cd %BUILD%
+		pscp "current-build.txt" "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/code"
+		pscp "Create_Synchronicity-r%REV%.zip" "Create_Synchronicity-r%REV%-DEBUG.zip" "Create_Synchronicity_Setup-r%REV%.exe" "Create_Synchronicity-r%REV%-Linux.zip" "Create_Synchronicity-r%REV%-Extensions.zip" "Create_Synchronicity-r%REV%-Scripts.zip" "createsoftware,synchronicity@frs.sourceforge.net:/home/pfs/project/s/sy/synchronicity/Create Synchronicity/Unreleased (SVN Builds)"
+	cd %ROOT%
 ) >> %LOG%
+
+echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge.net
+(
+	echo.
+	echo -----
+	echo Uploading SVN-CHECKSUMS via SCP.
+	
+	cd %BUILD%
+		pscp SVN-CHECKSUMS "createsoftware,synchronicity@web.sourceforge.net:/home/groups/s/sy/synchronicity/htdocs/code"
+	cd %ROOT%
+)
 
 echo (*) Building manual and uploading it to web.sourceforge.net.
 (
-echo.
-echo -----
-call manual.bat
+	echo.
+	echo -----
+	call manual.bat
 ) >> %LOG%
 
 @goto end
@@ -54,6 +68,6 @@ call manual.bat
 :help
 @echo This script is designed to be called by a SVN hook script.
 @echo If used from the command line, it should be passed the revision number as its first parameter.
-@echo Requires 7-zip installed in "C:\Program Files\7-Zip\7z.exe" and Putty installed in "C:\Program Files (x86)\PuTTY\pscp.exe".
+@echo Requires pscp to be installed in your path.
 @echo Pageant (putty key handler) should know the private key to connect to the scp server.
 :end

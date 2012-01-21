@@ -24,7 +24,7 @@ Translations:       Clément Pit--Claudel, Florian Haag, André Modesto, Teo Roj
                     Chiapperini, Gush Katif Laad, Bjørn Karlstrøm, Andres Aule,
                     S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
                     Alemu, Juan Pablo Ahumada, Stathis Grigoriadis, Tom Szabo,
-                    Romel Vera, Tomaz Valh
+                    Romel Vera, Tomaz Valh, Carl-Gustav Werner
 
 * Technical information
 License:            GNU GPL v3 or later (see "COPYING")

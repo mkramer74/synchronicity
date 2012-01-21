@@ -101,7 +101,7 @@ echo (**) Building zip files
 	cd "%ROOT%"
 ) >> %LOG%
 
-echo (*) Computing checksums
+echo (**) Computing checksums
 (
 	echo.
 	echo -----

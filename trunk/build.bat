@@ -19,8 +19,8 @@ echo Requires 7z and devenv and md5sum installed in your path.
 goto end
 
 :start
-set TAG=%1
-set CHECKSUMS=%2
+set TAG=%~1
+set CHECKSUMS=%~2
 
 set ROOT=%CD%
 set BUILD=%ROOT%\build

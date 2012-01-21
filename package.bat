@@ -31,7 +31,7 @@ echo (*) Creating current-build.txt
 	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Linux.zip/download"
 	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Extensions.zip/download"
 	echo "https://sourceforge.net/projects/synchronicity/files/Create Synchronicity/Unreleased (SVN Builds)/Create_Synchronicity-r%REV%-Scripts.zip/download"
-) > %BUILD%\current-build.txt
+) > "%BUILD%\current-build.txt"
 
 echo (*) Uploading builds to frs.sourceforge.net and rev info to web.sourceforge.net
 (

@@ -239,7 +239,7 @@ Friend NotInheritable Class MessageLoop
     End Sub
 
     Private Sub StartQueue(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        MainFormInstance.ApplicationTimer.Interval = 5000 'Wait 5s between profiles k and k+1, k > 0
+        MainFormInstance.ApplicationTimer.Interval = ProgramConfig.GetProgramSetting(Of Integer)(ProgramSetting.Pause, 5000) 'Wait 5s between profiles k and k+1, k > 0
         MainFormInstance.ApplicationTimer.Stop()
         ProcessProfilesQueue()
     End Sub

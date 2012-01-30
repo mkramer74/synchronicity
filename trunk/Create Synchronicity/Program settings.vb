@@ -21,6 +21,7 @@ Friend Module ProgramSetting
     Public Const TextLogs As String = "Text logs"
     Public Const Autocomplete As String = "Autocomplete"
     Public Const Forecast As String = "Forecast"
+    Public Const Pause As String = "Pause"
 
     'Program files
     Public Const ConfigFolderName As String = "config"

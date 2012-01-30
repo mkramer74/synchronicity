@@ -260,7 +260,7 @@ Friend Class SynchronizeForm
     End Function
 
     Private Sub UpdateStatuses()
-        Static CanDelete As Boolean = Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = SyncMethod.LRMirror
+        Static CanDelete As Boolean = (Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = SyncMethod.LRMirror)
 
         Status.TimeElapsed = (DateTime.Now - Status.StartTime) + New TimeSpan(1000000) ' ie +0.1s
 

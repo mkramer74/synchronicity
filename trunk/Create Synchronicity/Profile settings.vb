@@ -349,9 +349,9 @@ NotInheritable Class ProfileHandler
         ' Use a path-friendly version of the DATE constant.
         Environment.SetEnvironmentVariable("MMMYYYY", Date.Today.ToString("MMMyyyy").ToLower(Interaction.InvariantCulture))
         Environment.SetEnvironmentVariable("DATE", Date.Today.ToShortDateString.Replace("/"c, "-"c))
-        Environment.SetEnvironmentVariable("DAY", Date.Today.Day.ToString)
-        Environment.SetEnvironmentVariable("MONTH", Date.Today.Month.ToString)
-        Environment.SetEnvironmentVariable("YEAR", Date.Today.Year.ToString)
+        Environment.SetEnvironmentVariable("DAY", Date.Today.ToString("dd"))
+        Environment.SetEnvironmentVariable("MONTH", Date.Today.ToString("MM"))
+        Environment.SetEnvironmentVariable("YEAR", Date.Today.ToString("yyyy"))
 
         Return Environment.ExpandEnvironmentVariables(Translated_Path)
     End Function

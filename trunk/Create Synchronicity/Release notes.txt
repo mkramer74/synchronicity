@@ -39,6 +39,7 @@ SVN Server:         https://synchronicity.svn.sourceforge.net/svnroot/synchronic
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+Feb. 05, 2011 - FIX: Seldom UnauthorizedAccessExceptions when syncing to a recently reconfigured NAS.
 Jan. 31, 2011 - FIX: The year part in %MMMYYYY% didn't expand correctly.
 Jan. 30, 2011 - NEW: (Hidden setting) Customizable delay between queued profiles.
 Jan. 09, 2011 - NEW: (Hidden setting) Auto-include new subfolders of non-recursively selected folders.

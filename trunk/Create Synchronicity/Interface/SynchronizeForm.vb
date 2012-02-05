@@ -803,6 +803,36 @@ Friend Class SynchronizeForm
         End If
     End Sub
 
+    Private Sub SyncFileAttributes(SourceFile As String, DestFile As String)
+        If Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0) <> 0 Then 'Updating attributes is needed.
+            Log.LogInfo("SyncFileAttributes: DST: Setting attributes to normal; current attributes: " & IO.File.GetAttributes(DestFile))
+            IO.File.SetAttributes(DestFile, IO.FileAttributes.Normal) 'Tracker #2999436
+            Log.LogInfo("SyncFileAttributes: DST: Setting last write time")
+            'Must use IO.File.GetLastWriteTimeUtc(**DestFile**), because it might differ from IO.File.GetLastWriteTimeUtc(**SourceFile**) (rounding, DST settings, ...)
+            IO.File.SetLastWriteTimeUtc(DestFile, IO.File.GetLastWriteTimeUtc(DestFile).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0)))
+            Log.LogInfo("SyncFileAttributes: DST: Last write time set to " & IO.File.GetLastWriteTimeUtc(DestFile))
+        End If
+
+        Log.LogInfo("SyncFileAttributes: Setting attributes to " & IO.File.GetAttributes(SourceFile))
+        IO.File.SetAttributes(DestFile, IO.File.GetAttributes(SourceFile))
+        Log.LogInfo("SyncFileAttributes: Attributes set to " & IO.File.GetAttributes(DestFile))
+    End Sub
+
+    Private Sub SafeCopy(SourceFile As String, DestFile As String)
+        Log.LogInfo(String.Format("SafeCopy: Copying ""{0}"" to ""{1}"".", SourceFile, DestFile))
+
+        Dim TempDest, DestBack As String
+        Do
+            TempDest = DestFile & "-" & IO.Path.GetRandomFileName()
+            DestBack = DestFile & "-" & IO.Path.GetRandomFileName()
+        Loop While IO.File.Exists(TempDest) Or IO.File.Exists(DestBack)
+
+        IO.File.Copy(SourceFile, TempDest, False)
+        IO.File.Move(DestFile, DestBack)
+        IO.File.Move(TempDest, DestFile)
+        IO.File.Delete(DestBack)
+    End Sub
+
     Private Sub CopyFile(ByVal SourceFile As String, ByVal DestFile As String)
         Dim Suffix As String = GetCompressionExt()
         Dim Compression As Boolean = Suffix <> ""
@@ -824,33 +854,21 @@ Friend Class SynchronizeForm
                     Using TestForAccess As New IO.FileStream(SourceFile, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.None) : End Using 'Checks whether the file can be accessed before trying to copy it. This line was added because if the file is only partially locked, CopyFileEx starts copying it, then fails on the way, and deletes the destination.
                     IO.File.Copy(SourceFile, DestFile, True)
                 Catch Ex As IO.IOException
-                    Dim TempDest, DestBack As String
-                    Do
-                        TempDest = DestFile & "-" & IO.Path.GetRandomFileName()
-                        DestBack = DestFile & "-" & IO.Path.GetRandomFileName()
-                    Loop While IO.File.Exists(TempDest) Or IO.File.Exists(DestBack)
-                    IO.File.Copy(SourceFile, TempDest, False)
-                    IO.File.Move(DestFile, DestBack)
-                    IO.File.Move(TempDest, DestFile)
-                    IO.File.Delete(DestBack)
+                    SafeCopy(SourceFile, DestFile)
                 End Try
             Else
                 IO.File.Copy(SourceFile, DestFile)
             End If
         End If
 
-        If Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0) <> 0 Then 'Updating attributes is needed.
-            Log.LogInfo("CopyFile: DST: Setting attributes to normal; current attributes: " & IO.File.GetAttributes(DestFile))
-            IO.File.SetAttributes(DestFile, IO.FileAttributes.Normal) 'Tracker #2999436
-            Log.LogInfo("CopyFile: DST: Setting last write time")
-            'Reading must happen through IO.File.GetLastWriteTimeUtc(DestFile), because after the copy IO.File.GetLastWriteTimeUtc(SourceFile) may differ from IO.File.GetLastWriteTimeUtc(DestFile) (rounding, DST, ...)
-            IO.File.SetLastWriteTimeUtc(DestFile, IO.File.GetLastWriteTimeUtc(DestFile).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0)))
-            Log.LogInfo("CopyFile: DST: Last write time set to " & IO.File.GetLastWriteTimeUtc(DestFile))
-        End If
-
-        Log.LogInfo("CopyFile: Setting attributes to " & IO.File.GetAttributes(SourceFile))
-        IO.File.SetAttributes(DestFile, IO.File.GetAttributes(SourceFile))
-        Log.LogInfo("CopyFile: Attributes set to " & IO.File.GetAttributes(DestFile))
+        Try
+            SyncFileAttributes(SourceFile, DestFile)
+        Catch Ex As UnauthorizedAccessException
+            'This section addresses a subtle bug on NAS drives: if you reconfigure your NAS and change user settings, some files may cause access denied exceptions when trying to update their attributes. Resetting the file is the only solution I've found.
+            Log.LogInfo("CopyFile: Syncing file attributes failed. Retrying")
+            SafeCopy(SourceFile, DestFile)
+            SyncFileAttributes(SourceFile, DestFile)
+        End Try
 
         Status.CreatedFiles += 1
         If Not Compression Then Status.BytesCopied += Utilities.GetSize(SourceFile)

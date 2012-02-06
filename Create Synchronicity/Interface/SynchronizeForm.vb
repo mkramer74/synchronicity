@@ -260,23 +260,27 @@ Friend Class SynchronizeForm
     End Function
 
     Private Sub UpdateStatuses()
+        Static PreviousActionsDone As Long = -1
         Static CanDelete As Boolean = (Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = SyncMethod.LRMirror)
 
         Status.TimeElapsed = (DateTime.Now - Status.StartTime) + New TimeSpan(1000000) ' ie +0.1s
 
+        Dim EstimateString As String = ""
         Dim Copying As Boolean = Status.CurrentStep = StatusData.SyncStep.LR Or (Not CanDelete And Status.CurrentStep = StatusData.SyncStep.RL)
 
         If Status.CurrentStep = StatusData.SyncStep.Scan Then
             Speed.Text = Math.Round(Status.FilesScanned / Status.TimeElapsed.TotalSeconds).ToString & " files/s"
         ElseIf CanDelete And Status.CurrentStep = StatusData.SyncStep.RL Then
             Speed.Text = Math.Round(Status.DeletedFiles / Status.TimeElapsed.TotalSeconds).ToString & " files/s"
-        ElseIf Copying Then
+        ElseIf Copying AndAlso PreviousActionsDone <> Status.ActionsDone Then
+            PreviousActionsDone = Status.ActionsDone
+
             Status.Speed = Status.BytesCopied / Status.TimeElapsed.TotalSeconds
             Speed.Text = Utilities.FormatSize(Status.Speed) & "/s"
         End If
 
-        Dim EstimateString As String = ""
-        If Copying AndAlso Status.Speed > (1 << 10) AndAlso Status.TimeElapsed.TotalSeconds > 60 AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.Forecast, False) Then
+
+        If Copying AndAlso Status.Speed > (1 << 10) AndAlso Status.TimeElapsed.TotalSeconds > ProgramSetting.ForecastDelay AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.Forecast, False) Then
             Dim TotalTime As Integer = CInt(Math.Min(Integer.MaxValue, Status.BytesToCopy / Status.Speed))
             EstimateString = String.Format(" / ~{0}", Utilities.FormatTimespan(New TimeSpan(0, 0, TotalTime)))
         End If

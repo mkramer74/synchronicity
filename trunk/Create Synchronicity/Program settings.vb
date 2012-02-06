@@ -41,8 +41,10 @@ Friend Module ProgramSetting
 
 #If DEBUG Then
     Public Const Debug As Boolean = True
+    Public Const ForecastDelay As Integer = 0
 #Else
     Public Const Debug As Boolean = False
+    Public Const ForecastDelay As Integer = 60
 #End If
 
     Public Const AppLogThreshold As Integer = 1 << 23 '8 MB

@@ -552,16 +552,19 @@ Friend Class SynchronizeForm
 
                                 Status.CreatedFolders += 1
                             Case TypeOfAction.Delete
-                                If IO.Directory.GetFiles(SourcePath).GetLength(0) = 0 Then
+#If DEBUG Then
+                                Dim RemainingFiles As String() = IO.Directory.GetFiles(SourcePath)
+                                Dim RemainingFolders As String() = IO.Directory.GetDirectories(SourcePath)
+                                If RemainingFiles.Length > 0 Or RemainingFolders.Length > 0 Then Log.LogInfo(String.Format("Do_Task: Removing non-empty folder {0} ({1}) ({2})", SourcePath, String.Join(", ", RemainingFiles), String.Join(", ", RemainingFolders)))
+#End If
                                     Try
-                                        IO.Directory.Delete(SourcePath)
+                                        IO.Directory.Delete(SourcePath, True)
                                     Catch ex As Exception
                                         Dim DirInfo As New IO.DirectoryInfo(SourcePath)
                                         DirInfo.Attributes = IO.FileAttributes.Directory 'Using "DirInfo.Attributes = IO.FileAttributes.Normal" does just the same, and actually sets DirInfo.Attributes to "IO.FileAttributes.Directory"
                                         DirInfo.Delete()
                                     End Try
                                     Status.DeletedFolders += 1
-                                End If
                         End Select
                 End Select
                 Status.ActionsDone += 1
@@ -738,7 +741,7 @@ Friend Class SynchronizeForm
         If InitialValidFilesCount = ValidFiles.Count Then
             If Not Handler.GetSetting(Of Boolean)(ProfileSetting.ReplicateEmptyDirectories, True) Then
                 If ShouldUpdateFolder Then
-                    'Don't copy this folder over (not present yet)
+                    'Don't create/update this folder.
                     Status.FoldersToCreate -= 1
                     PopSyncingList(Context.Source)
                 Else

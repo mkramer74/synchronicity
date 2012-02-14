@@ -117,49 +117,34 @@ NotInheritable Class ConfigHandler
 
         Dim UserPath As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & ProgramSetting.DirSep & Branding.Brand & ProgramSetting.DirSep & Branding.Name & ProgramSetting.DirSep
 
-        'http://support.microsoft.com/default.aspx?scid=kb;EN-US;326549
-        Dim WriteNeededFiles As New List(Of String)
-        Dim WriteNeededFolders As New List(Of String)
-        Dim PotentialWriteNeededFolders As String() = {Application.StartupPath & ProgramSetting.DirSep & LogFolderName, Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName}
+        'To change folder attributes: http://support.microsoft.com/default.aspx?scid=kb;EN-US;326549
+        Dim WriteNeededFolders As New List(Of String) From {Application.StartupPath, Application.StartupPath & ProgramSetting.DirSep & LogFolderName, Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName}
 
-        WriteNeededFolders.Add(Application.StartupPath)
-        For Each Folder As String In PotentialWriteNeededFolders
-            If IO.Directory.Exists(Folder) Then
-                WriteNeededFolders.Add(Folder)
-                WriteNeededFiles.AddRange(IO.Directory.GetFiles(Folder))
-            End If
-        Next
-
-        Dim Writable As Boolean = True
+        Dim ErrorMessage As String = ""
         Dim ProgramPathExists As Boolean = IO.Directory.Exists(Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName)
 
         Try
             For Each Folder As String In WriteNeededFolders
-                Dim FolderInfo As New IO.DirectoryInfo(Folder)
-                Writable = Writable And (Not (FolderInfo.Attributes And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly)
+                If Not IO.Directory.Exists(Folder) Then Continue For
 
                 Dim TestPath As String = Folder & ProgramSetting.DirSep & "write-permissions"
                 IO.File.Create(TestPath).Close()
                 IO.File.Delete(TestPath)
+
+                If Folder = Application.StartupPath Then Continue For
+                For Each File As String In IO.Directory.GetFiles(Folder)
+                    If (IO.File.GetAttributes(File) And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly Then Throw New IO.IOException(File)
+                Next
             Next
-            For Each File As String In WriteNeededFiles
-                'Some bugs were reported regarding write-permissions not being found at this point of the code, which means that the deletion might have been delayed somewhat.
-                Writable = Writable And (Not (IO.File.GetAttributes(File) And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly)
-            Next
-        Catch
-            Writable = False
+        Catch Ex As IO.IOException
+            ErrorMessage = Ex.Message
+
+            If ProgramPathExists Then Interaction.ShowMsg("Create Synchronicity cannot write to your installation directory, although it contains configuration files. Your Application Data folder will therefore be used instead.", "Information", , MessageBoxIcon.Information)
+            Return UserPath
         End Try
 
         ' When a user folder exists, and no config folder exists in the install dir, use the user's folder.
-        If Writable And (ProgramPathExists Or Not IO.Directory.Exists(UserPath)) Then
-            UserFilesRootDir = Application.StartupPath & ProgramSetting.DirSep
-        Else
-            'Not translated, since it happens before loading translation files
-            If ProgramPathExists Then Interaction.ShowMsg("Create Synchronicity cannot write to your installation directory, although it contains configuration files. Your Application Data folder will therefore be used instead.", "Information", , MessageBoxIcon.Information)
-            UserFilesRootDir = UserPath
-        End If
-
-        Return UserFilesRootDir
+        Return If(ProgramPathExists Or Not IO.Directory.Exists(UserPath), Application.StartupPath & ProgramSetting.DirSep, UserPath)
     End Function
 
     Public Function GetProgramSetting(Of T)(ByVal Key As String, ByVal DefaultVal As T) As T

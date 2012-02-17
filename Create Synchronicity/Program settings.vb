@@ -119,8 +119,6 @@ NotInheritable Class ConfigHandler
 
         'To change folder attributes: http://support.microsoft.com/default.aspx?scid=kb;EN-US;326549
         Dim WriteNeededFolders As New List(Of String) From {Application.StartupPath, Application.StartupPath & ProgramSetting.DirSep & LogFolderName, Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName}
-
-        Dim ErrorMessage As String = ""
         Dim ProgramPathExists As Boolean = IO.Directory.Exists(Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName)
 
         Try
@@ -137,9 +135,7 @@ NotInheritable Class ConfigHandler
                 Next
             Next
         Catch Ex As IO.IOException
-            ErrorMessage = Ex.Message
-
-            If ProgramPathExists Then Interaction.ShowMsg("Create Synchronicity cannot write to your installation directory, although it contains configuration files. Your Application Data folder will therefore be used instead.", "Information", , MessageBoxIcon.Information)
+            If ProgramPathExists Then Interaction.ShowMsg("Create Synchronicity cannot write to your installation directory, although it contains configuration files. Your Application Data folder will therefore be used instead." & Environment.NewLine & Ex.Message, "Information", , MessageBoxIcon.Information)
             Return UserPath
         End Try
 

@@ -120,6 +120,7 @@ NotInheritable Class ConfigHandler
         'To change folder attributes: http://support.microsoft.com/default.aspx?scid=kb;EN-US;326549
         Dim WriteNeededFolders As New List(Of String) From {Application.StartupPath, Application.StartupPath & ProgramSetting.DirSep & LogFolderName, Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName}
         Dim ProgramPathExists As Boolean = IO.Directory.Exists(Application.StartupPath & ProgramSetting.DirSep & ConfigFolderName)
+        Dim ToDelete As New List(Of String)
 
         Try
             For Each Folder As String In WriteNeededFolders
@@ -127,13 +128,21 @@ NotInheritable Class ConfigHandler
 
                 Dim TestPath As String = Folder & ProgramSetting.DirSep & "write-permissions"
                 IO.File.Create(TestPath).Close()
-                IO.File.Delete(TestPath)
 
                 If Folder = Application.StartupPath Then Continue For
                 For Each File As String In IO.Directory.GetFiles(Folder)
                     If (IO.File.GetAttributes(File) And IO.FileAttributes.ReadOnly) = IO.FileAttributes.ReadOnly Then Throw New IO.IOException(File)
                 Next
             Next
+
+            For Each TestFile As String In ToDelete
+                Try
+                    IO.File.Delete(TestFile)
+                Catch Ex As IO.IOException
+                    ' Silently fail when only the deletion raised an exception : users reported that the file was sometimes in use.
+                End Try
+            Next
+
         Catch Ex As IO.IOException
             If ProgramPathExists Then Interaction.ShowMsg("Create Synchronicity cannot write to your installation directory, although it contains configuration files. Your Application Data folder will therefore be used instead." & Environment.NewLine & Ex.Message, "Information", , MessageBoxIcon.Information)
             Return UserPath

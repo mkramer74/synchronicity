@@ -236,7 +236,10 @@ Friend Class SynchronizeForm
         Dim Source As String = "", Dest As String = ""
         If Not SetPathFromSelectedItem(Source, Dest) Then Exit Sub
 
-        If IO.File.Exists(Source) Or IO.Directory.Exists(Source) Then Interaction.StartProcess(If((Control.ModifierKeys And Keys.Control) = Keys.Control, IO.Path.GetDirectoryName(Source), Source))
+        Dim Path As String = If((Control.ModifierKeys And Keys.Alt) <> 0, Dest, Source)
+        If (Control.ModifierKeys And Keys.Control) <> 0 Then Path = IO.Path.GetDirectoryName(Path)
+
+        If IO.File.Exists(Path) OrElse IO.Directory.Exists(Path) Then Interaction.StartProcess(Path)
     End Sub
 
     Private Function SetPathFromSelectedItem(ByRef Source As String, ByRef Dest As String) As Boolean

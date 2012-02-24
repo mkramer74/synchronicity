@@ -126,8 +126,9 @@ NotInheritable Class ConfigHandler
             For Each Folder As String In WriteNeededFolders
                 If Not IO.Directory.Exists(Folder) Then Continue For
 
-                Dim TestPath As String = Folder & ProgramSetting.DirSep & "write-permissions"
+                Dim TestPath As String = Folder & ProgramSetting.DirSep & "write-permissions." & IO.Path.GetRandomFileName()
                 IO.File.Create(TestPath).Close()
+                ToDelete.Add(TestPath)
 
                 If Folder = Application.StartupPath Then Continue For
                 For Each File As String In IO.Directory.GetFiles(Folder)

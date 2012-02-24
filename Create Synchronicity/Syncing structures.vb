@@ -21,7 +21,6 @@ Structure StatusData
 
     Dim FilesScanned As Long
 
-
     Dim CreatedFiles As Long
     Dim CreatedFolders As Long
     Dim FilesToCreate As Long

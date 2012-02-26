@@ -140,11 +140,10 @@ NotInheritable Class ConfigHandler
                 Try
                     IO.File.Delete(TestFile)
                 Catch Ex As IO.IOException
-                    ' Silently fail when only the deletion raised an exception : users reported that the file was sometimes in use.
+                    ' Silently fail when the file can't be found or is being used by another process 
                 End Try
             Next
-
-        Catch Ex As IO.IOException
+        Catch Ex As Exception When TypeOf Ex Is System.UnauthorizedAccessException Or TypeOf Ex Is IO.IOException
             If ProgramPathExists Then Interaction.ShowMsg("Create Synchronicity cannot write to your installation directory, although it contains configuration files. Your Application Data folder will therefore be used instead." & Environment.NewLine & Ex.Message, "Information", , MessageBoxIcon.Information)
             Return UserPath
         End Try

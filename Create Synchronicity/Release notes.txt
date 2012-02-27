@@ -3,7 +3,8 @@
 Languages:         English, French, German, Portuguese, Italian, Spanish, 
                    Swedish, Dutch, Czech, Indonesian, Hebrew, Danish, Russian,
                    Estonian, Polish, Bulgarian, Korean, Chinese (Simplified),
-                   Hungarian, Chinese (Traditional), Amharic, Greek
+                   Hungarian, Chinese (Traditional), Amharic, Greek, Turkish,
+                   Japanese, Slovene
 Created on:        June 3, 2009
 Created by:        Clément Pit--Claudel (Create Software)
 Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
@@ -24,7 +25,7 @@ Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo
                    Chiapperini, Gush Katif Laad, Bjørn Karlstrøm, Andres Aule,
                    S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis, Tom Szabo,
-                   Masahiko Kuroiwa, Romel Vera, Tomaz Valh, Carl-Gustav Werner,
+                   Masahiko Kuroiwa, Romel Vera, Tomaz Valh, Carl-Gustav Werner
 
 * Technical information
 License:           GNU GPL v3 or later (see "COPYING")
@@ -39,21 +40,23 @@ SVN Server:        https://synchronicity.svn.sourceforge.net/svnroot/synchronici
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+
+--- Version 6.0 ---
+Feb. 27, 2012 - SYN: Create Synchronicity 6.0 comes with prettier logs, a much faster preview list, 8 new expert settings, 6 new languages, post-sync scripts, and lots of updates and fixes. 
 Feb. 14, 2012 - FIX: "File not found" exception upon start-up in some rare cases.
 Feb. 06, 2012 - UPD: Stop updating speed while copying a large file.
 Feb. 05, 2012 - FIX: Seldom UnauthorizedAccessExceptions when syncing to a recently reconfigured NAS.
 Jan. 31, 2012 - FIX: The year part in %MMMYYYY% didn't expand correctly.
 Jan. 30, 2012 - NEW: (Hidden setting) Customizable delay between queued profiles.
 Jan. 09, 2012 - NEW: (Hidden setting) Auto-include new subfolders of non-recursively selected folders.
-Dec. 31, 2011 - UPD: Change the way arguments are passed to diff programs (see the updated manual)
-Dec. 15, 2011 - NEW: !Send logs by e-mail (see scripts/mail.bat /? for more info).
+Dec. 31, 2011 - UPD: Change the way arguments are passed to diff programs (see the manual)
+Dec. 15, 2011 - NEW: !Send logs by e-mail (see "scripts/mail.bat /?" for more info).
 Dec. 14, 2011 - UPD: Improve hook scripts support.
-Dec. 13, 2011 - UPD: Rework duration estimates, and display deletion speed while cleaning up.
-Dec. 13, 2011 - UPD: Enable tray notifications in all cases.
+Dec. 13, 2011 - UPD: Rework duration estimates; show deletion speed while cleaning up the destination.
+Dec. 13, 2011 - UPD: Show a tray notification when a backup completes.
 Dec. 12, 2011 - NEW: (Hidden setting) Log all synchronization errors to a separate profile-name.errors.log file (#3448527).
 Dec. 11, 2011 - UPD: !Use a VirtualMode preview list, saving up to 12% scanning time, and using a good 60% less memory. Also, loading the preview list is now instantaneous.
 Dec. 02, 2011 - UPD: Detailed view now contains a history of last backups (Ctrl+L)
-Dec. 02, 2011 - NEW: Press Ctrl+H to display a history of your profiles.
 Nov. 27, 2011 - UPD: !Prettier logs : alternating rows, cleaner layout, direct shortcut to latest entry.
 Nov. 07, 2011 - NEW: (Hidden setting) Preview-only profiles (#3089839).
 Nov. 04, 2011 - FIX: Subtle, non-critical corner-case bug: "Strict Mirror" sometimes remained on although syncing incrementally.
@@ -62,14 +65,17 @@ Nov. 01, 2011 - NEW: !100'000 downloads!
 Oct. 27, 2011 - NEW: (Hidden setting) Forget (discard) files older than a custom number of days.
 Oct. 25, 2011 - NEW: !Create profile groups to keep your profiles organized.
 Oct. 25, 2011 - UPD: Restrict the "propagate updates" to expert mode.
+Oct. 21, 2011 - UPD: If Verdana is broken, use another font.
 Sep. 29, 2011 - NEW: (Hidden setting) Exclude hidden files.
 Sep. 23, 2011 - NEW: !Japanese translation, by Masahiko Kuroiwa. ありがと!
+Jul. 15, 2011 - NEW: (Hidden setting) Optionally disable auto-completion in Settings window.
 Jul. 11, 2011 - NEW: (Hidden setting) Post-sync actions.
 Jul. 11, 2011 - NEW: !Turkish translation, by muska. Sağ olun!
 Jul. 08, 2011 - UPD: #3357854: Allow case-only changes in profile names and fix sorting after rename.
 Jul. 05, 2011 - FIX: Some users reported an error with the write-permissions file.
 Jun. 10, 2011 - NEW: Command-line switch to sync all profiles (/all).
 Jun. 10, 2011 - NEW: !Greek translation, by Stathis Grigoriadis. Ευχαριστώ!
+Jun. 07, 2011 - NEW: !Slovene translation, with parts by Tomaz Valh. Hvala!
 May. 28, 2011 - NEW: !Amharic translation, by Elfalem Alemu. አመሰግናለሁ!
 May. 18, 2011 - NEW: !Chinese (traditional) translation. 謝謝!
 

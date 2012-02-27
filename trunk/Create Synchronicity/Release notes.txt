@@ -43,6 +43,7 @@ NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modifica
 
 --- Version 6.0 ---
 Feb. 27, 2012 - SYN: Create Synchronicity 6.0 comes with prettier logs, a much faster preview list, 8 new expert settings, 6 new languages, post-sync scripts, and lots of updates and fixes. 
+Feb. 21, 2012 - UPD: Pressing alt and duoble-clicking an entry in the preview list now opens the corresponding destination file.
 Feb. 14, 2012 - FIX: "File not found" exception upon start-up in some rare cases.
 Feb. 06, 2012 - UPD: Stop updating speed while copying a large file.
 Feb. 05, 2012 - FIX: Seldom UnauthorizedAccessExceptions when syncing to a recently reconfigured NAS.

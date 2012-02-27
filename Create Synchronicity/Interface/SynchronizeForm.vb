@@ -479,7 +479,6 @@ Friend Class SynchronizeForm
         'Pass 2: Create actions R->L for files/folder copy/deletion, based on what was marked as Valid.
 
         SyncingList.Clear()
-
         ValidFiles.Clear()
 
         Me.Invoke(New Action(AddressOf LaunchTimer))

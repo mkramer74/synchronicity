@@ -512,16 +512,16 @@ Friend Class SynchronizeForm
 
         Me.Invoke(New Action(AddressOf LaunchTimer))
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.LR, Status.LeftActionsCount})
-        Do_Tasks(SideOfSource.Left, SyncingList, StatusData.SyncStep.LR)
+        Do_Tasks(SideOfSource.Left, StatusData.SyncStep.LR)
         Me.Invoke(StepCompletedCallback, StatusData.SyncStep.LR)
 
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.RL, Status.RightActionsCount})
-        Do_Tasks(SideOfSource.Right, SyncingList, StatusData.SyncStep.RL)
+        Do_Tasks(SideOfSource.Right, StatusData.SyncStep.RL)
         Me.Invoke(StepCompletedCallback, StatusData.SyncStep.RL)
     End Sub
 
     '"Source" is "current side", with the corresponding side stored in "Side"
-    Private Sub Do_Tasks(ByVal Side As SideOfSource, ByRef ListOfActions As List(Of SyncingItem), ByVal CurrentStep As StatusData.SyncStep)
+    Private Sub Do_Tasks(ByVal Side As SideOfSource, ByVal CurrentStep As StatusData.SyncStep)
         Dim IncrementCallback As New SetIntCall(AddressOf Increment)
 
         Dim Source As String = If(Side = SideOfSource.Left, LeftRootPath, RightRootPath)
@@ -830,9 +830,7 @@ Friend Class SynchronizeForm
         Log.LogInfo("SyncFileAttributes: Attributes set to " & IO.File.GetAttributes(DestFile))
     End Sub
 
-    Private Sub SafeCopy(SourceFile As String, DestFile As String)
-        Log.LogInfo(String.Format("SafeCopy: Copying ""{0}"" to ""{1}"".", SourceFile, DestFile))
-
+    Private Shared Sub SafeCopy(SourceFile As String, DestFile As String)
         Dim TempDest, DestBack As String
         Do
             TempDest = DestFile & "-" & IO.Path.GetRandomFileName()
@@ -866,6 +864,7 @@ Friend Class SynchronizeForm
                     Using TestForAccess As New IO.FileStream(SourceFile, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.None) : End Using 'Checks whether the file can be accessed before trying to copy it. This line was added because if the file is only partially locked, CopyFileEx starts copying it, then fails on the way, and deletes the destination.
                     IO.File.Copy(SourceFile, DestFile, True)
                 Catch Ex As IO.IOException
+                    Log.LogInfo(String.Format("Copy failed with message ""{0}"": Retrying in safe mode", Ex.Message))
                     SafeCopy(SourceFile, DestFile)
                 End Try
             Else
@@ -970,7 +969,6 @@ Friend Class SynchronizeForm
 
         Return True
     End Function
-
 
     Private Function IsSymLink(ByVal SubFolder As String) As Boolean
 #If LINUX Then

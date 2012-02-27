@@ -133,7 +133,7 @@ Friend NotInheritable Class LanguageHandler
                     Dim CurLanguage() As String = PropsReader.ReadLine.Split(";".ToCharArray)
 
                     If CurLanguage.Length <> 3 Then Continue While
-                    LanguagesInfo.Add(CurLanguage(0), New LangInfo With {.NativeName = CurLanguage(1), .CodeNames = New List(Of String)(CurLanguage(2).ToLower.Split("/"c))})
+                    LanguagesInfo.Add(CurLanguage(0), New LangInfo With {.NativeName = CurLanguage(1), .CodeNames = New List(Of String)(CurLanguage(2).ToLower(Interaction.InvariantCulture).Split("/"c))})
                 End While
             End Using
         End If
@@ -160,7 +160,7 @@ Friend NotInheritable Class LanguageHandler
                 Dim Info As LanguageHandler.LangInfo = LanguagesInfo(EnglishName)
                 NewItemText = String.Format("{0} - {1} ({2})", EnglishName, Info.NativeName, Info.CodeNames(0))
 
-                If Info.CodeNames.Contains(CurrentCulture.Name.ToLower) Then SystemLanguageItem = NewItemText
+                If Info.CodeNames.Contains(CurrentCulture.Name.ToLower(Interaction.InvariantCulture)) Then SystemLanguageItem = NewItemText
             End If
 
             LanguagesComboBox.Items.Add(NewItemText)

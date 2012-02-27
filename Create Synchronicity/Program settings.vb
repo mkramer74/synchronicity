@@ -244,8 +244,7 @@ NotInheritable Class ConfigHandler
     Public Sub IncrementSyncsCount()
         Try
             Dim Count As Integer
-            If IO.File.Exists(StatsFile) Then Integer.TryParse(IO.File.ReadAllText(StatsFile), Count)
-            IO.File.WriteAllText(StatsFile, (Count + 1).ToString)
+            If IO.File.Exists(StatsFile) AndAlso Integer.TryParse(IO.File.ReadAllText(StatsFile), Count) Then IO.File.WriteAllText(StatsFile, (Count + 1).ToString)
         Catch
         End Try
     End Sub

@@ -513,16 +513,16 @@ Friend Class SynchronizeForm
 
         Me.Invoke(New Action(AddressOf LaunchTimer))
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.LR, Status.LeftActionsCount})
-        Do_Task(SideOfSource.Left, SyncingList, StatusData.SyncStep.LR)
+        Do_Tasks(SideOfSource.Left, SyncingList, StatusData.SyncStep.LR)
         Me.Invoke(StepCompletedCallback, StatusData.SyncStep.LR)
 
         Me.Invoke(SetMaxCallback, New Object() {StatusData.SyncStep.RL, Status.RightActionsCount})
-        Do_Task(SideOfSource.Right, SyncingList, StatusData.SyncStep.RL)
+        Do_Tasks(SideOfSource.Right, SyncingList, StatusData.SyncStep.RL)
         Me.Invoke(StepCompletedCallback, StatusData.SyncStep.RL)
     End Sub
 
     '"Source" is "current side", with the corresponding side stored in "Side"
-    Private Sub Do_Task(ByVal Side As SideOfSource, ByRef ListOfActions As List(Of SyncingItem), ByVal CurrentStep As StatusData.SyncStep)
+    Private Sub Do_Tasks(ByVal Side As SideOfSource, ByRef ListOfActions As List(Of SyncingItem), ByVal CurrentStep As StatusData.SyncStep)
         Dim IncrementCallback As New SetIntCall(AddressOf Increment)
 
         Dim Source As String = If(Side = SideOfSource.Left, LeftRootPath, RightRootPath)
@@ -555,6 +555,9 @@ Friend Class SynchronizeForm
 
                                 'FIXME: Folder attributes sometimes don't apply well.
                                 IO.File.SetAttributes(DestPath, IO.File.GetAttributes(SourcePath))
+
+                                'When a file is updated, so is its parent folder's last-write time.
+                                'LATER: Remove this line: manual copying doesn't preserve creation time.
                                 IO.Directory.SetCreationTimeUtc(DestPath, IO.Directory.GetCreationTimeUtc(SourcePath).AddHours(Handler.GetSetting(Of Integer)(ProfileSetting.TimeOffset, 0)))
 
                                 Status.CreatedFolders += 1
@@ -562,16 +565,16 @@ Friend Class SynchronizeForm
 #If DEBUG Then
                                 Dim RemainingFiles As String() = IO.Directory.GetFiles(SourcePath)
                                 Dim RemainingFolders As String() = IO.Directory.GetDirectories(SourcePath)
-                                If RemainingFiles.Length > 0 Or RemainingFolders.Length > 0 Then Log.LogInfo(String.Format("Do_Task: Removing non-empty folder {0} ({1}) ({2})", SourcePath, String.Join(", ", RemainingFiles), String.Join(", ", RemainingFolders)))
+                                If RemainingFiles.Length > 0 Or RemainingFolders.Length > 0 Then Log.LogInfo(String.Format("Do_Tasks: Removing non-empty folder {0} ({1}) ({2})", SourcePath, String.Join(", ", RemainingFiles), String.Join(", ", RemainingFolders)))
 #End If
-                                    Try
-                                        IO.Directory.Delete(SourcePath, True)
-                                    Catch ex As Exception
-                                        Dim DirInfo As New IO.DirectoryInfo(SourcePath)
-                                        DirInfo.Attributes = IO.FileAttributes.Directory 'Using "DirInfo.Attributes = IO.FileAttributes.Normal" does just the same, and actually sets DirInfo.Attributes to "IO.FileAttributes.Directory"
-                                        DirInfo.Delete()
-                                    End Try
-                                    Status.DeletedFolders += 1
+                                Try
+                                    IO.Directory.Delete(SourcePath, True)
+                                Catch ex As Exception
+                                    Dim DirInfo As New IO.DirectoryInfo(SourcePath)
+                                    DirInfo.Attributes = IO.FileAttributes.Directory 'Using "DirInfo.Attributes = IO.FileAttributes.Normal" does just the same, and actually sets DirInfo.Attributes to "IO.FileAttributes.Directory"
+                                    DirInfo.Delete()
+                                End Try
+                                Status.DeletedFolders += 1
                         End Select
                 End Select
                 Status.ActionsDone += 1

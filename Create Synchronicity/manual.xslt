@@ -8,8 +8,9 @@
 	</xsl:variable>
 
 	<xsl:variable name="quote">"</xsl:variable>
-	
+
 	<xsl:variable name="base_url">http://synchronicity.sourceforge.net/</xsl:variable>
+	<xsl:variable name="image_path">D:/Documents/Sites Web/Sourceforge/Synchronicity/</xsl:variable>
 
 	<xsl:template match="//a[@href and not(img)]">\href{<xsl:value-of select="@href"/>}{<xsl:apply-templates />}</xsl:template>
 	<xsl:template match="//a[@href and not(img or starts-with(@href, 'http') or starts-with(@href, 'mailto'))]">\href{<xsl:value-of select="$base_url"/><xsl:value-of select="@href"/>}{<xsl:apply-templates />}</xsl:template>
@@ -23,14 +24,14 @@
 	<xsl:template match="//h4">\subsubsection{<xsl:apply-templates />}</xsl:template>
 	<xsl:template match="//h5">\paragraph{<xsl:apply-templates />}</xsl:template>
 	
-	<xsl:template match="//a[@href]/img">\includeimage{<xsl:value-of select="../@href"/>}{<xsl:value-of select="@alt"/>}</xsl:template>
-	<xsl:template match="//*[not(self::a)]/img">\includeimage{<xsl:value-of select="@src"/>}{<xsl:value-of select="@alt"/>}<xsl:apply-templates /></xsl:template>
-	<xsl:template match="//img[contains(@class, 'latex-silent')]">\includeimage{<xsl:value-of select="@src"/>}{}<xsl:apply-templates /></xsl:template>
+	<xsl:template match="//a[@href]/img">\includeimage{<xsl:value-of select="$image_path"/><xsl:value-of select="../@href"/>}{<xsl:value-of select="@alt"/>}</xsl:template> <!-- Include full size image, not thumbnail. -->
+	<xsl:template match="//*[not(self::a)]/img">\includeimage{<xsl:value-of select="$image_path"/><xsl:value-of select="@src"/>}{<xsl:value-of select="@alt"/>}<xsl:apply-templates /></xsl:template>
+	<xsl:template match="//img[contains(@class, 'latex-silent')]">\includeimage{<xsl:value-of select="$image_path"/><xsl:value-of select="@src"/>}{}<xsl:apply-templates /></xsl:template> <!-- Don't include a label -->
 	
 	<xsl:template match="//li">\item <xsl:apply-templates /></xsl:template>
 	
 	<xsl:template match="//p"><xsl:apply-templates /><xsl:value-of select="$newline"/></xsl:template>
-	<xsl:template match="//samp">\texttt{<xsl:apply-templates />}</xsl:template>
+	<xsl:template match="//samp">\lstinline!<xsl:apply-templates />!</xsl:template>
 	<xsl:template match="//sup">\textsuperscript{<xsl:apply-templates />}</xsl:template>
 	
 	<xsl:template match="//table">\begin{tabular}{<xsl:value-of select="@summary"/>}<xsl:apply-templates />\end{tabular}</xsl:template>
@@ -43,7 +44,7 @@
 
 	<xsl:template match="//*[not(self::samp)]/text()"><xsl:call-template name="replace-left-quote"><xsl:with-param name="text" select="."/></xsl:call-template></xsl:template>
 	
-	<xsl:template match="//div"></xsl:template>
+	<!--<xsl:template match="//div"></xsl:template>-->
 	<xsl:template match="//*[contains(@class, 'latex-discard')]"></xsl:template>
 	
 	<xsl:template name="replace-left-quote">
@@ -76,6 +77,7 @@
 		\usepackage[T1]{fontenc}
 		\usepackage[utf8]{inputenc}
 		\usepackage{lmodern}
+		\usepackage{listings}
 		\usepackage[english]{babel}
 		\usepackage{fullpage, wrapfig, grffile, graphicx, ifthen, float, hyperref}
 

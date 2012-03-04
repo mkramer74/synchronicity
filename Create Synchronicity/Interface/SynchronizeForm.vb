@@ -926,8 +926,8 @@ Friend Class SynchronizeForm
     Private Function AttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean
         Const AttributesMask As IO.FileAttributes = IO.FileAttributes.Hidden Or IO.FileAttributes.System Or IO.FileAttributes.Encrypted
 
-        ' Disabled by default, and in two-ways mode
-        ' TODO: Enable by default.
+        ' Disabled by default, and in two-ways mode.
+        ' TODO: Enable by default. It's currently disabled because some network drives do not update attributes correctly.
         If Not Handler.GetSetting(Of Boolean)(ProfileSetting.SyncFolderAttributes, False) Then Return False
         If Handler.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) = ProfileSetting.SyncMethod.BiIncremental Then Return False
 

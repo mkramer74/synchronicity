@@ -177,16 +177,21 @@ Friend NotInheritable Class FileNamePattern
         Return If(IO.File.Exists(Path), IO.File.ReadAllText(Path), FileName)
     End Function
 
-    Friend Shared Sub LoadPatternsList(ByRef PatternsList As List(Of FileNamePattern), ByVal PatternsStr As String, Optional ByVal IsFolder As Boolean = False)
-        PatternsList = New List(Of FileNamePattern)
+    Friend Shared Sub LoadPatternsList(ByRef PatternsList As List(Of FileNamePattern), ByVal PatternsStr As String, ByVal IsFolder As Boolean, Optional ByVal FolderPrefix As String = "")
         Dim Patterns As New List(Of String)(PatternsStr.Split(";".ToCharArray, StringSplitOptions.RemoveEmptyEntries))
 
         While Patterns.Count > 0 And Patterns.Count < 1024 'Prevent circular references
-            If IsBoxed(":"c, Patterns(0)) Then
-                Dim SubPatterns As String = SharpInclude(Unbox(Patterns(0)))
-                Patterns.AddRange(SubPatterns.Split(";".ToCharArray, StringSplitOptions.RemoveEmptyEntries))
-            Else
-                PatternsList.Add(GetPattern(Patterns(0), IsFolder))
+            Dim CurPattern As String = Patterns(0)
+
+            If IsFolder = CurPattern.StartsWith(FolderPrefix) Then
+                If IsFolder Then CurPattern = CurPattern.Substring(FolderPrefix.Length)
+
+                If IsBoxed(":"c, CurPattern) Then 'Load patterns from file
+                    Dim SubPatterns As String = SharpInclude(Unbox(CurPattern))
+                    Patterns.AddRange(SubPatterns.Split(";".ToCharArray, StringSplitOptions.RemoveEmptyEntries))
+                Else
+                    PatternsList.Add(GetPattern(CurPattern, IsFolder))
+                End If
             End If
 
             Patterns.RemoveAt(0)

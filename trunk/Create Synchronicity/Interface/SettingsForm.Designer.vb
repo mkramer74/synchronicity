@@ -93,6 +93,7 @@ Partial Class SettingsForm
         Me.CreateDestOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.CheckFileSizeOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.ChecksumOption = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.PropagateUpdatesOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.DirectoriesBox.SuspendLayout()
         Me.ViewsLayoutPanel.SuspendLayout()
@@ -730,12 +731,12 @@ Partial Class SettingsForm
         '
         'ExpertMenu
         '
-        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.PropagateUpdatesOption})
+        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.ToolStripSeparator4, Me.PropagateUpdatesOption})
         Me.ExpertMenu.Name = "ExpertMenu"
         Me.ExpertMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.ExpertMenu.ShowCheckMargin = True
         Me.ExpertMenu.ShowImageMargin = False
-        Me.ExpertMenu.Size = New System.Drawing.Size(163, 92)
+        Me.ExpertMenu.Size = New System.Drawing.Size(163, 98)
         '
         'CreateDestOption
         '
@@ -758,10 +759,16 @@ Partial Class SettingsForm
         Me.ChecksumOption.Size = New System.Drawing.Size(162, 22)
         Me.ChecksumOption.Text = "\MD5"
         '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(159, 6)
+        '
         'PropagateUpdatesOption
         '
         Me.PropagateUpdatesOption.Checked = True
         Me.PropagateUpdatesOption.CheckOnClick = True
+        Me.PropagateUpdatesOption.CheckState = System.Windows.Forms.CheckState.Checked
         Me.PropagateUpdatesOption.Name = "PropagateUpdatesOption"
         Me.PropagateUpdatesOption.Size = New System.Drawing.Size(162, 22)
         Me.PropagateUpdatesOption.Text = "\PROPAGATE"
@@ -867,9 +874,9 @@ Partial Class SettingsForm
     Friend WithEvents ExpertMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents CheckFileSizeOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ChecksumOption As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CreateDestOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents PropagateUpdatesOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GroupLabel As System.Windows.Forms.Label
     Friend WithEvents GroupNameBox As System.Windows.Forms.ComboBox
+    Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
 End Class

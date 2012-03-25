@@ -95,6 +95,8 @@ Partial Class SettingsForm
         Me.ChecksumOption = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.PropagateUpdatesOption = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ExcludedFoldersLabel = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ExcludedFoldersBox = New System.Windows.Forms.ToolStripTextBox()
         Me.DirectoriesBox.SuspendLayout()
         Me.ViewsLayoutPanel.SuspendLayout()
         Me.LeftViewPanel.SuspendLayout()
@@ -731,38 +733,38 @@ Partial Class SettingsForm
         '
         'ExpertMenu
         '
-        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.ToolStripSeparator4, Me.PropagateUpdatesOption})
+        Me.ExpertMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateDestOption, Me.CheckFileSizeOption, Me.ChecksumOption, Me.ExcludedFoldersLabel, Me.ToolStripSeparator4, Me.PropagateUpdatesOption})
         Me.ExpertMenu.Name = "ExpertMenu"
         Me.ExpertMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.ExpertMenu.ShowCheckMargin = True
         Me.ExpertMenu.ShowImageMargin = False
-        Me.ExpertMenu.Size = New System.Drawing.Size(163, 98)
+        Me.ExpertMenu.Size = New System.Drawing.Size(190, 142)
         '
         'CreateDestOption
         '
         Me.CreateDestOption.CheckOnClick = True
         Me.CreateDestOption.Name = "CreateDestOption"
-        Me.CreateDestOption.Size = New System.Drawing.Size(162, 22)
+        Me.CreateDestOption.Size = New System.Drawing.Size(189, 22)
         Me.CreateDestOption.Text = "\CREATE_DEST"
         '
         'CheckFileSizeOption
         '
         Me.CheckFileSizeOption.CheckOnClick = True
         Me.CheckFileSizeOption.Name = "CheckFileSizeOption"
-        Me.CheckFileSizeOption.Size = New System.Drawing.Size(162, 22)
+        Me.CheckFileSizeOption.Size = New System.Drawing.Size(189, 22)
         Me.CheckFileSizeOption.Text = "\COMPARE_SIZE"
         '
         'ChecksumOption
         '
         Me.ChecksumOption.CheckOnClick = True
         Me.ChecksumOption.Name = "ChecksumOption"
-        Me.ChecksumOption.Size = New System.Drawing.Size(162, 22)
+        Me.ChecksumOption.Size = New System.Drawing.Size(189, 22)
         Me.ChecksumOption.Text = "\MD5"
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(159, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(186, 6)
         '
         'PropagateUpdatesOption
         '
@@ -770,8 +772,20 @@ Partial Class SettingsForm
         Me.PropagateUpdatesOption.CheckOnClick = True
         Me.PropagateUpdatesOption.CheckState = System.Windows.Forms.CheckState.Checked
         Me.PropagateUpdatesOption.Name = "PropagateUpdatesOption"
-        Me.PropagateUpdatesOption.Size = New System.Drawing.Size(162, 22)
+        Me.PropagateUpdatesOption.Size = New System.Drawing.Size(189, 22)
         Me.PropagateUpdatesOption.Text = "\PROPAGATE"
+        '
+        'ExcludedFoldersLabel
+        '
+        Me.ExcludedFoldersLabel.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExcludedFoldersBox})
+        Me.ExcludedFoldersLabel.Name = "ExcludedFoldersLabel"
+        Me.ExcludedFoldersLabel.Size = New System.Drawing.Size(189, 22)
+        Me.ExcludedFoldersLabel.Text = "\EXCLUDED_FOLDERS"
+        '
+        'ExcludedFoldersBox
+        '
+        Me.ExcludedFoldersBox.Name = "ExcludedFoldersBox"
+        Me.ExcludedFoldersBox.Size = New System.Drawing.Size(100, 23)
         '
         'SettingsForm
         '
@@ -879,4 +893,6 @@ Partial Class SettingsForm
     Friend WithEvents GroupLabel As System.Windows.Forms.Label
     Friend WithEvents GroupNameBox As System.Windows.Forms.ComboBox
     Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ExcludedFoldersLabel As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ExcludedFoldersBox As System.Windows.Forms.ToolStripTextBox
 End Class

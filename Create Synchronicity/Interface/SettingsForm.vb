@@ -46,7 +46,7 @@ Friend Class SettingsForm
         End If
 
         GroupNameBox.Items.AddRange(Groups.ToArray)
-        'CType(ExcludedFoldersLabel.DropDown, ToolStripDropDownMenu).ShowImageMargin = False
+        CType(ExcludedFoldersLabel.DropDown, ToolStripDropDownMenu).ShowImageMargin = False
 
         Handler = New ProfileHandler(Name)
     End Sub
@@ -166,7 +166,7 @@ Friend Class SettingsForm
 
     Private Sub Bottom_Showtag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseEnter
         'BottomDescLabel.Text = CStr(CType(sender, Control).Tag)
-        BottomDescLabel.Text = CStr(StrictDateComparisonOption.Tag)
+        BottomDescLabel.Text = CStr(StrictDateComparisonOption.Tag) 'FIXME: Get rid of this and use a tooltip
     End Sub
 
     Private Sub Bottom_HideTag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseLeave
@@ -455,7 +455,7 @@ Friend Class SettingsForm
         Handler.CopySetting(ProfileSetting.Checksum, ChecksumOption.Checked, LoadToForm)
         Handler.CopySetting(ProfileSetting.CheckFileSize, CheckFileSizeOption.Checked, LoadToForm)
         Handler.CopySetting(ProfileSetting.Group, GroupNameBox.Text, LoadToForm)
-        'Handler.CopySetting(ProfileSetting.ExcludedFolders, ExcludedFoldersBox.Text, LoadToForm)
+        Handler.CopySetting(ProfileSetting.ExcludedFolders, ExcludedFoldersBox.Text, LoadToForm)
         'Hidden settings are not added here
 
         'Note: Behaves correctly when no radio button is checked, although CopyAllFiles is unchecked.

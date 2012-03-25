@@ -22,7 +22,7 @@ Friend Class MainForm
         ' Code (largely inspired) by U.N. Owen
         Dim WindowSettings As New List(Of String)(ProgramConfig.GetProgramSetting(Of String)(ProgramSetting.MainFormAttributes, "").Split(","c))
         Try
-            Dim Values As New List(Of Integer) : WindowSettings.ForEach(Sub(Elem) Values.Add(CInt(Elem)))
+            Dim Values As New List(Of Integer) : WindowSettings.ForEach(Sub(Elem) Values.Add(CInt(Elem))) 'FIXME: Lambdas
             If Values.Count = 4 AndAlso Values.TrueForAll(Function(Value As Integer) Value > 0 And Value < 5000) Then
                 Me.Location = New Drawing.Point(Values(0), Values(1))
                 Me.Size = New Drawing.Size(Values(2), Values(3))

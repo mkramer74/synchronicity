@@ -46,7 +46,7 @@ Friend Class SettingsForm
         End If
 
         GroupNameBox.Items.AddRange(Groups.ToArray)
-        CType(ExcludedFoldersLabel.DropDown, ToolStripDropDownMenu).ShowImageMargin = False
+        'CType(ExcludedFoldersLabel.DropDown, ToolStripDropDownMenu).ShowImageMargin = False
 
         Handler = New ProfileHandler(Name)
     End Sub
@@ -455,7 +455,7 @@ Friend Class SettingsForm
         Handler.CopySetting(ProfileSetting.Checksum, ChecksumOption.Checked, LoadToForm)
         Handler.CopySetting(ProfileSetting.CheckFileSize, CheckFileSizeOption.Checked, LoadToForm)
         Handler.CopySetting(ProfileSetting.Group, GroupNameBox.Text, LoadToForm)
-        Handler.CopySetting(ProfileSetting.ExcludedFolders, ExcludedFoldersBox.Text, LoadToForm)
+        'Handler.CopySetting(ProfileSetting.ExcludedFolders, ExcludedFoldersBox.Text, LoadToForm)
         'Hidden settings are not added here
 
         'Note: Behaves correctly when no radio button is checked, although CopyAllFiles is unchecked.

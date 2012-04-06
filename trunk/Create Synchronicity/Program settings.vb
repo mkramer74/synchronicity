@@ -177,9 +177,7 @@ NotInheritable Class ConfigHandler
             Exit Sub
         End If
 
-        Dim ConfigString As String = IO.File.ReadAllText(MainConfigFile)
-        Dim ConfigArray As New List(Of String)(ConfigString.Split(";"c))
-        For Each Setting As String In ConfigArray
+        For Each Setting As String In IO.File.ReadAllText(MainConfigFile).Split(";"c)
             Dim Pair As String() = Setting.Split(":".ToCharArray, 2)
             If Pair.Length() < 2 Then Continue For
             If Settings.ContainsKey(Pair(0)) Then Settings.Remove(Pair(0))

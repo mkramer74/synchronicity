@@ -93,7 +93,7 @@ NotInheritable Class ProfileHandler
         If GetSetting(Of String)(ProfileSetting.PostSyncAction) IsNot Nothing Then SetSetting(Of Boolean)(ProfileSetting.ErrorsLog, True)
 
         'Sanity checks: if no folders were included on the right due to automatic destination creation, select all folders
-        If GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False) And GetSetting(Of String)(ProfileSetting.RightSubFolders) Is Nothing Then SetSetting(Of String)(ProfileSetting.RightSubFolders, "*")
+        If GetSetting(Of Boolean)(ProfileSetting.MayCreateDestination, False) And GetSetting(Of String)(ProfileSetting.RightSubFolders, "") = "" Then SetSetting(Of String)(ProfileSetting.RightSubFolders, "*")
     End Sub
 
     Function LoadConfigFile() As Boolean
@@ -185,7 +185,7 @@ NotInheritable Class ProfileHandler
             End If
         Next
 
-        If Configuration.ContainsKey(ProfileSetting.CompressionExt) AndAlso Configuration(ProfileSetting.CompressionExt) <> "" Then
+        If GetSetting(Of String)(ProfileSetting.CompressionExt, "") <> "" Then
             If Array.IndexOf({".gz", ".bz2"}, Configuration(ProfileSetting.CompressionExt)) < 0 Then
                 IsValid = False
                 InvalidListing.Add("Unknown compression extension, or missing ""."":" & Configuration(ProfileSetting.CompressionExt))
@@ -285,7 +285,7 @@ NotInheritable Class ProfileHandler
 
     Sub LoadSubFoldersList(ByVal ConfigLine As String, ByRef Subfolders As Dictionary(Of String, Boolean))
         Subfolders.Clear()
-        Dim ConfigCheckedFoldersList As New List(Of String)(If(Configuration.ContainsKey(ConfigLine), Configuration(ConfigLine), "").Split(";"c))
+        Dim ConfigCheckedFoldersList As New List(Of String)(GetSetting(Of String)(ConfigLine, "").Split(";"c))
         ConfigCheckedFoldersList.RemoveAt(ConfigCheckedFoldersList.Count - 1) 'Removes the last, empty element
         ' Warning: The trailing comma can't be removed when generating the configuration string.
         ' Using StringSplitOptions.RemoveEmptyEntries would make no difference between ';' (root folder selected, no subfolders) and '' (nothing selected at all)

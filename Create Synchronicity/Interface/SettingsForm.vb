@@ -63,7 +63,7 @@ Friend Class SettingsForm
     End Sub
 
     Private Sub SettingsForm_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
-        ReloadTrees(True) 'Loading happens after showing the form.
+        ReloadTrees(True, , False) 'Loading happens after showing the form. Do not automatically check the root node.
         RightView.Sorted = True : LeftView.Sorted = True
     End Sub
 
@@ -224,7 +224,7 @@ Friend Class SettingsForm
         'When the CheckBoxes' display is switched on, the checked property is not taken into account for the display.
         'Therefore, re-check the tree (if it has already been loaded)
         If RightView.CheckBoxes AndAlso RightView.Nodes.Count > 0 Then
-            LoadCheckState(RightView, Handler.RightCheckedNodes) 'InhibitAutoCheck? -> Enabled in LoadCheckState anyway.
+            LoadCheckState(RightView, Handler.RightCheckedNodes, True) 'InhibitAutoCheck? -> Enabled in LoadCheckState anyway.
         End If
     End Sub
 
@@ -347,7 +347,7 @@ Friend Class SettingsForm
         End If
     End Sub
 
-    Private Sub ReloadTrees(ByVal AllowFullReload As Boolean, Optional ByVal ForceRight As Boolean = False)
+    Private Sub ReloadTrees(ByVal AllowFullReload As Boolean, Optional ByVal ForceRight As Boolean = False, Optional ByVal AutoCheckRoot As Boolean = True)
         ReloadButton.Enabled = False
         SaveButton.Enabled = False
         Loading.Visible = True
@@ -358,10 +358,10 @@ Friend Class SettingsForm
         Cleanup_Paths()
         'Unless FullReload is true, and no path has changed, only the trees where paths have changed are reloaded.
         If FullReload Or PrevLeft <> FromTextBox.Text Then
-            LoadTree(LeftView, FromTextBox.Text, Handler.LeftCheckedNodes)
+            LoadTree(LeftView, FromTextBox.Text, Handler.LeftCheckedNodes, AutoCheckRoot)
         End If
         If FullReload Or PrevRight <> ToTextBox.Text Or ForceRight Then
-            LoadTree(RightView, ToTextBox.Text, Handler.RightCheckedNodes, CreateDestOption.Checked)
+            LoadTree(RightView, ToTextBox.Text, Handler.RightCheckedNodes, CreateDestOption.Checked, AutoCheckRoot)
         End If
 
         Loading.Visible = False
@@ -373,7 +373,7 @@ Friend Class SettingsForm
         CheckSettings()
     End Sub
 
-    Private Sub LoadTree(ByVal Tree As TreeView, ByVal OriginalPath As String, ByVal CheckedNodes As Dictionary(Of String, Boolean), Optional ByVal DynamicDest As Boolean = False)
+    Private Sub LoadTree(ByVal Tree As TreeView, ByVal OriginalPath As String, ByVal CheckedNodes As Dictionary(Of String, Boolean), ByVal AutoCheckRoot As Boolean, Optional ByVal DynamicDest As Boolean = False)
         Tree.Nodes.Clear()
 
         Dim Path As String = ProfileHandler.TranslatePath(OriginalPath) & ProgramSetting.DirSep
@@ -392,7 +392,7 @@ Friend Class SettingsForm
 
                     'Expanding root is crucial here, since children were already added, but not their subchildren, and expand only works on nodes that already have subchildren.
                     Tree.Nodes(0).Expand()
-                    LoadCheckState(Tree, CheckedNodes)
+                    LoadCheckState(Tree, CheckedNodes, AutoCheckRoot)
                 Catch Ex As Exception 'Root folder cannot be read
                     Tree.Nodes.Clear()
                     Tree.Enabled = False
@@ -403,9 +403,9 @@ Friend Class SettingsForm
         If Not Tree.Enabled Then Tree.BackColor = Drawing.Color.LightGray
     End Sub
 
-    Private Sub LoadCheckState(ByVal Tree As TreeView, ByVal CheckedNodes As Dictionary(Of String, Boolean))
+    Private Sub LoadCheckState(ByVal Tree As TreeView, ByVal CheckedNodes As Dictionary(Of String, Boolean), ByVal AutoCheckRoot As Boolean)
         Dim BaseNode As TreeNode = Tree.Nodes(0)
-        If CheckedNodes.Count = 0 Then CheckedNodes.Add("", True)
+        If CheckedNodes.Count = 0 And AutoCheckRoot Then CheckedNodes.Add("", True) 'Automatically check the root node; useful when loading a new path, but must not happen if all folders were intentionally excluded.
         InhibitAutocheck = True
         For Each CheckedPath As KeyValuePair(Of String, Boolean) In CheckedNodes
             CheckAccordingToPath(BaseNode, New List(Of String)(CheckedPath.Key.Split(ProgramSetting.DirSep)), CheckedPath.Value)

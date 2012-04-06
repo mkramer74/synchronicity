@@ -535,7 +535,7 @@ Friend Class SynchronizeForm
             Dim DestPath As String = Destination & Entry.Path
 
             Try
-                UpdateLabel(CurrentStep, If(Entry.Action = TypeOfAction.Delete, SourcePath, DestPath))
+                UpdateLabel(CurrentStep, If(Entry.Action = TypeOfAction.Delete, SourcePath, Entry.Path))
 
                 Select Case Entry.Type
                     Case TypeOfItem.File

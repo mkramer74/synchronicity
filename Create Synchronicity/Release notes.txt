@@ -19,7 +19,7 @@ Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                    Brenden Veljacich, Shawn McTear, Eugene Dreyer,
                    Terje Ballangby, Tim Naylor, Geoffroy Ménard, Rick Weinstein,
                    Ira Bashkow, Ron Aronica, Sela (www.SelaGroup.com),
-                   Slobodan Dijaković
+                   Slobodan Dijaković, Gavin W.F. Smith
 Patches:           U.N. Owen
 Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                    Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,

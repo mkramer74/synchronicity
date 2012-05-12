@@ -142,7 +142,10 @@ Friend Class MainForm
         If e.Item = 0 Then
             e.CancelEdit = True
             Dim SettingsForm As New SettingsForm(e.Label, ProfilesGroups)
-            SettingsForm.ShowDialog()
+
+            'Since this happens while the label is being edited, the normal blinking mecanisms that brings the modal dialog to front when the owner window is clicked doesn't work.
+            'Explicitly specifying the owner forces the modal dialog to always be on top of the caller.
+            SettingsForm.ShowDialog(Me) 'This is especially important if users minimize CS while editing the label - in this case, returning to CS shows a blocked main windows, and users must loop through all windows (Ctrl+Tab) to reach the settings dialog.
         Else
             If Not Profiles(Actions.Items(e.Item).Text).Rename(e.Label) Then e.CancelEdit = True
         End If

@@ -4,7 +4,7 @@ Languages:         English, French, German, Portuguese, Italian, Spanish,
                    Swedish, Dutch, Czech, Indonesian, Hebrew, Danish, Russian,
                    Estonian, Polish, Bulgarian, Korean, Chinese (Simplified),
                    Hungarian, Chinese (Traditional), Amharic, Greek, Turkish,
-                   Japanese, Slovene
+                   Japanese, Slovene, Norwegian
 Created on:        June 3, 2009
 Created by:        Clément Pit--Claudel (Create Software)
 Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
@@ -29,7 +29,7 @@ Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo
                    S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis, Tom Szabo,
                    Masahiko Kuroiwa, Romel Vera, Tomaz Valh, Carl-Gustav Werner,
-                   Ademas Pramuatmaja
+                   Ademas Pramuatmaja, Jim Leirvik
 
 * Technical information
 License:           GNU GPL v3 or later (see "COPYING")
@@ -44,9 +44,10 @@ SVN Server:        https://synchronicity.svn.sourceforge.net/svnroot/synchronici
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+May. 26, 2012 - NEW: !Norwegian translation, by Jim Leirvik. 
 
 --- Version 6.0 ---
-Mer. 11, 2012 - SYN: Create Synchronicity 6.0 comes with prettier logs, a much faster preview list, 8 new expert settings, 6 new languages, post-sync scripts, and lots of updates and fixes. 
+Mar. 11, 2012 - SYN: Create Synchronicity 6.0 comes with prettier logs, a much faster preview list, 8 new expert settings, 6 new languages, post-sync scripts, and lots of updates and fixes. 
 Feb. 21, 2012 - UPD: Pressing alt and double-clicking an entry in the preview list now opens the corresponding destination file.
 Feb. 14, 2012 - FIX: "File not found" exception upon start-up in some rare cases.
 Feb. 06, 2012 - UPD: Stop updating speed while copying a large file.

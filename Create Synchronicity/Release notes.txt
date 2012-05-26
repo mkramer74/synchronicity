@@ -20,7 +20,7 @@ Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                    Terje Ballangby, Tim Naylor, Geoffroy Ménard, Rick Weinstein,
                    Ira Bashkow, Ron Aronica, Sela (www.SelaGroup.com),
                    Slobodan Dijaković, Gavin W.F. Smith, Christine Aznar,
-                   Richard Duda
+                   Richard Duda, David Connolly
 Patches:           U.N. Owen
 Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                    Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,

@@ -254,10 +254,12 @@ Friend Class MainForm
     Sub SetView(ByVal Offset As Integer)
         CurView = (CurView + Offset) Mod Views.Length
 #If CONFIG = "Linux" Then
-        CurView = If(CurView = 0, CurView + 1, CurView) 'Exclude tile view.
+        If CurView = 0 Then CurView = 1 'Exclude tile view.
 #End If
 
         Actions.View = Views(CurView)
+
+        ReloadProfilesList()
         Actions.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
     End Sub
 
@@ -281,7 +283,7 @@ Friend Class MainForm
             NewItem.Group = Actions.Groups(1)
             NewItem.ImageIndex = Profile.GetSetting(Of Integer)(ProfileSetting.Method, ProfileSetting.DefaultMethod) + If(Profile.Scheduler.Frequency = ScheduleInfo.Freq.Never, 0, 4)
             NewItem.SubItems.Add(Profile.FormatMethod()).ForeColor = Drawing.Color.DarkGray
-            NewItem.SubItems.Add(Profile.FormatLastRun("D3"))
+            If Actions.View = View.Details Then NewItem.SubItems.Add(Profile.FormatLastRun("D3")) 'Fix #3515300
 
             Dim GroupName As String = Profile.GetSetting(Of String)(ProfileSetting.Group, "")
             If GroupName <> "" Then

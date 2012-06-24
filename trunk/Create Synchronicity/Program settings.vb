@@ -226,9 +226,13 @@ NotInheritable Class ConfigHandler
         If ProgramSetting.Debug Or CommandLine.Silent Or CommandLine.Log Then
             Static UniqueID As String = Guid.NewGuid().ToString
 
-            Using AppLog As New IO.StreamWriter(AppLogFile, True)
-                AppLog.WriteLine(String.Format("[{0}][{1}] {2}", UniqueID, Date.Now.ToString(), EventData.Replace(Environment.NewLine, " // ")))
-            End Using
+            Try
+                Using AppLog As New IO.StreamWriter(AppLogFile, True)
+                    AppLog.WriteLine(String.Format("[{0}][{1}] {2}", UniqueID, Date.Now.ToString(), EventData.Replace(Environment.NewLine, " // ")))
+                End Using
+            Catch Ex As IO.IOException
+                ' File in use.
+            End Try
         End If
     End Sub
 

@@ -44,6 +44,8 @@ SVN Server:        https://synchronicity.svn.sourceforge.net/svnroot/synchronici
 * Change Log
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
+--- In future releases ---
+Jun. 27, 2012 - FIX: Profiles name overlapping in some cases (#3515300).
 May. 26, 2012 - NEW: !Norwegian translation, by Jim Leirvik. 
 
 --- Version 6.0 ---

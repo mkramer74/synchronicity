@@ -610,11 +610,11 @@ Friend Class SynchronizeForm
         Next
     End Sub
 
-    Private Sub AddToSyncingList(ByVal Path As String, ByVal Type As TypeOfItem, ByVal Side As SideOfSource, ByVal Action As TypeOfAction, ByVal IsUpdate As Boolean, Optional ByVal Suffix As String = "")
+    Private Sub AddToSyncingList(ByVal Path As String, ByVal Type As TypeOfItem, ByVal Side As SideOfSource, ByVal Action As TypeOfAction, ByVal IsUpdate As Boolean)
         Dim Entry As New SyncingItem With {.Path = Path, .Type = Type, .Side = Side, .Action = Action, .IsUpdate = IsUpdate, .RealId = SyncingList.Count}
 
         SyncingList.Add(Entry)
-        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(Entry.Path & Suffix)
+        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(GetCompressedName(Entry.Path))
 
         Select Case Entry.Action
             Case TypeOfAction.Copy
@@ -703,8 +703,7 @@ Friend Class SynchronizeForm
         Try
             For Each SourceFile As String In IO.Directory.GetFiles(SourceFolder)
                 Log.LogInfo("Scanning " & SourceFile)
-                Dim Suffix As String = GetCompressionExt()
-                Dim DestinationFile As String = CombinePathes(DestinationFolder, IO.Path.GetFileName(SourceFile) & Suffix)
+                Dim DestinationFile As String = GetCompressedName(CombinePathes(DestinationFolder, IO.Path.GetFileName(SourceFile)))
 
                 Try
                     If IsIncludedInSync(SourceFile) Then
@@ -712,13 +711,13 @@ Friend Class SynchronizeForm
                         Dim RelativeFilePath As String = SourceFile.Substring(Context.SourceRootPath.Length)
 
                         If IsNewFile OrElse SourceIsMoreRecent(SourceFile, DestinationFile) Then
-                            AddToSyncingList(RelativeFilePath, TypeOfItem.File, Context.Source, TypeOfAction.Copy, Not IsNewFile, Suffix)
+                            AddToSyncingList(RelativeFilePath, TypeOfItem.File, Context.Source, TypeOfAction.Copy, Not IsNewFile)
                             Log.LogInfo(String.Format("SearchForChanges: {0} ""{1}"" ""{2}"" ({3}).", If(IsNewFile, "[New File]", "[Updated file]"), SourceFile, DestinationFile, RelativeFilePath))
 
                             If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.Forecast, False) Then Status.BytesToCopy += Utilities.GetSize(SourceFile) 'Degrades performance.
                         Else
                             'Adds an entry to not delete this when cleaning up the other side.
-                            AddValidFile(RelativeFilePath & Suffix)
+                            AddValidFile(GetCompressedName(RelativeFilePath))
                             Log.LogInfo(String.Format("SearchForChanges: [Valid] ""{0}"" ""{1}"" ({2})", SourceFile, DestinationFile, RelativeFilePath))
                         End If
                     Else
@@ -845,10 +844,7 @@ Friend Class SynchronizeForm
     End Sub
 
     Private Sub CopyFile(ByVal SourceFile As String, ByVal DestFile As String)
-        Dim Suffix As String = GetCompressionExt()
-        Dim Compression As Boolean = Suffix <> ""
-
-        If Compression Then DestFile &= Suffix
+        Dim CompressedFile As String = GetCompressedName(DestFile)
 
         Log.LogInfo(String.Format("CopyFile: Source: {0}, Destination: {1}", SourceFile, DestFile))
 
@@ -856,9 +852,13 @@ Friend Class SynchronizeForm
             IO.File.SetAttributes(DestFile, IO.FileAttributes.Normal)
         End If
 
+        Dim Compression As Boolean = CompressedFile <> DestFile
+        DestFile = CompressedFile
+
         If Compression Then
             Static GZipCompressor As Compressor = LoadCompressionDll()
-            GZipCompressor.CompressFile(SourceFile, DestFile, Sub(Progress As Long) Status.BytesCopied += Progress) ', ByRef ContinueRunning As Boolean) 'ContinueRunning = Not [STOP]
+            Static Decompress As Boolean = Handler.GetSetting(Of Boolean)(ProfileSetting.Decompress, False)
+            GZipCompressor.CompressFile(SourceFile, CompressedFile, Decompress, Sub(Progress As Long) Status.BytesCopied += Progress) ', ByRef ContinueRunning As Boolean) 'ContinueRunning = Not [STOP]
         Else
             If IO.File.Exists(DestFile) Then
                 Try
@@ -920,8 +920,15 @@ Friend Class SynchronizeForm
         Return Not MatchesPattern(Path, ExcludedDirPatterns)
     End Function
 
-    Private Function GetCompressionExt() As String
-        Return Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "") 'AndAlso Utilities.GetSize(File) > ConfigOptions.CompressionThreshold
+    Private Function GetCompressedName(ByVal OriginalName As String) As String
+        Static Extension As String = Handler.GetSetting(Of String)(ProfileSetting.CompressionExt, "")
+
+        If Extension <> "" AndAlso Handler.GetSetting(Of Boolean)(ProfileSetting.Decompress, False) Then
+            Return If(OriginalName.EndsWith(Extension), OriginalName.Substring(0, OriginalName.LastIndexOf(Extension)), OriginalName)
+        Else
+            Return OriginalName + Extension
+        End If
+        'AndAlso Utilities.GetSize(File) > ConfigOptions.CompressionThreshold
     End Function
 
     Private Function AttributesChanged(ByVal AbsSource As String, ByVal AbsDest As String) As Boolean

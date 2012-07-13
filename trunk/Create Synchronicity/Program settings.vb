@@ -28,7 +28,7 @@ Friend Module ProgramSetting
     Public Const LogFolderName As String = "log"
     Public Const SettingsFileName As String = "mainconfig.ini"
     Public Const AppLogName As String = "app.log"
-    Public Const DllName As String = "compress.dll"
+    Public Const DllName As String = "compress-decompress.dll"
     'Public CompressionThreshold As Integer = 0 'Better not filter at all
 
     Public Const GroupPrefix As Char = ":"c

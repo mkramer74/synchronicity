@@ -19,8 +19,9 @@ Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                    Brenden Veljacich, Shawn McTear, Eugene Dreyer,
                    Terje Ballangby, Tim Naylor, Geoffroy Ménard, Rick Weinstein,
                    Ira Bashkow, Ron Aronica, Sela (www.SelaGroup.com),
-                   Slobodan Dijaković, Gavin W.F. Smith, Christine Aznar,
-                   Richard Duda, David Connolly, G. W. Daly
+                   Slobodan Dijaković, Gavin W. F. Smith, Christine Aznar,
+                   Richard Duda, David Connolly, G. W. Daly, Tom & Kathi Brown,
+                   Felipe Esquivel
 Patches:           U.N. Owen
 Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                    Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,
@@ -29,7 +30,7 @@ Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo
                    S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis, Tom Szabo,
                    Masahiko Kuroiwa, Romel Vera, Tomaz Valh, Carl-Gustav Werner,
-                   Ademas Pramuatmaja, Jim Leirvik, Tom & Kathi Brown
+                   Ademas Pramuatmaja, Jim Leirvik
 
 * Technical information
 License:           GNU GPL v3 or later (see "COPYING")

@@ -156,17 +156,12 @@ Friend Class SettingsForm
         End If
     End Sub
 
-    Private Sub CouldShowTip(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RightView.MouseEnter, LeftView.MouseEnter, FromTextBox.GotFocus, ToTextBox.GotFocus, FromTextBox.MouseEnter, ToTextBox.MouseEnter, LRMirrorMethodOption.MouseEnter, LRIncrementalMethodOption.MouseEnter, TwoWaysIncrementalMethodOption.MouseEnter, IncludedTypesTextBox.MouseEnter, ExcludedTypesTextBox.MouseEnter
+    Private Sub CouldShowTip(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RightView.MouseEnter, LeftView.MouseEnter, FromTextBox.GotFocus, ToTextBox.GotFocus, FromTextBox.MouseEnter, ToTextBox.MouseEnter, LRMirrorMethodOption.MouseEnter, LRIncrementalMethodOption.MouseEnter, TwoWaysIncrementalMethodOption.MouseEnter, IncludedTypesTextBox.MouseEnter, ExcludedTypesTextBox.MouseEnter, StrictDateComparisonOption.MouseEnter
         Interaction.ShowToolTip(CType(sender, Control))
     End Sub
 
-    Private Sub ShouldHideTip(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RightView.MouseLeave, LeftView.MouseLeave, FromTextBox.LostFocus, ToTextBox.LostFocus, FromTextBox.MouseLeave, ToTextBox.MouseLeave, LRMirrorMethodOption.MouseLeave, LRIncrementalMethodOption.MouseLeave, TwoWaysIncrementalMethodOption.MouseLeave, IncludedTypesTextBox.MouseLeave, ExcludedTypesTextBox.MouseLeave
+    Private Sub ShouldHideTip(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RightView.MouseLeave, LeftView.MouseLeave, FromTextBox.LostFocus, ToTextBox.LostFocus, FromTextBox.MouseLeave, ToTextBox.MouseLeave, LRMirrorMethodOption.MouseLeave, LRIncrementalMethodOption.MouseLeave, TwoWaysIncrementalMethodOption.MouseLeave, IncludedTypesTextBox.MouseLeave, ExcludedTypesTextBox.MouseLeave, StrictDateComparisonOption.MouseLeave
         Interaction.HideToolTip(CType(sender, Control))
-    End Sub
-
-    Private Sub Bottom_Showtag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseEnter
-        'BottomDescLabel.Text = CStr(CType(sender, Control).Tag)
-        BottomDescLabel.Text = CStr(StrictDateComparisonOption.Tag) 'FIXME: Get rid of this and use a tooltip
     End Sub
 
     Private Sub Bottom_HideTag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseLeave

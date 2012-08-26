@@ -21,7 +21,7 @@ Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                    Ira Bashkow, Ron Aronica, Sela (www.SelaGroup.com),
                    Slobodan Dijaković, Gavin W. F. Smith, Christine Aznar,
                    Richard Duda, David Connolly, G. W. Daly, Tom & Kathi Brown,
-                   Felipe Esquivel, Dimitri De Franciscis, 
+                   Felipe Esquivel, Dimitri De Franciscis, Robert Bleiker,
                    Trevor Patrick Photography
 Patches:           U.N. Owen
 Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,

@@ -26,6 +26,7 @@ Friend Class SynchronizeForm
     Private Preview As Boolean 'Should show a preview.
 
     Private Status As StatusData
+    Private TitleText As String
     Private Sorter As New SyncingListSorter(3)
 
     Private FullSyncThread As Threading.Thread
@@ -79,7 +80,7 @@ Friend Class SynchronizeForm
         Me.CreateHandle()
         Translation.TranslateControl(Me)
         Me.Icon = ProgramConfig.Icon
-        Me.Text = String.Format(Me.Text, Handler.ProfileName, LeftRootPath, RightRootPath) 'Feature requests #3037548, #3055740
+        TitleText = String.Format(Me.Text, Handler.ProfileName, LeftRootPath, RightRootPath)
 
         Labels = New String() {"", Step1StatusLabel.Text, Step2StatusLabel.Text, Step3StatusLabel.Text}
 
@@ -305,6 +306,18 @@ Friend Class SynchronizeForm
             End If
             Interaction.StatusIcon.Text = StatusLabel
         End SyncLock
+
+        Dim PercentProgress As Integer
+        If Status.CurrentStep = StatusData.SyncStep.Scan Then
+            PercentProgress = 0
+        ElseIf Status.CurrentStep = StatusData.SyncStep.Done OrElse Status.TotalActionsCount = 0 Then
+            PercentProgress = 100
+        Else
+            PercentProgress = CInt(100 * Status.ActionsDone / Status.TotalActionsCount)
+        End If
+
+        'Later: No need to update every time when CurrentStep \in {Scan, Done}
+        Me.Text = String.Format("({0}%)", PercentProgress) & TitleText 'Feature requests #3037548, #3055740
     End Sub
 #End Region
 

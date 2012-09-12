@@ -22,7 +22,7 @@ Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                    Slobodan Dijaković, Gavin W. F. Smith, Christine Aznar,
                    Richard Duda, David Connolly, G. W. Daly, Tom & Kathi Brown,
                    Felipe Esquivel, Dimitri De Franciscis, Robert Bleiker,
-                   Trevor Patrick Photography
+                   Trevor Patrick Photography, George Spark
 Patches:           U.N. Owen
 Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                    Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,
@@ -47,6 +47,8 @@ SVN Server:        https://synchronicity.svn.sourceforge.net/svnroot/synchronici
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
 --- In future releases ---
+Sep. 05, 2009 - UPD: Run Create Synchronicity immediately after the setup. 
+Aug. 29, 2012 - UPD: Add a percentage progress indicator in task bar and window title.
 Jun. 27, 2012 - FIX: Profiles name overlapping in some cases (#3515300).
 May. 26, 2012 - NEW: !Norwegian translation, by Jim Leirvik. 
 

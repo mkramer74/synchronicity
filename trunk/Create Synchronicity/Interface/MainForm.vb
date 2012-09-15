@@ -178,6 +178,9 @@ Friend Class MainForm
     Private Sub ActionsMenu_Opening(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles ActionsMenu.Opening
         Dim FileSize As Integer = If(IO.File.Exists(Profiles(CurrentProfile()).LogPath), CInt(Utilities.GetSize(Profiles(CurrentProfile()).LogPath) / 1000), 0)
         ClearLogMenuItem.Text = String.Format(ClearLogMenuItem.Tag.ToString, FileSize)
+
+        'Forbid syncing without at least one preview, at least in non-expert mode
+        SynchronizeMenuItem.Visible = ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.ExpertMode, False) OrElse Profiles(CurrentProfile).GetLastRun() <> ScheduleInfo.DATE_NEVER
     End Sub
 
     Private Sub PreviewMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PreviewMenuItem.Click

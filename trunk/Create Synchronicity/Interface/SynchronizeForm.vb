@@ -317,7 +317,7 @@ Friend Class SynchronizeForm
         End If
 
         'Later: No need to update every time when CurrentStep \in {Scan, Done}
-        Me.Text = String.Format("({0}%)", PercentProgress) & TitleText 'Feature requests #3037548, #3055740
+        Me.Text = String.Format("({0}%) ", PercentProgress) & TitleText 'Feature requests #3037548, #3055740
     End Sub
 #End Region
 

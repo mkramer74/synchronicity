@@ -627,7 +627,7 @@ Friend Class SynchronizeForm
         Dim Entry As New SyncingItem With {.Path = Path, .Type = Type, .Side = Side, .Action = Action, .IsUpdate = IsUpdate, .RealId = SyncingList.Count}
 
         SyncingList.Add(Entry)
-        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(GetCompressedName(Entry.Path))
+        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(GetCompressedName(Entry.Path)) 'TODO: Check if suffix is added to folders too.
 
         Select Case Entry.Action
             Case TypeOfAction.Copy
@@ -766,9 +766,9 @@ Friend Class SynchronizeForm
                     'Don't create/update this folder.
                     Status.FoldersToCreate -= 1
                     PopSyncingList(Context.Source)
-                Else
-                    RemoveValidFile(Folder)
                 End If
+
+                RemoveValidFile(Folder) 'Folders added for creation are marked as valid in AddToSyncingList. Removing this mark is vital to ensuring that the ReplicateEmptyDirectories setting works correctly (otherwise the count increases.
 
                 'Problem: What if ancestors of a folder have been marked valid, and the folder is empty?
                 'If the folder didn't exist, it's ancestors won't be created, since only the folder itself is added.

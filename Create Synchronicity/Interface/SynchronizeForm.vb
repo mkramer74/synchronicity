@@ -627,7 +627,7 @@ Friend Class SynchronizeForm
         Dim Entry As New SyncingItem With {.Path = Path, .Type = Type, .Side = Side, .Action = Action, .IsUpdate = IsUpdate, .RealId = SyncingList.Count}
 
         SyncingList.Add(Entry)
-        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(GetCompressedName(Entry.Path)) 'TODO: Check if suffix is added to folders too.
+        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(If(Type = TypeOfItem.Folder, Entry.Path, GetCompressedName(Entry.Path))) 'TODO: Check if suffix is added to folders too.
 
         Select Case Entry.Action
             Case TypeOfAction.Copy

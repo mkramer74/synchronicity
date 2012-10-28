@@ -278,6 +278,14 @@ Structure CommandLine
 #End If
 
     Shared Sub ReadArgs(ByVal ArgsList As List(Of String))
+#If DEBUG Then
+        ProgramConfig.LogDebugEvent("Parsing command line settings")
+        For Each Param As String In ArgsList
+            ProgramConfig.LogDebugEvent("  Got: " + Param)
+        Next
+        ProgramConfig.LogDebugEvent("Done.")
+#End If
+
         If ArgsList.Count > 1 Then
             CommandLine.Help = ArgsList.Contains("/help")
             CommandLine.Quiet = ArgsList.Contains("/quiet")

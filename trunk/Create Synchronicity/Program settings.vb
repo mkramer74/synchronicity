@@ -31,6 +31,7 @@ Friend Module ProgramSetting
     Public Const DllName As String = "compress-decompress.dll"
     'Public CompressionThreshold As Integer = 0 'Better not filter at all
 
+    Public Const ExcludedFolderPrefix As String = "folder" 'Used to parse excluded file types. For example, `folder"Documents"` means that folders named documents should be excluded.
     Public Const GroupPrefix As Char = ":"c
     Public Const EnqueuingSeparator As Char = "|"c
 #If CONFIG = "Linux" Then

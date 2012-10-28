@@ -53,18 +53,20 @@ Friend NotInheritable Class MessageLoop
         ' Initialize ProgramConfig, Translation 
         InitializeSharedObjects()
 
-        'Read command line settings
-        CommandLine.ReadArgs(New List(Of String)(Environment.GetCommandLineArgs()))
-
         ' Start logging
+        ProgramConfig.LogAppEvent(New String("="c, 20))
         ProgramConfig.LogAppEvent("Program started: " & Application.StartupPath)
         ProgramConfig.LogAppEvent(String.Format("Profiles folder: {0}.", ProgramConfig.ConfigRootDir))
         Interaction.ShowDebug(Translation.Translate("\DEBUG_WARNING"), Translation.Translate("\DEBUG_MODE"))
 
+        'Read command line settings
+        CommandLine.ReadArgs(New List(Of String)(Environment.GetCommandLineArgs()))
+
         ' Check if multiple instances are allowed.
         If CommandLine.RunAs = CommandLine.RunMode.Scheduler AndAlso SchedulerAlreadyRunning() Then
             ProgramConfig.LogAppEvent("Scheduler already running; exiting.")
-            ExitNeeded = True : Exit Sub
+            ExitNeeded = True
+            Exit Sub
         Else
             AddHandler Me.ThreadExit, AddressOf MessageLoop_ThreadExit
         End If
@@ -73,6 +75,7 @@ Friend NotInheritable Class MessageLoop
         ReloadProfiles()
         ProgramConfig.LoadProgramSettings()
         If Not ProgramConfig.ProgramSettingsSet(ProgramSetting.AutoUpdates) Or Not ProgramConfig.ProgramSettingsSet(ProgramSetting.Language) Then
+            ProgramConfig.LogDebugEvent("Auto updates or language not set; launching first run dialog.")
             HandleFirstRun()
         End If
 
@@ -97,6 +100,8 @@ Friend NotInheritable Class MessageLoop
             Interaction.ShowMsg(FreeSpace.ToString)
 #End If
         Else
+            ProgramConfig.LogDebugEvent(String.Format("Initialization complete. Running as '{0}'.", CommandLine.RunAs.ToString))
+
             If CommandLine.RunAs = CommandLine.RunMode.Queue Or CommandLine.RunAs = CommandLine.RunMode.Scheduler Then
                 Interaction.ToggleStatusIcon(True)
 
@@ -111,7 +116,8 @@ Friend NotInheritable Class MessageLoop
 #If DEBUG Then
             ElseIf CommandLine.RunAs = CommandLine.RunMode.Scanner Then
                 Explore(CommandLine.ScanPath)
-                ExitNeeded = True : Exit Sub
+                ExitNeeded = True
+                Exit Sub
 #End If
             Else
                 AddHandler MainFormInstance.FormClosed, AddressOf ReloadMainForm

@@ -167,10 +167,6 @@ Friend Class SettingsForm
         Interaction.HideToolTip(CType(sender, Control))
     End Sub
 
-    Private Sub Bottom_HideTag(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StrictDateComparisonOption.MouseLeave
-        BottomDescLabel.Text = ""
-    End Sub
-
     Private Sub AfterExpand(ByVal sender As Object, ByVal e As System.Windows.Forms.TreeViewEventArgs) Handles LeftView.AfterExpand, RightView.AfterExpand
         ClickedRightTreeView = (DirectCast(sender, Control).Name = "RightView")
         For Each Node As TreeNode In e.Node.Nodes

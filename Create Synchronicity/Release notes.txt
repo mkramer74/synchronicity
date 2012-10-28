@@ -48,7 +48,8 @@ SVN Server:        https://synchronicity.svn.sourceforge.net/svnroot/synchronici
 NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modification, SYN: Synopsis 
 --------------------------
 --- In future releases --- 
-Oct. 28, 2012 - FIX: Enabling look-backwards date filters forced empty directories propagation to enabled.
+Oct. 28, 2012 - UPD: Folders excluded using regular expressions are now grayed-out in folder tree views.
+Oct. 27, 2012 - FIX: Enabling look-backwards date filters forced replication empty directories, even if it was manually disabled.
 Oct. 10, 2012 - NEW: !Catalan translation, by Sebastià Sureda. Gràcies!
 Sep. 05, 2012 - UPD: Run Create Synchronicity immediately after the setup. 
 Aug. 29, 2012 - UPD: Add a percentage progress indicator in task bar and window title.

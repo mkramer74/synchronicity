@@ -49,7 +49,7 @@ NEW: New feature; FIX: Bug fixed; UPD: Update/Improvement; !: Important modifica
 --------------------------
 --- In future releases --- 
 Oct. 28, 2012 - FIX: Enabling look-backwards date filters forced empty directories propagation to enabled.
-Oct. 10, 2012 - NEW: !Catalan translation, by Sebastià Sureda. Thanks
+Oct. 10, 2012 - NEW: !Catalan translation, by Sebastià Sureda. Gràcies!
 Sep. 05, 2012 - UPD: Run Create Synchronicity immediately after the setup. 
 Aug. 29, 2012 - UPD: Add a percentage progress indicator in task bar and window title.
 Jun. 27, 2012 - FIX: Profiles name overlapping in some cases (#3515300).

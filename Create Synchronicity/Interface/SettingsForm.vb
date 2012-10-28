@@ -17,6 +17,9 @@ Friend Class SettingsForm
     Dim PrevLeft As String = "-1" 'Initiate to an invalid path value to force reloading.
     Dim PrevRight As String = "-1" 'These values are used to check whether the folder tree should be reloaded.
 
+    Dim ExcludedFolderPatterns As New List(Of FileNamePattern)
+    ReadOnly EXCLUDED_FORECOLOR As Drawing.Color = Drawing.Color.LightGray
+
     'Note:
     'The list called Handler.(left|right)CheckedNodes contains pathes not ending with "*", associated with booleans indicating whether all subfolders /path/ are to be synced.
     'The boolean value is stored as a * appended at the end of the file name.
@@ -177,6 +180,12 @@ Friend Class SettingsForm
                     Dim NewNode As TreeNode = Node.Nodes.Add(GetFileOrFolderName(Dir))
                     NewNode.Checked = (Node.ToolTipText = "*" And Node.Checked)
                     NewNode.ToolTipText = Node.ToolTipText
+
+                    If Node.ForeColor <> EXCLUDED_FORECOLOR Then
+                        GrayOutIfExcluded(NewNode)
+                    Else
+                        GrayOut(NewNode)
+                    End If
                 Next
             Catch Ex As Exception 'Typically UnauthorizedAccess exceptions.
 #If DEBUG Then
@@ -229,6 +238,12 @@ Friend Class SettingsForm
 
     Private Sub MoreLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MoreLabel.MouseClick
         ExpertMenu.Show(MoreLabel, e.Location)
+    End Sub
+
+    Private Sub ExcludedTypesTextBox_Validated(sender As Object, e As EventArgs) Handles ExcludedTypesTextBox.Validated
+        LoadExcludedFolderPatterns()
+        If (LeftView.Nodes.Count > 0) Then GrayOutIfExcluded(LeftView.Nodes(0))
+        If (RightView.Nodes.Count > 0) Then GrayOutIfExcluded(RightView.Nodes(0))
     End Sub
 #End Region
 
@@ -356,7 +371,7 @@ Friend Class SettingsForm
             LoadTree(LeftView, FromTextBox.Text, Handler.LeftCheckedNodes, AutoCheckRoot)
         End If
         If FullReload Or PrevRight <> ToTextBox.Text Or ForceRight Then
-            LoadTree(RightView, ToTextBox.Text, Handler.RightCheckedNodes, CreateDestOption.Checked, AutoCheckRoot)
+            LoadTree(RightView, ToTextBox.Text, Handler.RightCheckedNodes, AutoCheckRoot, CreateDestOption.Checked)
         End If
 
         Loading.Visible = False
@@ -400,12 +415,15 @@ Friend Class SettingsForm
 
     Private Sub LoadCheckState(ByVal Tree As TreeView, ByVal CheckedNodes As Dictionary(Of String, Boolean), ByVal AutoCheckRoot As Boolean)
         Dim BaseNode As TreeNode = Tree.Nodes(0)
+
         If CheckedNodes.Count = 0 And AutoCheckRoot Then CheckedNodes.Add("", True) 'Automatically check the root node; useful when loading a new path, but must not happen if all folders were intentionally excluded.
         InhibitAutocheck = True
         For Each CheckedPath As KeyValuePair(Of String, Boolean) In CheckedNodes
             CheckAccordingToPath(BaseNode, New List(Of String)(CheckedPath.Key.Split(ProgramSetting.DirSep)), CheckedPath.Value)
         Next
         InhibitAutocheck = False
+
+        GrayOutIfExcluded(BaseNode)
     End Sub
 
     Private Sub CheckAccordingToPath(ByVal BaseNode As TreeNode, ByRef Path As List(Of String), ByVal FullCheck As Boolean)
@@ -427,6 +445,26 @@ Friend Class SettingsForm
                     CheckAccordingToPath(Node, Path, FullCheck)
                     Exit For
                 End If
+            Next
+        End If
+    End Sub
+
+    Private Sub GrayOut(ByVal Node As TreeNode)
+        Node.ForeColor = EXCLUDED_FORECOLOR
+
+        For Each SubNode As TreeNode In Node.Nodes
+            GrayOut(SubNode)
+        Next
+    End Sub
+
+    Private Sub GrayOutIfExcluded(ByVal Node As TreeNode)
+        If FileNamePattern.MatchesPattern(Node.FullPath, ExcludedFolderPatterns) Then
+            GrayOut(Node)
+        Else
+            Node.ForeColor = Drawing.Color.Black
+
+            For Each SubNode As TreeNode In Node.Nodes
+                GrayOutIfExcluded(SubNode)
             Next
         End If
     End Sub
@@ -452,6 +490,8 @@ Friend Class SettingsForm
         Handler.CopySetting(ProfileSetting.Group, GroupNameBox.Text, LoadToForm)
         'Handler.CopySetting(ProfileSetting.ExcludedFolders, ExcludedFoldersBox.Text, LoadToForm)
         'Hidden settings are not added here
+
+        LoadExcludedFolderPatterns() 'Load excluded folder patterns from UI (ExcludedTypesTextBox.Text) and settings dictionary (ExcludedFolders)
 
         'Note: Behaves correctly when no radio button is checked, although CopyAllFiles is unchecked.
         Dim Restrictions As Integer = (If(CopyAllFilesCheckBox.Checked, 0, 1) * (If(IncludeFilesOption.Checked, 1, 0) + 2 * If(ExcludeFilesOption.Checked, 1, 0)))
@@ -507,6 +547,12 @@ Friend Class SettingsForm
             End If
             SetRootPathDisplay(True)
         End If
+    End Sub
+
+    Private Sub LoadExcludedFolderPatterns()
+        ExcludedFolderPatterns = New List(Of FileNamePattern)
+        FileNamePattern.LoadPatternsList(ExcludedFolderPatterns, ExcludedTypesTextBox.Text, True, ProgramSetting.ExcludedFolderPrefix)
+        FileNamePattern.LoadPatternsList(ExcludedFolderPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedFolders, ""), True, "") 'Not shown in the UI.
     End Sub
 
     Private Shared Function Cleanup(ByVal Path As String) As String

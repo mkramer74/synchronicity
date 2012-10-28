@@ -68,10 +68,10 @@ Friend Class SynchronizeForm
         LeftRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Source))
         RightRootPath = ProfileHandler.TranslatePath(Handler.GetSetting(Of String)(ProfileSetting.Destination))
 
-        FileNamePattern.LoadPatternsList(IncludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.IncludedTypes, ""), False, "folder")
-        FileNamePattern.LoadPatternsList(ExcludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedTypes, ""), False, "folder")
+        FileNamePattern.LoadPatternsList(IncludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.IncludedTypes, ""), False, ProgramSetting.ExcludedFolderPrefix)
+        FileNamePattern.LoadPatternsList(ExcludedPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedTypes, ""), False, ProgramSetting.ExcludedFolderPrefix)
         FileNamePattern.LoadPatternsList(ExcludedDirPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedFolders, ""), True, "")
-        FileNamePattern.LoadPatternsList(ExcludedDirPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedTypes, ""), True, "folder")
+        FileNamePattern.LoadPatternsList(ExcludedDirPatterns, Handler.GetSetting(Of String)(ProfileSetting.ExcludedTypes, ""), True, ProgramSetting.ExcludedFolderPrefix)
 
         FullSyncThread = New Threading.Thread(AddressOf FullSync)
         ScanThread = New Threading.Thread(AddressOf Scan)
@@ -627,7 +627,7 @@ Friend Class SynchronizeForm
         Dim Entry As New SyncingItem With {.Path = Path, .Type = Type, .Side = Side, .Action = Action, .IsUpdate = IsUpdate, .RealId = SyncingList.Count}
 
         SyncingList.Add(Entry)
-        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(If(Type = TypeOfItem.Folder, Entry.Path, GetCompressedName(Entry.Path))) 'TODO: Check if suffix is added to folders too.
+        If Entry.Action <> TypeOfAction.Delete Then AddValidFile(If(Type = TypeOfItem.Folder, Entry.Path, GetCompressedName(Entry.Path)))
 
         Select Case Entry.Action
             Case TypeOfAction.Copy
@@ -918,9 +918,9 @@ Friend Class SynchronizeForm
         Try
             Select Case Handler.GetSetting(Of Integer)(ProfileSetting.Restrictions)
                 Case 1
-                    Return MatchesPattern(GetFileOrFolderName(FullPath), IncludedPatterns)
+                    Return FileNamePattern.MatchesPattern(GetFileOrFolderName(FullPath), IncludedPatterns)
                 Case 2
-                    Return Not MatchesPattern(GetFileOrFolderName(FullPath), ExcludedPatterns)
+                    Return Not FileNamePattern.MatchesPattern(GetFileOrFolderName(FullPath), ExcludedPatterns)
             End Select
         Catch Ex As Exception 'TODO: When?
             Log.HandleSilentError(Ex)
@@ -930,7 +930,7 @@ Friend Class SynchronizeForm
     End Function
 
     Private Function HasAcceptedDirname(ByVal Path As String) As Boolean
-        Return Not MatchesPattern(Path, ExcludedDirPatterns)
+        Return Not FileNamePattern.MatchesPattern(Path, ExcludedDirPatterns)
     End Function
 
     Private Function GetCompressedName(ByVal OriginalName As String) As String
@@ -1007,10 +1007,6 @@ Friend Class SynchronizeForm
         Return Dir.TrimEnd(ProgramSetting.DirSep) & ProgramSetting.DirSep & File.TrimStart(ProgramSetting.DirSep)
     End Function
 
-    Private Shared Function GetExtension(ByVal File As String) As String
-        Return File.Substring(File.LastIndexOf("."c) + 1) 'Not used when dealing with a folder.
-    End Function
-
     Private Shared Function LoadCompressionDll() As Compressor
         Dim DLL As Reflection.Assembly = Reflection.Assembly.LoadFrom(ProgramConfig.CompressionDll)
 
@@ -1019,25 +1015,6 @@ Friend Class SynchronizeForm
         Next
 
         Throw New ArgumentException("Invalid DLL: " & ProgramConfig.CompressionDll)
-    End Function
-
-    Private Shared Function MatchesPattern(ByVal PathOrFileName As String, ByRef Patterns As List(Of FileNamePattern)) As Boolean
-        Dim Extension As String = GetExtension(PathOrFileName)
-
-        For Each Pattern As FileNamePattern In Patterns 'LINUX: Problem with IgnoreCase
-            Select Case Pattern.Type
-                Case FileNamePattern.PatternType.FileExt
-                    If String.Compare(Extension, Pattern.Pattern, True) = 0 Then Return True
-                Case FileNamePattern.PatternType.FileName
-                    If String.Compare(PathOrFileName, Pattern.Pattern, True) = 0 Then Return True
-                Case FileNamePattern.PatternType.FolderName
-                    If PathOrFileName.EndsWith(Pattern.Pattern, StringComparison.CurrentCultureIgnoreCase) Then Return True
-                Case FileNamePattern.PatternType.Regex
-                    If System.Text.RegularExpressions.Regex.IsMatch(PathOrFileName, Pattern.Pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then Return True
-            End Select
-        Next
-
-        Return False
     End Function
 
     Private Shared Function Md5(ByVal Path As String) As String

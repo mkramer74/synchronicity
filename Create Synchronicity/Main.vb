@@ -231,8 +231,10 @@ Friend NotInheritable Class MessageLoop
         Try
             If NeedToRunAtBootTime Then
                 ProgramConfig.RegisterBoot()
-                ProgramConfig.LogAppEvent("Registered program in startup list, trying to start scheduler")
-                If CommandLine.RunAs = CommandLine.RunMode.Normal Then Diagnostics.Process.Start(Application.ExecutablePath, "/scheduler /noupdates" & If(CommandLine.Log, " /log", ""))
+                If CommandLine.RunAs = CommandLine.RunMode.Normal Then
+                    ProgramConfig.LogAppEvent("Starting scheduler")
+                    Diagnostics.Process.Start(Application.ExecutablePath, "/scheduler /noupdates" & If(CommandLine.Log, " /log", ""))
+                End If
             Else
                 If Microsoft.Win32.Registry.GetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Nothing) IsNot Nothing Then
                     ProgramConfig.LogAppEvent("Unregistering program from startup list")

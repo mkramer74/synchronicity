@@ -240,7 +240,7 @@ NotInheritable Class ConfigHandler
     Public Sub RegisterBoot()
         If Microsoft.Win32.Registry.GetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Nothing) Is Nothing Then
             LogAppEvent("Registering program in startup list")
-            Microsoft.Win32.Registry.SetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Application.ExecutablePath & " /scheduler")
+            Microsoft.Win32.Registry.SetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, String.Format("""{0}"" /scheduler", Application.ExecutablePath))
         End If
     End Sub
 

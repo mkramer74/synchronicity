@@ -178,7 +178,15 @@ NotInheritable Class ConfigHandler
             Exit Sub
         End If
 
-        For Each Setting As String In IO.File.ReadAllText(MainConfigFile).Split(";"c)
+        Dim ConfigString As String
+        Try
+            ConfigString = IO.File.ReadAllText(MainConfigFile)
+        Catch Ex As IO.IOException
+            System.Threading.Thread.Sleep(200) 'Freeze for 1/5 of a second to allow for the other user to release the file.
+            ConfigString = IO.File.ReadAllText(MainConfigFile)
+        End Try
+
+        For Each Setting As String In ConfigString.Split(";"c)
             Dim Pair As String() = Setting.Split(":".ToCharArray, 2)
             If Pair.Length() < 2 Then Continue For
             If Settings.ContainsKey(Pair(0)) Then Settings.Remove(Pair(0))

@@ -292,13 +292,14 @@ NotInheritable Class ProfileHandler
         ' Using StringSplitOptions.RemoveEmptyEntries would make no difference between ';' (root folder selected, no subfolders) and '' (nothing selected at all)
 
         For Each Dir As String In ConfigCheckedFoldersList
-            If Not Subfolders.ContainsKey(Dir) Then
-                If Dir.EndsWith("*") Then
-                    Subfolders.Add(Dir.Substring(0, Dir.Length - 1), True)
-                Else
-                    Subfolders.Add(Dir, False)
-                End If
+            Dim Recursive As Boolean = False
+
+            If Dir.EndsWith("*") Then
+                Recursive = True
+                Dir = Dir.Substring(0, Dir.Length - 1)
             End If
+
+            If Not Subfolders.ContainsKey(Dir) Then Subfolders.Add(Dir, Recursive)
         Next
     End Sub
 

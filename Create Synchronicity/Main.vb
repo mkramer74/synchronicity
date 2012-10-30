@@ -209,6 +209,8 @@ Friend NotInheritable Class MessageLoop
 #Region "Scheduling"
     Private Function SchedulerAlreadyRunning() As Boolean
         Dim MutexName As String = "[[Create Synchronicity scheduler]] " & Application.ExecutablePath.Replace(ProgramSetting.DirSep, "!"c).ToLower(Interaction.InvariantCulture)
+        If MutexName.Length > 260 Then MutexName = MutexName.Substring(0, 260)
+
         ProgramConfig.LogDebugEvent(String.Format("Registering mutex: ""{0}""", MutexName))
 
         Try
@@ -216,6 +218,9 @@ Friend NotInheritable Class MessageLoop
         Catch Ex As Threading.AbandonedMutexException
             ProgramConfig.LogDebugEvent("Abandoned mutex detected")
             Return False
+        Catch Ex As System.UnauthorizedAccessException
+            ProgramConfig.LogDebugEvent("Acess to the Mutex forbidden")
+            Return True
         End Try
 
         Return (Not Blocker.WaitOne(0, False))

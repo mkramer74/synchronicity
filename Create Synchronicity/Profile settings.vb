@@ -109,6 +109,7 @@ NotInheritable Class ProfileHandler
                 Dim Param() As String = ConfigLine.Split(":".ToCharArray, 2)
                 If Param.Length < 2 Then
                     Interaction.ShowMsg(Translation.TranslateFormat("\INVALID_SETTING", ConfigLine))
+                    ProgramConfig.LogAppEvent("Invalid setting for profile '" & ProfileName & "': " & ConfigLine)
                 ElseIf Not Configuration.ContainsKey(Param(0)) Then
                     Configuration.Add(Param(0), Param(1))
                 End If

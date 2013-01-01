@@ -23,7 +23,8 @@ Special thanks:    Mauricio Leyzaola, Christian Eibler, Alexander Barnes,
                    Richard Duda, David Connolly, G. W. Daly, Tom & Kathi Brown,
                    Felipe Esquivel, Dimitri De Franciscis, Robert Bleiker,
                    Trevor Patrick Photography, George Spark, Jack Fowler, 
-                   Bert Byfield, Michael Boiger, atomMan， Steffen Hartmann 
+                   Bert Byfield, Michael Boiger, atomMan， Steffen Hartmann,
+                   Roy Hawk
 Patches:           U.N. Owen
 Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo,
                    Pedro Silva, Marco Medri, Jaime Roquero, Hampus Bengtsson,

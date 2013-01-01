@@ -22,6 +22,7 @@ Friend Module ProgramSetting
     Public Const Autocomplete As String = "Autocomplete"
     Public Const Forecast As String = "Forecast"
     Public Const Pause As String = "Pause"
+    Public Const AutoStartupRegistration As String = "Auto startup registration"
 
     'Program files
     Public Const ConfigFolderName As String = "config"
@@ -246,9 +247,11 @@ NotInheritable Class ConfigHandler
     End Sub
 
     Public Sub RegisterBoot()
-        If Microsoft.Win32.Registry.GetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Nothing) Is Nothing Then
-            LogAppEvent("Registering program in startup list")
-            Microsoft.Win32.Registry.SetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, String.Format("""{0}"" /scheduler", Application.ExecutablePath))
+        If ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.AutoStartupRegistration, True) Then
+            If Microsoft.Win32.Registry.GetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, Nothing) Is Nothing Then
+                LogAppEvent("Registering program in startup list")
+                Microsoft.Win32.Registry.SetValue(ProgramSetting.RegistryRootedBootKey, ProgramSetting.RegistryBootVal, String.Format("""{0}"" /scheduler", Application.ExecutablePath))
+            End If
         End If
     End Sub
 

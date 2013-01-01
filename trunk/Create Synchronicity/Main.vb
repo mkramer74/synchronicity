@@ -234,7 +234,7 @@ Friend NotInheritable Class MessageLoop
         Next
 
         Try
-            If NeedToRunAtBootTime Then
+            If NeedToRunAtBootTime AndAlso ProgramConfig.GetProgramSetting(Of Boolean)(ProgramSetting.AutoStartupRegistration, True) Then
                 ProgramConfig.RegisterBoot()
                 If CommandLine.RunAs = CommandLine.RunMode.Normal Then
                     ProgramConfig.LogAppEvent("Starting scheduler")

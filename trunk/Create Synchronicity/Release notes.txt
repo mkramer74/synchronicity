@@ -33,7 +33,7 @@ Translations:      Clément Pit--Claudel, Florian Haag, André Modesto, Teo Rojo
                    S. G. Park, Marco C., Marco Salvagno, Lajos Toldy, Elfalem
                    Alemu, Juan Pablo Ahumada, Stathis Grigoriadis, Tom Szabo,
                    Masahiko Kuroiwa, Romel Vera, Tomaz Valh, Carl-Gustav Werner,
-                   Ademas Pramuatmaja, Jim Leirvik, Sebastià Sureda
+                   Ademas Pramuatmaja, Jim Leirvik, Sebastià Sureda, Matej Sur
 
 * Technical information
 License:           GNU GPL v3 or later (see "COPYING")
